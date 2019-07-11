@@ -27,7 +27,7 @@
         'security/ir.model.access.csv',
         'views/views.xml',
         'views/adjudicacion_directa.xml',
-        'views/elaboracion_contratos.xml',
+        'views/elaboracion_contrato.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
