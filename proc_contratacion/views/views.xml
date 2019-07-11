@@ -1,0 +1,191 @@
+<odoo>
+  <data>
+    <!-- LICITACIONES -->
+    <record model="ir.ui.view" id="proc_contratacion.licitacion_tree">
+      <field name="name">proceso.licitacion.tree</field>
+      <field name="model">proceso.licitacion</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="tipolicitacion"/>
+          <field name="numerolicitacion"/>
+          <field name="convocatoria"/>
+          <field name="objetolicitacion"/>
+          <field name="normatividad"/>
+          <field name="fechaoficio"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="proc_contratacion.licitacion_form">
+      <field name="name">proceso.licitacion.form</field>
+      <field name="model">proceso.licitacion</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <div class="oe_button_box oe_read_only" name="button_box">
+              <button type="action" icon="fa-clipboard" string="Convocatoria/Bases"></button>
+
+              <button type="action" icon="fa-list-ol" string="Ev. Puntos"></button>
+
+              <button type="action" icon="fa-users" string="Participantes"></button>
+
+              <button type="action" icon="fa-calendar" string="Eventos"></button>
+
+              <button type="action" icon="fa-bitbucket" string="Desierta"></button>
+            </div>
+
+            <group>
+              <group string="Seleccionar Obra" colspan="1" col="2">
+                <field name="name" string="Programa de Inversión"/>
+                <field name="objetolicitacion"/>
+              </group>
+              <group string="Datos De La Licitación" colspan="1" col="2">
+                <field name="tipolicitacion"/>
+                <field name="numerolicitacion"/>
+                <field name="convocatoria"/>
+                <field name="fechaconinv"/>
+                <field name="caracter"/>
+                <field name="normatividad"/>
+              </group>
+              <group string="Presiden Actos" colspan="1" col="2">
+                <field name="funcionariopresideactos"/>
+                <field name="puesto"/>
+                <field name="numerooficio"/>
+                <field name="fechaoficio"/>
+                <field name="oficioinvitacioncontraloria"/>
+                <field name="fechaoficio2"/>
+                <field name="notariopublico"/>
+              </group>
+              <group string="Datos Generales" colspan="1" col="2">
+                <field name="fechalimiteentregabases"/>
+                <field name="fecharegistrocompranet"/>
+                <field name="costobasesdependencia"/>
+                <field name="costocompranetbanco"/>
+                <field name="fechaestimadainicio"/>
+                <field name="fechaestimadatermino"/>
+                <field name="plazodias"/>
+                <field name="capitalcontable"/>
+                <field name="anticipomaterial"/>
+                <field name="anticipoinicio"/>
+                <field name="puntosminimospropuestatecnica"/>
+              </group>
+              <group string="Visita De Obra" colspan="1" col="2">
+                <field name="visitafechahora"/>
+                <field name="visitalugar"/>
+              </group>
+              <group string="Junta De Aclaraciones" colspan="1" col="2">
+                <field name="juntafechahora"/>
+                <field name="juntalugar"/>
+              </group>
+              <group string="Apertura" colspan="1" col="2">
+                <field name="aperturafechahora"/>
+                <field name="aperturalugar"/>
+              </group>
+              <group string="Fallo" colspan="1" col="2">
+                <field name="fallofechahora"/>
+                <field name="fallolugar"/>
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- ACCIONES VENTANA -->
+    <record model="ir.actions.act_window" id="proc_contratacion.licitacion_action_window">
+      <field name="name">Registro de licitaciones</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">proceso.licitacion</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- TREE VIEW REPORTE-->
+    <record model="ir.ui.view" id="proc_contratacion.licitacion_tree2">
+      <field name="name">proceso.licitacion.tree2</field>
+      <field name="model">proceso.licitacion</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="numerolicitacion"/>
+          <field name="convocatoria"/>
+          <field name="objetolicitacion"/>
+          <field name="normatividad"/>
+          <field name="fechaoficio"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- ACCIONES VENTANA DE REPORTE -->
+    <record model="ir.actions.act_window" id="proc_contratacion.licitacion_action_window2">
+      <field name="name">Registro de licitaciones</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">proceso.licitacion</field>
+      <field name="view_id" ref="proc_contratacion.licitacion_tree2"/>
+      <field name="view_mode">tree</field>
+    </record>
+
+    <!-- MENUS -->
+    <menuitem name="Proceso de contratación" id="proc_contratacion.menu_root" sequence="0"/>
+    <menuitem name="Registro de licitaciones" id="proc_contratacion.consulta_menu" parent="proc_contratacion.menu_root"
+              action="proc_contratacion.licitacion_action_window" sequence="1"/>
+
+     <menuitem name="Consulta de licitaciones" id="proc_contratacion.licitacion_menu"
+     parent="proc_contratacion.menu_root" action="proc_contratacion.licitacion_action_window2" sequence="2"/>
+
+    <!-- explicit list view definition -->
+    <!--
+    <record model="ir.ui.view" id="proc_contratacion.list">
+      <field name="name">proc_contratacion list</field>
+      <field name="model">proc_contratacion.proc_contratacion</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+    -->
+
+    <!-- actions opening views on models -->
+    <!--
+    <record model="ir.actions.act_window" id="proc_contratacion.action_window">
+      <field name="name">proc_contratacion window</field>
+      <field name="res_model">proc_contratacion.proc_contratacion</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    -->
+
+    <!-- server action to the one above -->
+    <!--
+    <record model="ir.actions.server" id="proc_contratacion.action_server">
+      <field name="name">proc_contratacion server</field>
+      <field name="model_id" ref="model_proc_contratacion_proc_contratacion"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": self._name,
+        }
+      </field>
+    </record>
+    -->
+
+    <!-- Top menu item -->
+    <!--
+    <menuitem name="proc_contratacion" id="proc_contratacion.menu_root"/>
+    -->
+    <!-- menu categories -->
+    <!--
+    <menuitem name="Menu 1" id="proc_contratacion.menu_1" parent="proc_contratacion.menu_root"/>
+    <menuitem name="Menu 2" id="proc_contratacion.menu_2" parent="proc_contratacion.menu_root"/>
+    -->
+    <!-- actions -->
+    <!--
+    <menuitem name="List" id="proc_contratacion.menu_1_list" parent="proc_contratacion.menu_1"
+              action="proc_contratacion.action_window"/>
+    <menuitem name="Server to list" id="proc_contratacion" parent="proc_contratacion.menu_2"
+              action="proc_contratacion.action_server"/>
+    -->
+  </data>
+</odoo>

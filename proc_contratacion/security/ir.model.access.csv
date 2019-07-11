@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_proc_contratacion_views,proceso.licitacion,model_proceso_licitacion,,1,1,1,1
+access_proc_contratacion_adjudicacion_directa,proceso.adjudicacion_directa,model_proceso_adjudicacion_directa,,1,1,1,1
+access_proc_contratacion_elaboracion_contratos,proceso.elaboracion_contratos,model_proceso_elaboracion_contratos,,1,1,1,1

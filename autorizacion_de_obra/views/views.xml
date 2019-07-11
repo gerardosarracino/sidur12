@@ -1,0 +1,95 @@
+<odoo>
+  <data>
+
+    <record id="action_autorizacion_de_obra" model="ir.actions.act_window">
+            <field name="name">Autorización de obra</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">autorizacion_de_obra.oficios_de_autorizacion</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Autorización de obra
+              </p>
+            </field>
+    </record>
+    
+    <record model="ir.ui.view" id="autorizacion_de_obra_form">
+      <field name="name">Autorización de obra</field>
+      <field name="model">autorizacion_de_obra.oficios_de_autorizacion</field>
+      <field name="arch" type="xml">
+        <form>
+          <header>
+            <button string='Anexo Tecnico' name='close_dialog' type='object' class='btn-primary'/>
+          </header>
+          <sheet>
+            <group string="Autorización de obra" class="text-center">
+              <h1><field name="numero_de_oficio" placeholder="Número de oficio"/></h1>
+            </group>
+            <group>
+              <field name="fecha_actual"/>
+              <field name="fecha_de_recibido"/>
+              <field name="fecha_de_vencimiento"/>
+              <field name="importe"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>  
+
+    <!--WIZARD-->
+     <record model="ir.ui.view" id="autorizacion_de_obra_wizard">
+      <field name="name">Anexo técnico del oficio</field>
+      <field name="model">autorizacion_de_obra.anexo_tecnico</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group string="Anexo técnico" class="text-center">
+              <h1><field name="clave_de_obra" placeholder="Clave de obra"/></h1>
+            </group>
+            <group>
+              <field name="clave_presupuestal"/>
+              <field name="monto_federal"/>
+              <field name="monto_estatal"/>
+              <field name="monto_municipal"/>
+              <field name="total"/>
+            </group>
+          </sheet>
+          <footer>
+              <button string='Crear' name='close_dialog' type='object' class='btn-primary'/>
+              <button string='cancelar' class='btn-secondary' special='cancel'/>
+          </footer>
+        </form>
+      </field>
+    </record>  
+ 
+    
+    <act_window id="action_autorizacion_de_obra_wizard"
+                multi="True"
+                key2="client_action_multi"
+                name="Anexo técnico"
+                res_model="autorizacion_de_obra.anexo_tecnico"
+                view_mode="form"
+                target="new"/>  
+
+
+
+    <record model="ir.ui.view" id="autorizacion_de_obra.tree">
+    <field name="name">Nuevo Oficio De Autorización</field>
+    <field name="model">autorizacion_de_obra.oficios_de_autorizacion</field>
+    <field name="arch" type="xml">
+      <tree>
+          <field name="fecha_actual"/>
+          <field name="fecha_de_recibido"/>
+          <field name="fecha_de_vencimiento"/>
+          <field name="numero_de_oficio"/>
+          <field name="importe"/>
+      </tree>
+    </field>
+  </record>
+
+    <menuitem name="Autorización de obra" id="autorizacion_de_obra.menu_root" sequence="0"/>
+        <menuitem name="Oficios de Autorización" id="autorizacion_de_obra.obra_menu" parent="autorizacion_de_obra.menu_root" action="action_autorizacion_de_obra" sequence="1"/>
+           <menuitem  id="menu_autorizacion_de_obra_wizard" parent="autorizacion_de_obra.menu_root" action="action_autorizacion_de_obra_wizard" sequence="2"/>  
+        
+  </data>
+</odoo>
