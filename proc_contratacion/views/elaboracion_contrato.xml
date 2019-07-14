@@ -1,4 +1,7 @@
 <odoo>
+
+
+
   <data>
     <!-- LICITACIONES -->
     <record model="ir.ui.view" id="proc_contratacion.elaboracion_contratos_tree">
@@ -20,7 +23,16 @@
       <field name="arch" type="xml">
         <form>
           <sheet>
+              <div class="oe_button_box oe_read_only" name="button_box">
+                      <button name='finiquitarContrato'  type='object' class='btn-primary' icon="fa-clock-o"
+                              string="Finiquitar Contrato Anticipadamente"></button>
+
+                      <button name='conveniosModificados'  type='object' class='btn-primary' icon="fa-pencil-square-o"
+                              string="Convenios Modificados"></button>
+                </div>
+
             <notebook colspan="4">
+
                     <page string="Datos Generales">
                          <group>
                           <group string="Contrato Datos Generales" colspan="2" col="2">
@@ -90,7 +102,9 @@
       <field name="view_mode">tree,form</field>
     </record>
 
-    <!-- LICITACIONES -->
+
+
+    <!-- SEGUIMIENTO DE CONTRATOS -->
     <record model="ir.ui.view" id="proc_contratacion.elaboracion_contrato_2">
       <field name="name">proceso.elaboracion_contrato.tree2</field>
       <field name="model">proceso.elaboracion_contrato</field>
@@ -104,6 +118,43 @@
         </tree>
       </field>
     </record>
+
+
+
+
+     <!-- ACCIONES PARA ELIMINAR EL BOTON DELETE -->
+    <record id="partner_tree_no_delete" model="ir.ui.view">
+        <field name="name">contrato.tree.no.delete</field>
+        <field name="model">proceso.elaboracion_contrato</field>
+        <field name="inherit_id" ref="proc_contratacion.elaboracion_contrato_2" />
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="delete">false</attribute>
+            </xpath>
+        </field>
+    </record>
+
+
+
+
+        <!-- ACTION DE ESTADISTICAS-->
+<act_window id="estadisticas_contrato"
+    name="Estadisticas"
+    src_model="proceso.elaboracion_contrato"
+    res_model="proceso.elaboracion_contrato"
+    view_type="form" view_mode="form"
+    key2="client_action_multi" target="new"
+    />
+
+  <!-- ACTION DE LISTADO DETALLADO-->
+<act_window id="listado_detallado"
+    name="Listado Detallado"
+    src_model="proceso.elaboracion_contrato"
+    res_model="proceso.elaboracion_contrato"
+    view_type="form" view_mode="form"
+    key2="client_action_multi" target="new"
+    />
+
 
     <!-- ACCIONES VENTANA -->
     <record model="ir.actions.act_window" id="proc_contratacion.seguimiento_contrato_action_window">

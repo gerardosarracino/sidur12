@@ -1,0 +1,36 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="finiquitar_anticipadamente">
+          <field name="name">proceso.finiquitar_anticipadamente.form</field>
+          <field name="model">proceso.finiquitar_anticipadamente</field>
+          <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                       <group string="Convenios Modificatorios" colspan="2" col="2">
+                           <field name="fecha"/>
+                           <field name="referencia"/>
+                           <field name="observaciones"/>
+                       </group>
+                    </group>
+                </sheet>
+                </form>
+              </field>
+        </record>
+
+        <!-- tree view -->
+    <record model="ir.ui.view" id="finiquitar_anticipadamente_tree">
+      <field name="name">proceso.finiquitar_anticipadamente.tree</field>
+      <field name="model">proceso.finiquitar_anticipadamente</field>
+      <field name="arch" type="xml">
+        <tree>
+           <field name="fecha"/>
+           <field name="referencia"/>
+           <field name="observaciones"/>
+        </tree>
+      </field>
+    </record>
+
+
+    </data>
+</odoo>

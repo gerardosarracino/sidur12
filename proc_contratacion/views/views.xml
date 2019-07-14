@@ -27,7 +27,7 @@
 
               <button type="action" icon="fa-list-ol" string="Ev. Puntos"></button>
 
-              <button type="action" icon="fa-users" string="Participantes"></button>
+              <button name='participantes'  type='object' class='btn-primary' icon="fa-users" string="Participantes"></button>
 
               <button type="action" icon="fa-calendar" string="Eventos"></button>
 
@@ -99,12 +99,13 @@
       <field name="view_mode">tree,form</field>
     </record>
 
+
     <!-- TREE VIEW REPORTE-->
     <record model="ir.ui.view" id="proc_contratacion.licitacion_tree2">
       <field name="name">proceso.licitacion.tree2</field>
       <field name="model">proceso.licitacion</field>
       <field name="arch" type="xml">
-        <tree>
+        <tree create="false">
           <field name="numerolicitacion"/>
           <field name="convocatoria"/>
           <field name="objetolicitacion"/>
@@ -113,6 +114,48 @@
         </tree>
       </field>
     </record>
+
+     <!-- ACCIONES PARA ELIMINAR EL BOTON DELETE -->
+    <record id="licitacion_tree_no_delete" model="ir.ui.view">
+        <field name="name">licitacion.tree.no.delete</field>
+        <field name="model">proceso.licitacion</field>
+        <field name="inherit_id" ref="proc_contratacion.licitacion_tree2" />
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="delete">false</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ACTION DE CALENDARIO DE EVENTOS-->
+<act_window id="calendario_eventos"
+    name="Calendario de Eventos"
+    src_model="proceso.licitacion"
+    res_model="proceso.licitacion"
+    view_type="form" view_mode="form"
+    key2="client_action_multi" target="new"
+    view_id="proc_contratacion.licitacion_tree2"
+    />
+
+        <!-- ACTION DE LISTADO DE LICITACIONES-->
+<act_window id="listado_licitaciones"
+    name="Listado de Licitaciones"
+    src_model="proceso.licitacion"
+    res_model="proceso.licitacion"
+    view_type="form" view_mode="form"
+    key2="client_action_multi" target="new"
+    view_id="proc_contratacion.licitacion_tree2"
+    />
+
+    <!-- ACTION DE ESTADISTICAS-->
+<act_window id="estadisticas_licitacion"
+    name="Estadisticas"
+    src_model="proceso.licitacion"
+    res_model="proceso.licitacion"
+    view_type="form" view_mode="form"
+    key2="client_action_multi" target="new"
+    view_id="proc_contratacion.licitacion_tree2"
+    />
 
     <!-- ACCIONES VENTANA DE REPORTE -->
     <record model="ir.actions.act_window" id="proc_contratacion.licitacion_action_window2">

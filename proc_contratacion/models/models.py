@@ -44,6 +44,18 @@ class licitacion(models.Model):
 	fallofechahora = fields.Datetime(string="Fecha/Hora")
 	fallolugar = fields.Text(string="Lugar")
 
+	@api.multi
+	def participantes(self):
+		return {
+			'type': 'ir.actions.act_window',
+			'name': 'Licitantes participantes',
+			'res_model': 'proceso.participantes',
+			'view_mode': 'tree,form',
+			'view_type': 'form',
+			'target': 'self',
+		}
+
+
 
 # class proc_contratacion(models.Model):
 #     _name = 'proc_contratacion.proc_contratacion'

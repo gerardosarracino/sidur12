@@ -1,7 +1,7 @@
 <odoo>
   <data>
     <!-- LICITACIONES -->
-    <record model="ir.ui.view" id="proc_contratacion.adjudicacion_directa_tree">
+    <record model="ir.ui.view" id="proc_contratacion.adjudicacion_directa">
       <field name="name">proceso.adjudicacion_directa.tree</field>
       <field name="model">proceso.adjudicacion_directa</field>
       <field name="arch" type="xml">
@@ -20,32 +20,69 @@
       <field name="arch" type="xml">
         <form>
           <sheet>
-            <group>
-              <group string="Agregar nueva adjudicación directa" colspan="2" col="2">
-                <field name="name" string="Programa de inversión"/>
-                <field name="partidaimporte"/>
-                <field name="partidiva"/>
-                <field name="partidatotal"/>
-                <field name="descripcionmeta"/>
-              </group>
-              <group colspan="1" col="2">
-                <field name="numerocontrato"/>
-                <field name="fechaadjudicacion"/>
-                <field name="dictamen"/>
-                <field name="normatividad"/>
-                <field name="importeadjudicacion"/>
-                <field name="iva"/>
-              </group>
-              <group colspan="1" col="2">
-                <field name="importeiva"/>
-                <field name="totaladjudicado"/>
-                <field name="anticipoinicio"/>
-                <field name="anticipomaterial"/>
-                <field name="fechainicio"/>
-                <field name="fechatermino"/>
-                <field name="plazodias"/>
-              </group>
-            </group>
+            <notebook colspan="4">
+
+                    <page string="Adjudicación Directa">
+                         <group>
+                          <group string="Agregar nueva adjudicación directa" colspan="2" col="2">
+                            <field name="name" string="Programa de inversión"/>
+                            <field name="partidaimporte"/>
+                            <field name="partidiva"/>
+                            <field name="partidatotal"/>
+                            <field name="descripcionmeta"/>
+                          </group>
+                          <group colspan="1" col="2">
+                            <field name="numerocontrato"/>
+                            <field name="fechaadjudicacion"/>
+                            <field name="dictamen"/>
+                            <field name="normatividad"/>
+                            <field name="importeadjudicacion"/>
+                            <field name="iva"/>
+                          </group>
+                          <group colspan="1" col="2">
+                            <field name="importeiva"/>
+                            <field name="totaladjudicado"/>
+                            <field name="anticipoinicio"/>
+                            <field name="anticipomaterial"/>
+                            <field name="fechainicio"/>
+                            <field name="fechatermino"/>
+                            <field name="plazodias"/>
+                          </group>
+                        </group>
+                    </page>
+
+                    <page string="Definición de recursos específicos para el contrato" class="oe_read_only">
+                      <group colspan="2" col="2">
+                      <group string="Definición de recursos específicos para el contrato" >
+                          <group>
+                          <field name="recurso_federal"/>
+                          <field name="recurso_federal_indirecto"/>
+                          </group>
+
+                          <group>
+                          <field name="recurso_estatal"/>
+                          <field name="recurso_estatal_indirecto"/>
+                          </group>
+
+                          <group>
+                          <field name="recurso_municipal"/>
+                          <field name="recurso_municipal_indirecto"/>
+                          </group>
+
+                          <group>
+                          <field name="recurso_otros"/>
+                          </group>
+
+                          <group>
+                          <field name="total_recurso"/>
+                          </group>
+                      </group>
+                      </group>
+                    </page>
+
+            </notebook>
+
+
           </sheet>
         </form>
       </field>
