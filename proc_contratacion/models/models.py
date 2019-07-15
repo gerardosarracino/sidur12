@@ -49,11 +49,17 @@ class licitacion(models.Model):
 		return {
 			'type': 'ir.actions.act_window',
 			'name': 'Licitantes participantes',
-			'res_model': 'proceso.participantes',
+			'res_model': 'proceso.participantes_contratistas',
 			'view_mode': 'tree,form',
 			'view_type': 'form',
 			'target': 'self',
 		}
+
+
+class Participantes(models.Model):
+	_name = "proceso.participantes_contratistas"
+
+	contratista_participante = fields.Many2one('contratista.contratista', 'name')
 
 
 

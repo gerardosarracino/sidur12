@@ -31,7 +31,7 @@
         'views/elaboracion_contrato.xml',
         'views/convenios.xml',
         'views/finiquitar_contrato_anticipadamente.xml',
-
+        'views/participantes_contratistas.xml',
 
 
     ],

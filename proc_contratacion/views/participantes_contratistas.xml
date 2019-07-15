@@ -1,0 +1,32 @@
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="proceso_participantes">
+          <field name="name">proceso.participantes.form</field>
+          <field name="model">proceso.participantes_contratistas</field>
+          <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                       <group string="Licitantes participantes" colspan="2" col="2">
+                           <field name="contratista_participante" />
+                       </group>
+                    </group>
+                </sheet>
+                </form>
+              </field>
+        </record>
+
+        <!-- tree view -->
+    <record model="ir.ui.view" id="proceso_participantes_tree">
+      <field name="name">proceso.participantes.tree</field>
+      <field name="model">proceso.participantes_contratistas</field>
+      <field name="arch" type="xml">
+        <tree>
+           <field name="contratista_participante" string="Licitantes participantes"/>
+        </tree>
+      </field>
+    </record>
+
+
+    </data>
+</odoo>
