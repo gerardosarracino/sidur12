@@ -119,10 +119,23 @@
       </field>
     </record>
 
+    <!-- CONCEPTOS CONTRATADOS -->
+    <record model="ir.ui.view" id="proc_contratacion.elaboracion_contrato_3">
+      <field name="name">proceso.elaboracion_contrato.tree3</field>
+      <field name="model">proceso.elaboracion_contrato</field>
+      <field name="arch" type="xml">
+        <tree create="false">
+            <field name="fecha"/>
+            <field name="contrato" string="# Contrato"/>
+            <field name="descripcionmeta" string="Objeto"/>
+            <field name="total" string="Monto"/>
+            <field name="contratista" string="Contratista"/>
+        </tree>
+      </field>
+    </record>
 
 
-
-     <!-- ACCIONES PARA ELIMINAR EL BOTON DELETE -->
+     <!-- ACCIONES PARA ELIMINAR EL BOTON DELETE DE SEGUIMIENTO DE CONTRATO -->
     <record id="partner_tree_no_delete" model="ir.ui.view">
         <field name="name">contrato.tree.no.delete</field>
         <field name="model">proceso.elaboracion_contrato</field>
@@ -134,7 +147,17 @@
         </field>
     </record>
 
-
+    <!-- ACCIONES PARA ELIMINAR EL BOTON DELETE DE CONCEPTOS DE CONTRATO -->
+    <record id="partner_tree_no_delete_concepto" model="ir.ui.view">
+        <field name="name">contrato.tree.no.delete.concepto</field>
+        <field name="model">proceso.elaboracion_contrato</field>
+        <field name="inherit_id" ref="proc_contratacion.elaboracion_contrato_3" />
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="delete">false</attribute>
+            </xpath>
+        </field>
+    </record>
 
 
         <!-- ACTION DE ESTADISTICAS-->
@@ -155,6 +178,15 @@
     key2="client_action_multi" target="new"
     />
 
+  <!-- ACTION DE CONCEPTOS CONTRATADOS-->
+<act_window id="conceptos_contratados"
+    name="Conceptos Contratados"
+    src_model="proceso.elaboracion_contrato"
+    res_model="proceso.elaboracion_contrato"
+    view_type="form" view_mode="form"
+    key2="client_action_multi" target="new"
+    />
+
 
     <!-- ACCIONES VENTANA -->
     <record model="ir.actions.act_window" id="proc_contratacion.seguimiento_contrato_action_window">
@@ -165,6 +197,14 @@
       <field name="view_mode">tree</field>
     </record>
 
+  <!-- ACCIONES VENTANA -->
+    <record model="ir.actions.act_window" id="proc_contratacion.concepto_contratados_action_window">
+      <field name="name">Conceptos de Contratados</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">proceso.elaboracion_contrato</field>
+      <field name="view_id" ref="proc_contratacion.elaboracion_contrato_3"/>
+      <field name="view_mode">tree</field>
+    </record>
 
     <!-- MENUS -->
       <menuitem name="Elaboración de contratos" id="proc_contratacion.elaboracion_contrato"
@@ -173,6 +213,10 @@
     <!-- MENUS -->
       <menuitem name="Seguimiento de contratos" id="proc_contratacion.seguimiento_contratos"
                 parent="proc_contratacion.menu_root" action="proc_contratacion.seguimiento_contrato_action_window" sequence="5"/>
+
+    <!-- MENUS -->
+      <menuitem name="Conceptos Contratados" id="proc_contratacion.conceptos_contratados"
+                parent="proc_contratacion.menu_root" action="proc_contratacion.concepto_contratados_action_window" sequence="6"/>
 
 </data>
 </odoo>

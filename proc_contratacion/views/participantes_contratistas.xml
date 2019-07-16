@@ -9,6 +9,7 @@
                     <group>
                        <group string="Licitantes participantes" colspan="2" col="2">
                            <field name="contratista_participante" />
+
                        </group>
                     </group>
                 </sheet>

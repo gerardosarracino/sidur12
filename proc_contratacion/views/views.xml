@@ -1,5 +1,6 @@
 <odoo>
   <data>
+
     <!-- LICITACIONES -->
     <record model="ir.ui.view" id="proc_contratacion.licitacion_tree">
       <field name="name">proceso.licitacion.tree</field>
@@ -23,13 +24,15 @@
         <form>
           <sheet>
             <div class="oe_button_box oe_read_only" name="button_box">
-              <button type="action" icon="fa-clipboard" string="Convocatoria/Bases"></button>
+              <button type="action" icon="fa-clipboard" string="Convocatoria / Bases"></button>
 
               <button type="action" icon="fa-list-ol" string="Ev. Puntos"></button>
 
-              <button name='participantes'  type='object' class='btn-primary' icon="fa-users" string="Participantes"></button>
+              <button name='participantes'  type='object' class="oe_inline oe_stat_button" icon="fa-users" string="Participantes"></button>
 
               <button type="action" icon="fa-calendar" string="Eventos"></button>
+
+              <button type="action" icon="fa-times-circle" string="Cancelar"></button>
 
               <button type="action" icon="fa-bitbucket" string="Desierta"></button>
             </div>
@@ -84,6 +87,7 @@
               <group string="Fallo" colspan="1" col="2">
                 <field name="fallofechahora"/>
                 <field name="fallolugar"/>
+
               </group>
             </group>
           </sheet>
