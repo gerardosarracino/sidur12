@@ -4,6 +4,9 @@ access_proc_contratacion_adjudicacion_directa,proceso.adjudicacion_directa,model
 access_proc_contratacion_elaboracion_contrato,proceso.elaboracion_contrato,model_proceso_elaboracion_contrato,,1,1,1,1
 access_proc_contratacion_convenios_modificados,proceso.convenios_modificados,model_proceso_convenios_modificado,,1,1,1,1
 access_proc_finiquitar_anticipadamente,proceso.finiquitar_anticipadamente,model_proceso_finiquitar_anticipadamente,,1,1,1,1
-access_proc_participantes_contratistas,proceso.participantes_contratistas,model_proceso_participantes_contratistas,,1,1,1,1
+access_proc_proceso_participantee,proceso.participante,model_proceso_participante,,1,1,1,1
+access_proc_proceso_anticipo,proceso.anticipo_contratos,model_proceso_anticipo_contratos,,1,1,1,1
+
+
 
 

@@ -7,7 +7,7 @@
       <field name="arch" type="xml">
         <tree>
           <field name="numerocontrato"/>
-          <field name="descripcionmeta"/>
+          <field name="name"/>
           <field name="importeadjudicacion"/>
           <field name="normatividad"/>
         </tree>
@@ -25,11 +25,11 @@
                     <page string="Adjudicación Directa">
                          <group>
                           <group string="Agregar nueva adjudicación directa" colspan="2" col="2">
-                            <field name="name" string="Programa de inversión"/>
+                            <field name="programas_inversion_adjudicacion" string="Programa de inversión" attrs="{'readonly':[('name','!=',False)]}"/>
                             <field name="partidaimporte"/>
                             <field name="partidiva"/>
                             <field name="partidatotal"/>
-                            <field name="descripcionmeta"/>
+                            <field name="name"/>
                           </group>
                           <group colspan="1" col="2">
                             <field name="numerocontrato"/>
@@ -48,12 +48,17 @@
                             <field name="fechatermino"/>
                             <field name="plazodias"/>
                           </group>
+
                         </group>
                     </page>
 
                     <page string="Definición de recursos específicos para el contrato" class="oe_read_only">
                       <group colspan="2" col="2">
                       <group string="Definición de recursos específicos para el contrato" >
+                          <group colspan="1" col="2">
+                            <field name="contratista"/>
+                          </group>
+
                           <group>
                           <field name="recurso_federal"/>
                           <field name="recurso_federal_indirecto"/>
@@ -77,6 +82,9 @@
                           <field name="total_recurso"/>
                           </group>
                       </group>
+
+
+
                       </group>
                     </page>
 

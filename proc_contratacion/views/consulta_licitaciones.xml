@@ -1,0 +1,57 @@
+<odoo>
+    <data>
+
+
+    <record model="ir.ui.view" id="proc_contratacion.licitacion_tree2">
+      <field name="name">proceso.licitacion.tree2</field>
+      <field name="model">proceso.licitacion</field>
+      <field name="arch" type="xml">
+        <tree create="false" >
+          <field name="numerolicitacion"/>
+          <field name="convocatoria"/>
+          <field name="name"/>
+          <field name="normatividad"/>
+          <field name="fechaoficio"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="licitacion_tree_no_delete" model="ir.ui.view">
+        <field name="name">licitacion.tree.no.delete</field>
+        <field name="model">proceso.licitacion</field>
+        <field name="inherit_id" ref="proc_contratacion.licitacion_tree2" />
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="delete">false</attribute>
+
+            </xpath>
+        </field>
+    </record>
+
+    <act_window id="calendario_eventos"
+    name="Calendario de Eventos"
+    src_model="proceso.licitacion"
+    res_model="proceso.licitacion"
+    view_type="form" view_mode="form"
+    key2="client_action_multi" target="new"
+    view_id="proc_contratacion.licitacion_tree2"
+    />
+    <!-- CHEECAAR ARRIBAAAA-->
+
+
+        <!-- ACTION DE LISTADO DE LICITACIONES-->
+<act_window id="listado_licitaciones"
+    name="Listado de Licitaciones"
+    src_model="proceso.licitacion"
+    res_model="proceso.licitacion"
+    view_type="form" view_mode="form"
+    key2="client_action_multi" target="new"
+    view_id="proc_contratacion.licitacion_tree2"
+    />
+
+
+
+</data>
+
+
+</odoo>

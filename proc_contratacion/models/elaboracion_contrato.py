@@ -7,39 +7,52 @@ class elaboracioncontratos(models.Model):
 
     _name = "proceso.elaboracion_contrato"
 
-    name = fields.Char(string="Seleccionar obra", required=True)
+    obra = fields.Many2one('proceso.licitacion', string="Seleccionar obra")
+    adjudicacion = fields.Many2one('proceso.adjudicacion_directa', string="Seleccionar obra")
+
     fecha = fields.Date(string="Fecha", required=True)
     contrato = fields.Char(string="Contrato", required=True)
-    descripcionmeta = fields.Text(string="Descripción/Meta", required=True)
+
+    name = fields.Text(string="Descripción/Meta", required=True)
+
     descripciontrabajos = fields.Text(string="Descripción trabajos:", required=True)
     unidadresponsableejecucion = fields.Char(string="Unidad responsable de su ejecución", required=True)
+
     supervisionexterna = fields.Text(string="Supervisión externa")
-    supervisionexterna1 = fields.Char(string="Supervisión externa1")
-    total = fields.Float(string="Total", required=True)
-    contratista = fields.Char(string="Contratista", required=True)
+
+    # relacion con autorizacion de obra pendiente
+    supervisionexterna1 = fields.Char(string="Supervisión externa")
+
+    importe_contrato = fields.Float(string="Importe:")
+    iva_contrato = fields.Float(string="IVA:")
+    portentaje_iva_contrato = fields.Float(string="% IVA:")
+    total_contrato = fields.Float(string="Total:")
+
+    total = fields.Float(string="Total", readonly=True)
+
+    # falta relacion con el contratista de la obra seleccionada, nose cuando aparece
+    contratista = fields.Char(string="Contratista", readonly=True, default=".")
+
     fechainicio = fields.Date(string="Fecha de Inicio", required=True)
     fechatermino = fields.Date(string="Fecha de Termino", required=True)
-    select = [('1', 'Diario'), ('2', 'Mensual')]
-    periodicidadretencion = fields.Selection(select, string="Periodicidad Retención", required=True)
+
+    select = [('1', 'Diario'), ('2', 'Mensual'), ('3', 'Ninguno')]
+    periodicidadretencion = fields.Selection(select, string="Periodicidad Retención", required=True, default="3")
     retencion = fields.Float(string="% Retencion")
 
+    # FALTA HACER LOS CAMPOS DE LA TABLA EN MODO EDITAR, CLAVE PRESUPUESTAL, RECURSOS AUTORIZADOS ETC...
+    # RELACION CON REGISTRO DE OBRAS Y/0 OBRAS AUTORIZADAS
+
     # Anticipo
-    fecha_anticipo = fields.Date(string="Fecha Anticipo")
-    obra = fields.Text(string="Obra")
-    porcentaje_anticipo = fields.Float(string="Anticipo Inicio")
-    total_anticipo_porcentaje = fields.Float(string="Total Anticipo")
-    anticipo_material = fields.Float(string="Anticipo Material")
-    importe = fields.Float(string="Importe Contratado")
-    anticipo = fields.Integer(string="Anticipo")
-    iva = fields.Float(string="I.V.A")
-    total_anticipo = fields.Integer(string="Total Anticipo")
-    numero_fianza = fields.Float(string="# Fianza")
-    afianzadora = fields.Char(string="Afianzadora")
-    fecha_fianza = fields.Date(string="Fecha Fianza")
+    xd = fields.Many2many('proceso.anticipo_contratos', string="Anticipo")
+
+
 
     # Fianzas
-    select_tipo_fianza = [('1', 'Cumplimiento'), ('2', 'Calidad/Vicios Ocultos'), ('3', 'Responsabilidad Civil')]
-    tipo_fianza = fields.Selection(select_tipo_fianza, string="Tipo Fianza", default="1")
+    select_tipo_fianza = [('1', 'Cumplimiento'), ('2', 'Calidad/Vicios Ocultos'), ('3', 'Responsabilidad Civil'),
+                          ('4', 'Ninguno')]
+    tipo_fianza = fields.Selection(select_tipo_fianza, string="Tipo Fianza", default="4")
+
     numero_fianza_fianzas = fields.Integer(string="Numero Fianza")
     monto = fields.Float(string="Monto")
     fecha_fianza_fianzas = fields.Float(string="Fecha Fianza")
@@ -47,6 +60,8 @@ class elaboracioncontratos(models.Model):
 
     # Deducciones
     deducciones = fields.Many2many("generales.deducciones", string="Deducciones")
+
+
 
 
     @api.multi
@@ -138,3 +153,18 @@ class FiniquitarContratoAnticipadamente(models.Model):
     observaciones = fields.Text(string="Observaciones:")
 
 
+class AnticipoContratos(models.Model):
+    _name = "proceso.anticipo_contratos"
+
+    fecha_anticipo = fields.Date(string="Fecha Anticipo")
+    obra_anticipo = fields.Many2one('proceso.elaboracion_contrato', string="Obra")
+    porcentaje_anticipo = fields.Float(string="Anticipo Inicio")
+    total_anticipo_porcentaje = fields.Float(string="Total Anticipo")
+    anticipo_material = fields.Float(string="Anticipo Material")
+    importe = fields.Float(string="Importe Contratado")
+    anticipo = fields.Integer(string="Anticipo")
+    iva = fields.Float(string="I.V.A")
+    total_anticipo = fields.Integer(string="Total Anticipo")
+    numero_fianza = fields.Float(string="# Fianza")
+    afianzadora = fields.Char(string="Afianzadora")
+    fecha_fianza = fields.Date(string="Fecha Fianza")
