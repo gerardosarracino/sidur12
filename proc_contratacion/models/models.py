@@ -10,10 +10,8 @@ class licitacion(models.Model):
     radio = [(
         '1', "Ninguno"), ('2', "Cancelado"), ('3', "Abandonado")]
     estado_radio = fields.Selection(radio, string="Estado de la Obra", default="1")
-
     fecha_cancelado = fields.Date(string="Fecha de Cancelacion:")
     observaciones_cancelado = fields.Text(string="Observaciones:")
-
     fecha_desierta = fields.Date(string="Fecha de Desierta:")
     observaciones_desierta = fields.Text(string="Observaciones:")
 

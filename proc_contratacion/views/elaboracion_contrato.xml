@@ -49,7 +49,7 @@
 
                     <page string="Datos Generales" icon="fa-bitbucket">
                          <group>
-                          <group string="Contrato Datos Generales" colspan="2" col="2">
+                          <group string="Contrato Datos Generales" colspan="1" col="2">
 
                           <field name="obra" string="Seleccionar Licitacion" attrs="{'readonly': [('adjudicacion','!=', False)]}" />
 
@@ -66,23 +66,14 @@
                             <field name="supervisionexterna1"/>
                           </group>
 
-                             <group colspan="2" col="2" attrs="{'invisible': [('obra' and 'adjudicacion', '=', False)]}">
+                             <group colspan="1" col="2" attrs="{'invisible': [('obra' and 'adjudicacion', '=', False)]}">
                                  <field name="importe_contrato"/>
                                  <field name="iva_contrato"/>
                                  <field name="portentaje_iva_contrato"/>
                                  <field name="total_contrato"/>
                              </group>
 
-                         <group colspan="2" col="2">
-                            <field name="total"/>
-                            <field name="contratista"/>
-                            <field name="fechainicio" class="oe_inline"/>
-                            <field name="fechatermino" class="oe_inline"/>
-                            <field name="periodicidadretencion" class="oe_inline"/>
-                            <field name="retencion"/>
-                          </group>
-
-                             <group class="oe_read_only">
+                             <group class="oe_read_only" colspan="1" col="2">
                                <div>
                                 <table border="1">
                                 <tr>
@@ -179,6 +170,17 @@
                                   </table>
                                 </div>
                           </group>
+
+                         <group colspan="1" col="2">
+                            <field name="total"/>
+                            <field name="contratista"/>
+                            <field name="fechainicio" class="oe_inline"/>
+                            <field name="fechatermino" class="oe_inline"/>
+                            <field name="periodicidadretencion" class="oe_inline"/>
+                            <field name="retencion"/>
+                          </group>
+
+
 
                         </group>
                     </page>
@@ -328,15 +330,6 @@
     </record>
 
 
-        <!-- ACTION DE ESTADISTICAS-->
-<act_window id="estadisticas_contrato"
-    name="Estadisticas"
-    src_model="proceso.elaboracion_contrato"
-    res_model="proceso.elaboracion_contrato"
-    view_type="form" view_mode="form"
-    key2="client_action_multi" target="new"
-    />
-
   <!-- ACTION DE LISTADO DETALLADO-->
 <act_window id="listado_detallado"
     name="Listado Detallado"
@@ -345,16 +338,6 @@
     view_type="form" view_mode="form"
     key2="client_action_multi" target="new"
     />
-
-  <!-- ACTION DE CONCEPTOS CONTRATADOS-->
-<act_window id="conceptos_contratados"
-    name="Conceptos Contratados"
-    src_model="proceso.elaboracion_contrato"
-    res_model="proceso.elaboracion_contrato"
-    view_type="form" view_mode="form"
-    key2="client_action_multi" target="new"
-    />
-
 
     <!-- ACCIONES VENTANA -->
     <record model="ir.actions.act_window" id="proc_contratacion.seguimiento_contrato_action_window">
@@ -373,8 +356,6 @@
       <field name="view_id" ref="proc_contratacion.elaboracion_contrato_3"/>
       <field name="view_mode">tree</field>
     </record>
-
-
 
     <!-- MENUS -->
       <menuitem name="Elaboración de contratos" id="proc_contratacion.elaboracion_contrato"

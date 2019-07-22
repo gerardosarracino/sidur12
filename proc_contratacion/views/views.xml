@@ -1,5 +1,6 @@
 <odoo>
   <data>
+
     <!-- PARTICIPANTES FORM AND TREE -->
     <record model="ir.ui.view" id="proceso_participantes_form">
           <field name="name">proceso.participantes.form</field>
@@ -95,28 +96,30 @@
               <button name='desierta'  type='object' class='btn-primary' icon="fa-bitbucket" string="Desierta"></button>
             </div>
 
-            <group string="">
-                <field name="estado_radio" widget="radio"/>
+            <group string="" >
+                <group colspan="1" col="2" string="Estado de la obra">
+                    <field name="estado_radio" widget="radio"/>
 
-                <group string="CANCELADO" attrs="{'invisible': [('estado_radio','!=', '2')]}" colspan="2" col="2">
-                    <field name="fecha_cancelado"/>
-                    <field name="observaciones_cancelado"/>
-                </group>
+                    <group string="CANCELADO" attrs="{'invisible': [('estado_radio','!=', '2')]}" colspan="2" col="2">
+                        <field name="fecha_cancelado"/>
+                        <field name="observaciones_cancelado"/>
+                    </group>
 
-                <group string="DESIERTA" attrs="{'invisible': [('estado_radio','!=', '3')]}" colspan="2" col="2">
-                    <field name="fecha_desierta"/>
-                    <field name="observaciones_desierta"/>
+                    <group string="DESIERTA" attrs="{'invisible': [('estado_radio','!=', '3')]}" colspan="2" col="2">
+                        <field name="fecha_desierta"/>
+                        <field name="observaciones_desierta"/>
+                    </group>
                 </group>
             </group>
 
             <group>
               <group string="Seleccionar Obra" colspan="1" col="2">
-                <field name="programa_inversion" string="Programa de Inversión" attrs="{'readonly':[('programa_inversion','!=',False)]}" />
+                <field name="programa_inversion" string="Programa de Inversión" />
                 <field name="name"/>
               </group>
               <group string="Datos De La Licitación" colspan="1" col="2">
                 <field name="tipolicitacion"/>
-                <field name="numerolicitacion" attrs="{'readonly':[('numerolicitacion','!=',False)]}"/>
+                <field name="numerolicitacion" />
                 <field name="convocatoria"/>
                 <field name="fechaconinv"/>
                 <field name="caracter"/>
@@ -180,18 +183,59 @@
 
 
     <!-- TREE VIEW REPORTE-->
-
+    <record model="ir.ui.view" id="proc_contratacion.licitacion_tree2">
+      <field name="name">proceso.licitacion.tree2</field>
+      <field name="model">proceso.licitacion</field>
+      <field name="arch" type="xml">
+        <tree create="false" >
+          <field name="numerolicitacion"/>
+          <field name="convocatoria"/>
+          <field name="name"/>
+          <field name="normatividad"/>
+          <field name="fechaoficio"/>
+        </tree>
+      </field>
+    </record>
 
     <!-- TREE VIEW REPORTE-->
 
 
      <!-- ACCIONES PARA ELIMINAR EL BOTON DELETE -->
+    <record id="licitacion_tree_no_delete" model="ir.ui.view">
+        <field name="name">licitacion.tree.no.delete</field>
+        <field name="model">proceso.licitacion</field>
+        <field name="inherit_id" ref="proc_contratacion.licitacion_tree2" />
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="delete">false</attribute>
 
+            </xpath>
+        </field>
+    </record>
 
      <!-- ACCIONES PARA ELIMINAR EL BOTON DELETE -->
 
 
     <!-- ACTION DE CALENDARIO DE EVENTOS-->
+     <act_window id="calendario_eventos"
+    name="Calendario de Eventos"
+    src_model="proceso.licitacion"
+    res_model="proceso.licitacion"
+    view_type="form" view_mode="form"
+    key2="client_action_multi" target="new"
+    view_id="proc_contratacion.licitacion_tree2"
+    />
+    <!-- CHEECAAR ARRIBAAAA-->
+    <!-- ACTION DE LISTADO DE LICITACIONES-->
+<act_window id="listado_licitaciones"
+    name="Listado de Licitaciones"
+    src_model="proceso.licitacion"
+    res_model="proceso.licitacion"
+    view_type="form" view_mode="form"
+    key2="client_action_multi" target="new"
+    view_id="proc_contratacion.licitacion_tree2"
+    />
+
 
 
     <!-- ACCIONES VENTANA DE REPORTE -->

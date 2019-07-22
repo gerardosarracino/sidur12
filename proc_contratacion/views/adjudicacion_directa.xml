@@ -105,7 +105,8 @@
     </record>
 
     <!-- MENUS -->
-      <menuitem name="Adjudicación directa" id="proc_contratacion.adjudicacion_directa_menu" parent="proc_contratacion.menu_root" action="proc_contratacion.adjudicacion_directa_action_window" sequence="3"/>
+      <menuitem name="Adjudicación directa" id="proc_contratacion.adjudicacion_directa_menu"
+                parent="proc_contratacion.menu_root" action="proc_contratacion.adjudicacion_directa_action_window" sequence="3"/>
 
 
     <!-- explicit list view definition -->
