@@ -8,6 +8,7 @@
                 <sheet>
                     <group>
                        <group string="Convenios Modificatorios" colspan="2" col="2">
+                           <field name="contrato"/>
                            <field name="fecha_convenios"/>
                            <field name="name_convenios"/>
                            <field name="referencia"/>
@@ -67,12 +68,31 @@
           </field>
         </record>
 
+    <record model="ir.ui.view" id="proceso_convenios_modificado_search">
+         <field name="name">convenios modificados</field>
+         <field name="model">proceso.convenios_modificado</field>
+         <field name="arch" type="xml">
+            <search>
+                   <field name="contrato"/>
+                   <field name="fecha_convenios"/>
+                   <field name="referencia"/>
+                   <field name="observaciones"/>
+
+                   <field name="tipo_convenio"/>
+                   <field name="monto_total" string="Monto"/>
+                   <field name="plazo_fecha_inicio" />
+                   <field name="plazo_fecha_termino" />
+            </search>
+         </field>
+      </record>
+
         <!-- tree view -->
     <record model="ir.ui.view" id="proceso_convenios_modificados_tree">
       <field name="name">proceso.convenios_modificados.tree</field>
       <field name="model">proceso.convenios_modificado</field>
       <field name="arch" type="xml">
         <tree>
+           <field name="contrato"/>
            <field name="fecha_convenios"/>
            <field name="referencia"/>
            <field name="observaciones"/>

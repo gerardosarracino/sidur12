@@ -6,15 +6,17 @@ from odoo import models, fields, api
 class elaboracioncontratos(models.Model):
 
     _name = "proceso.elaboracion_contrato"
+    _rec_name = 'contrato'
+
+    contrato_id = fields.Char(compute="nombre", store=True)
 
     obra = fields.Many2one('proceso.licitacion', string="Seleccionar obra")
     adjudicacion = fields.Many2one('proceso.adjudicacion_directa', string="Seleccionar obra")
-
     fecha = fields.Date(string="Fecha", required=True)
+
     contrato = fields.Char(string="Contrato", required=True)
 
     name = fields.Text(string="Descripción/Meta", required=True)
-
     descripciontrabajos = fields.Text(string="Descripción trabajos:", required=True)
     unidadresponsableejecucion = fields.Char(string="Unidad responsable de su ejecución", required=True)
 
@@ -43,11 +45,6 @@ class elaboracioncontratos(models.Model):
     # FALTA HACER LOS CAMPOS DE LA TABLA EN MODO EDITAR, CLAVE PRESUPUESTAL, RECURSOS AUTORIZADOS ETC...
     # RELACION CON REGISTRO DE OBRAS Y/0 OBRAS AUTORIZADAS
 
-    # Anticipo
-    xd = fields.Many2many('proceso.anticipo_contratos', string="Anticipo")
-
-
-
     # Fianzas
     select_tipo_fianza = [('1', 'Cumplimiento'), ('2', 'Calidad/Vicios Ocultos'), ('3', 'Responsabilidad Civil'),
                           ('4', 'Ninguno')]
@@ -61,8 +58,9 @@ class elaboracioncontratos(models.Model):
     # Deducciones
     deducciones = fields.Many2many("generales.deducciones", string="Deducciones")
 
-
-
+    @api.one
+    def nombre(self):
+        self.contrato_id = self.contrato
 
     @api.multi
     def conveniosModificados(self):
@@ -87,9 +85,23 @@ class elaboracioncontratos(models.Model):
             'target': 'self',
         }
 
+    @api.multi
+    def AnticipoContrato(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Anticipo Contrato',
+            'res_model': 'proceso.anticipo_contratos',
+            'view_mode': 'tree,form',
+            'view_type': 'form',
+            'target': 'current',
+        }
+
 
 class ConveniosModificados(models.Model):
     _name = "proceso.convenios_modificado"
+
+    contrato_id = fields.Char(compute="nombre", store=True)
+    contrato = fields.Many2one('proceso.elaboracion_contrato', string='Numero Contrato:', readonly=True)
 
     fecha_convenios = fields.Date(string="Fecha:")
     name_convenios = fields.Text(string="Obra:")
@@ -130,6 +142,10 @@ class ConveniosModificados(models.Model):
     convenio_afianzadora = fields.Char(string="Afianzadora:")
     convenio_monto_afianzadora = fields.Integer(string="Afianzadora:")
 
+    @api.one
+    def nombre(self):
+        self.contrato_id = self.id
+
     @api.depends('monto_importe', 'monto_iva')
     def sumaMonto(self):
         for rec in self:
@@ -148,6 +164,13 @@ class ConveniosModificados(models.Model):
 class FiniquitarContratoAnticipadamente(models.Model):
     _name = "proceso.finiquitar_anticipadamente"
 
+    @api.one
+    def nombre(self):
+        self.contrato_id = self.id
+
+    contrato_id = fields.Char(compute="nombre", store=True)
+    contrato = fields.Many2one('proceso.elaboracion_contrato', string='Numero Contrato:', readonly=True)
+
     fecha = fields.Date(string="Fecha:")
     referencia = fields.Char(string="Referencia:")
     observaciones = fields.Text(string="Observaciones:")
@@ -156,8 +179,10 @@ class FiniquitarContratoAnticipadamente(models.Model):
 class AnticipoContratos(models.Model):
     _name = "proceso.anticipo_contratos"
 
+    contrato_id = fields.Char(compute="nombre", store=True)
+    contrato = fields.Many2one('proceso.elaboracion_contrato', string='Numero Contrato:', readonly=True)
+
     fecha_anticipo = fields.Date(string="Fecha Anticipo")
-    obra_anticipo = fields.Many2one('proceso.elaboracion_contrato', string="Obra")
     porcentaje_anticipo = fields.Float(string="Anticipo Inicio")
     total_anticipo_porcentaje = fields.Float(string="Total Anticipo")
     anticipo_material = fields.Float(string="Anticipo Material")
@@ -168,3 +193,7 @@ class AnticipoContratos(models.Model):
     numero_fianza = fields.Float(string="# Fianza")
     afianzadora = fields.Char(string="Afianzadora")
     fecha_fianza = fields.Date(string="Fecha Fianza")
+
+    @api.one
+    def nombre(self):
+        self.contrato_id = self.id

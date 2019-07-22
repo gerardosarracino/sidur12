@@ -10,6 +10,7 @@
                 <sheet>
                     <group>
                        <group string="Licitantes participantes" colspan="2" col="2">
+                           <field name="numerolicitacion"  />
                            <field name="contratista_participantes"  />
                        </group>
                     </group>
@@ -18,12 +19,25 @@
               </field>
         </record>
 
+
+    <record model="ir.ui.view" id="proceso_participante_participantes_search">
+         <field name="name">contratistas participantes</field>
+         <field name="model">proceso.participante</field>
+         <field name="arch" type="xml">
+            <search>
+                <field name="numerolicitacion"/>
+                <field name="contratista_participantes"/>
+            </search>
+         </field>
+      </record>
+
         <!-- tree view -->
     <record model="ir.ui.view" id="proceso_participantes_tree">
       <field name="name">proceso.participantes.tree</field>
       <field name="model">proceso.participante</field>
       <field name="arch" type="xml">
         <tree>
+           <field name="numerolicitacion" string="Numero de Licitación"/>
            <field name="contratista_participantes" string="Licitantes participantes" widget="many2many_tags"/>
         </tree>
       </field>
@@ -73,6 +87,22 @@
       </field>
     </record>
 
+  <record model="ir.ui.view" id="proceso_licitacion_search">
+         <field name="name">Contratacion Licitacion</field>
+         <field name="model">proceso.licitacion</field>
+         <field name="arch" type="xml">
+            <search>
+                <field name="tipolicitacion" />
+                <field name="numerolicitacion"/>
+                <field name="convocatoria"/>
+                <field name="name"/>
+                <field name="normatividad"/>
+                <field name="estado_radio"/>
+                <field name="fechaoficio" />
+            </search>
+         </field>
+  </record>
+
 
     <record model="ir.ui.view" id="proc_contratacion.licitacion_form">
       <field name="name">proceso.licitacion.form</field>
@@ -86,8 +116,14 @@
               <button type="action" icon="fa-list-ol" string="Ev. Puntos"></button>
 
 
-              <button name='%(action_participantes)d'  type='action' icon="fa-users" string="Participantes"></button>
+              <!--<button name='%(action_participantes)d'  type='action' icon="fa-users" string="Participantes"></button>-->
 
+              <button class="oe_stat_button" type="action" name="%(action_participantes)d" context="{
+                       'search_default_numerolicitacion': active_id,
+                       'default_numerolicitacion': active_id
+                       }" icon="fa-users">
+                        <field name="variable_count" string=' Participantes' widget="statinfo" />
+                     </button>
 
               <button type="action" icon="fa-calendar" string="Eventos"></button>
 

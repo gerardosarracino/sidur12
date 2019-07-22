@@ -6,6 +6,7 @@ from odoo import models, fields, api
 class licitacion(models.Model):
     _name = "proceso.licitacion"
 
+    licitacion_id = fields.Char(compute="nombre", store=True)
     # contratista_participante = fields.Many2many('contratista.contratista', 'name')
     radio = [(
         '1', "Ninguno"), ('2', "Cancelado"), ('3', "Abandonado")]
@@ -23,7 +24,9 @@ class licitacion(models.Model):
 
     select = [('1', 'Licitación publica'), ('2', 'Licitación simplificada/Por invitación')]
     tipolicitacion = fields.Selection(select, string="Tipo de Licitación", default="1", required=True)
+
     numerolicitacion = fields.Char(string="Número de Licitación", required=True)
+
     convocatoria = fields.Char(string="Convocatoria", required=True)
     fechaconinv = fields.Date(string="Fecha Con/Inv", required=True)
     select1 = [('1', 'Estatal'), ('2', 'Nacional'), ('3', 'Internacional')]
@@ -57,16 +60,29 @@ class licitacion(models.Model):
     fallofechahora = fields.Datetime(string="Fecha/Hora")
     fallolugar = fields.Text(string="Lugar")
 
-    '''participantes= fields = fields.Many2one('proceso.participante',string="Company", default=lambda
-        self: self.env['proceso.participante'].search([]))'''
+    variable_count = fields.Integer(compute='contar')
+
+    @api.one
+    def contar(self):
+        count = self.env['proceso.participante'].search_count([('numerolicitacion', '=', self.id)])
+        self.variable_count = count
+
+    @api.one
+    def nombre(self):
+        self.licitacion_id = self.numerolicitacion
 
 
 class Participante(models.Model):
     _name = "proceso.participante"
 
+    licitacion_id = fields.Char(compute="nombre", store=True)
+    numerolicitacion = fields.Many2one('proceso.licitacion', string='Numero Licitación:',
+                                       readonly=True)
     contratista_participantes = fields.Many2many('contratista.contratista')
 
-
+    @api.one
+    def nombre(self):
+        self.licitacion_id = self.id
 
 
 

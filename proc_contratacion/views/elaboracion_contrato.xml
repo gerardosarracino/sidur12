@@ -30,6 +30,19 @@
       </field>
     </record>
 
+      <record model="ir.ui.view" id="proceso_contrato_search">
+         <field name="name">elaboracion contrato</field>
+         <field name="model">proceso.elaboracion_contrato</field>
+         <field name="arch" type="xml">
+            <search>
+                  <field name="fecha"/>
+                  <field name="contrato" string="# Contrato"/>
+                  <field name="obra"  string="Objeto Licitaciones"/>
+                  <field name="adjudicacion"  string="/ Adjudicaciones Directas"/>
+                  <field name="contratista"/>
+            </search>
+         </field>
+        </record>
 
     <record model="ir.ui.view" id="proc_contratacion.elaboracion_contrato_form">
       <field name="name">proceso.elaboracion_contrato.form</field>
@@ -38,11 +51,21 @@
         <form>
           <sheet>
               <div class="oe_button_box oe_read_only" name="button_box">
-                      <button name='finiquitarContrato'  type='object' class='btn-primary' icon="fa-clock-o"
-                              string="Finiquitar Contrato Anticipadamente"></button>
+                     <!--<button name='finiquitarContrato'  type='object' class='btn-primary' icon="fa-clock-o"
+                              string="Finiquitar Contrato Anticipadamente"></button> -->
+                    <button class="oe_stat_button" type="object" name="finiquitarContrato" context="{
+                       'search_default_contrato': active_id,
+                       'default_contrato': active_id
+                       }" icon="fa-clock-o" string=' FiniquitarContratoAnticipadamente'>
+                     </button>
+                     <!-- <button name='conveniosModificados'  type='object' class='btn-primary' icon="fa-pencil-square-o"
+                              string="Convenios Modificados"></button> -->
+                     <button class="oe_stat_button" type="object" name="conveniosModificados" context="{
+                       'search_default_contrato': active_id,
+                       'default_contrato': active_id
+                       }" icon="fa-pencil-square-o" string='Convenios Modificados' >
+                     </button>
 
-                      <button name='conveniosModificados'  type='object' class='btn-primary' icon="fa-pencil-square-o"
-                              string="Convenios Modificados"></button>
                 </div>
 
             <notebook colspan="4">
@@ -186,10 +209,14 @@
                     </page>
 
                     <page string="Anticipo" class="oe_read_only">
-                        <group string="Anticipo">
-                                <field name="xd"/>
+                        <div class="text-center">
+                            <button class="oe_stat_button" type="object" name="AnticipoContrato" context="{
+                               'search_default_contrato': active_id,
+                               'default_contrato': active_id
+                               }" icon="fa-pencil-square-o" string='Ver o Agregar Anticipos' >
+                     </button>
+                        </div>
 
-                        </group>
                     </page>
 
                     <page string="Fianzas" class="oe_read_only" >
@@ -216,12 +243,33 @@
     </record>
 
 
+<record model="ir.ui.view" id="proceso_anticipo_contratos_search">
+         <field name="name">anticipo contratos</field>
+         <field name="model">proceso.anticipo_contratos</field>
+         <field name="arch" type="xml">
+            <search>
+                  <field name="contrato"/>
+                <field name="fecha_anticipo"/>
+                <field name="porcentaje_anticipo"/>
+                <field name="total_anticipo_porcentaje"/>
+                <field name="anticipo_material"/>
+                <field name="importe"/>
+                <field name="anticipo"/>
+                <field name="iva"/>
+                <field name="total_anticipo"/>
+                <field name="numero_fianza"/>
+                <field name="afianzadora"/>
+                <field name="fecha_fianza"/>
+            </search>
+         </field>
+        </record>
 
 <record model="ir.ui.view" id="proc_contratacion.anticipo_tree">
       <field name="name">proceso.anticipo.tree</field>
       <field name="model">proceso.anticipo_contratos</field>
       <field name="arch" type="xml">
         <tree >
+          <field name="contrato"/>
           <field name="fecha_anticipo"/>
           <field name="porcentaje_anticipo"/>
           <field name="importe"/>
@@ -242,18 +290,18 @@
       <sheet>
           <group colspan="2" col="2">
               <group string="Agregar Anticipo">
-        <field name="fecha_anticipo"/>
-        <field name="obra_anticipo"/>
-        <field name="porcentaje_anticipo"/>
-        <field name="total_anticipo_porcentaje"/>
-        <field name="anticipo_material"/>
-        <field name="importe"/>
-        <field name="anticipo"/>
-        <field name="iva"/>
-        <field name="total_anticipo"/>
-        <field name="numero_fianza"/>
-        <field name="afianzadora"/>
-        <field name="fecha_fianza"/>
+                <field name="contrato"/>
+                <field name="fecha_anticipo"/>
+                <field name="porcentaje_anticipo"/>
+                <field name="total_anticipo_porcentaje"/>
+                <field name="anticipo_material"/>
+                <field name="importe"/>
+                <field name="anticipo"/>
+                <field name="iva"/>
+                <field name="total_anticipo"/>
+                <field name="numero_fianza"/>
+                <field name="afianzadora"/>
+                <field name="fecha_fianza"/>
              </group>
           </group>
       </sheet>
