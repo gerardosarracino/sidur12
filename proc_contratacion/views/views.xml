@@ -1,7 +1,6 @@
 <odoo>
   <data>
-
-    <!-- PARTICIPANTES FORM AND TREE -->
+    <!-- PARTICIPANTES FORM -->
     <record model="ir.ui.view" id="proceso_participantes_form">
           <field name="name">proceso.participantes.form</field>
           <field name="model">proceso.participante</field>
@@ -19,7 +18,7 @@
               </field>
         </record>
 
-
+    <!-- SEARCH PARTICIPANTES -->
     <record model="ir.ui.view" id="proceso_participante_participantes_search">
          <field name="name">contratistas participantes</field>
          <field name="model">proceso.participante</field>
@@ -31,7 +30,7 @@
          </field>
       </record>
 
-        <!-- tree view -->
+        <!-- tree view PARTICIPANTES-->
     <record model="ir.ui.view" id="proceso_participantes_tree">
       <field name="name">proceso.participantes.tree</field>
       <field name="model">proceso.participante</field>
@@ -43,16 +42,6 @@
       </field>
     </record>
 
-
-
-<!-- BOTON CANCELAR -->
-<record model="ir.actions.act_window" id="action_cancelar">
-        <field name="name">Cancelar</field>
-        <field name="res_model">proceso.licitacion</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
-        <field name="view_id" ref="proceso_participantes_tree"/>
-    </record>
 
 <!-- BOTON PARTICIPANTES -->
 <record model="ir.actions.act_window" id="action_participantes">
@@ -67,26 +56,25 @@
         <field name="target">current</field>
     </record>
 
-
-
-
-    <!-- LICITACIONES -->
+    <!-- LICITACIONES TREE -->
     <record model="ir.ui.view" id="proc_contratacion.licitacion_tree">
       <field name="name">proceso.licitacion.tree</field>
       <field name="model">proceso.licitacion</field>
       <field name="arch" type="xml">
-        <tree decoration-danger="estado_radio == '2'" decoration-muted="estado_radio == '3'">
+        <tree decoration-muted="estado_obra, '>=', '1'" decoration-danger="estado_obra_cancelar, '>=', '1'">
+          <field name="estado_obra" invisible="1"/>
+          <field name="estado_obra_cancelar" invisible="1"/>
           <field name="tipolicitacion" />
           <field name="numerolicitacion"/>
           <field name="convocatoria"/>
           <field name="name"/>
           <field name="normatividad"/>
-          <field name="estado_radio" widget="radio" invisible="True"/>
           <field name="fechaoficio" />
         </tree>
       </field>
     </record>
 
+<!-- LICITACION SEARCH -->
   <record model="ir.ui.view" id="proceso_licitacion_search">
          <field name="name">Contratacion Licitacion</field>
          <field name="model">proceso.licitacion</field>
@@ -97,13 +85,118 @@
                 <field name="convocatoria"/>
                 <field name="name"/>
                 <field name="normatividad"/>
-                <field name="estado_radio"/>
                 <field name="fechaoficio" />
             </search>
          </field>
   </record>
 
 
+    <!-- SEARCH DESIERTA -->
+    <record model="ir.ui.view" id="estado_obra_desierta_search">
+         <field name="name">Estado Obra</field>
+         <field name="model">proceso.estado_obra_desierta</field>
+         <field name="arch" type="xml">
+            <search>
+                <field name="estado_obra"/>
+                <field name="numerolicitacion"/>
+                <field name="fecha_desierta"/>
+                <field name="observaciones_desierta"/>
+            </search>
+         </field>
+  </record>
+
+  <!-- SEARCH CANCELAR -->
+    <record model="ir.ui.view" id="estado_obra_search_cancelar">
+         <field name="name">Estado Obra Cancelar</field>
+         <field name="model">proceso.estado_obra_cancelar</field>
+         <field name="arch" type="xml">
+            <search>
+                <field name="estado_obra_cancelar"/>
+                <field name="numerolicitacion"/>
+                <field name="fecha_cancelado"/>
+                <field name="observaciones_cancelado"/>
+            </search>
+         </field>
+  </record>
+
+<!-- CANCELADO TREE -->
+  <record id="estado_obra_cancelado_tree" model="ir.ui.view">
+      <field name="name">estado.obra.cancelado.tree</field>
+      <field name="model">proceso.estado_obra_cancelar</field>
+      <field name="arch" type="xml">
+          <tree string="">
+              <field name="fecha_cancelado"/>
+              <field name="observaciones_cancelado"/>
+          </tree>
+      </field>
+  </record>
+  <!-- DESIERTA TREE -->
+      <record id="estado_obra_desierta_tree" model="ir.ui.view">
+          <field name="name">estado.obra.desierta.tree</field>
+          <field name="model">proceso.estado_obra_desierta</field>
+          <field name="arch" type="xml">
+              <tree string="">
+                  <field name="fecha_desierta"/>
+                  <field name="observaciones_desierta"/>
+              </tree>
+          </field>
+      </record>
+<!-- CANCELADO FORM -->
+ <record id="estado_obra_cancelado_form" model="ir.ui.view">
+            <field name="name">estado.obra.cancelado.form</field>
+            <field name="model">proceso.estado_obra_cancelar</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <sheet>
+                        <group colspan="1" col="2" string="Estado de la obra Cancelado">
+                            <field name="estado_obra_cancelar"/>
+                            <field name="numerolicitacion"/>
+                            <field name="fecha_cancelado"/>
+                            <field name="observaciones_cancelado"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+<!-- DESIERTA FORM -->
+      <record id="estado_obra_desierta_form" model="ir.ui.view">
+            <field name="name">estado.obra.desierta.form</field>
+            <field name="model">proceso.estado_obra_desierta</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <sheet>
+                        <group colspan="1" col="2" string="Estado de la obra Desierta">
+                            <field name="estado_obra"/>
+                            <field name="numerolicitacion"/>
+                            <field name="fecha_desierta"/>
+                            <field name="observaciones_desierta"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+<!-- BOTON DESIERTA -->
+<record model="ir.actions.act_window" id="action_desierta">
+        <field name="name">Desierta</field>
+        <field name="res_model">proceso.estado_obra_desierta</field>
+        <field name="view_type">form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+        (0, 0, {'view_mode': 'tree', 'view_id': ref('estado_obra_desierta_tree')}),
+        (0, 0, {'view_mode': 'form', 'view_id': ref('estado_obra_desierta_form')})]"/>
+        <field name="target">current</field>
+    </record>
+<!-- BOTON CANCELAR -->
+<record model="ir.actions.act_window" id="action_cancelar">
+        <field name="name">Cancelar</field>
+        <field name="res_model">proceso.estado_obra_cancelar</field>
+        <field name="view_type">form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+        (0, 0, {'view_mode': 'tree', 'view_id': ref('estado_obra_cancelado_tree')}),
+        (0, 0, {'view_mode': 'form', 'view_id': ref('estado_obra_cancelado_form')})]"/>
+        <field name="target">current</field>
+    </record>
+
+<!-- LICITACION FORM -->
     <record model="ir.ui.view" id="proc_contratacion.licitacion_form">
       <field name="name">proceso.licitacion.form</field>
       <field name="model">proceso.licitacion</field>
@@ -114,7 +207,6 @@
               <button type="action" icon="fa-clipboard" string="Convocatoria / Bases"></button>
 
               <button type="action" icon="fa-list-ol" string="Ev. Puntos"></button>
-
 
               <!--<button name='%(action_participantes)d'  type='action' icon="fa-users" string="Participantes"></button>-->
 
@@ -127,31 +219,29 @@
 
               <button type="action" icon="fa-calendar" string="Eventos"></button>
 
-              <button name='%(action_cancelar)d'  type='action'  icon="fa-times-circle" string="Cancelar"></button>
+              <button class="oe_stat_button"  type='action' name='%(action_cancelar)d' icon="fa-times-circle"
+                      attrs="{'invisible': [('estado_obra','>=', '1')]}"
+                      context="{
+                       'search_default_numerolicitacion': active_id,
+                       'default_numerolicitacion': active_id
+                       }"
+                      string="Cancelar" ></button>
 
-              <button name='desierta'  type='object' class='btn-primary' icon="fa-bitbucket" string="Desierta"></button>
+              <button class="oe_stat_button"  type='action' name='%(action_desierta)d'
+                      context="{
+                       'search_default_numerolicitacion': active_id,
+                       'default_numerolicitacion': active_id
+                       }"
+                      icon="fa-bitbucket" string="Desierta"
+                      attrs="{'invisible': [('estado_obra_cancelar','>=', '1')]}"></button>
             </div>
-
-            <group string="" >
-                <group colspan="1" col="2" string="Estado de la obra">
-                    <field name="estado_radio" widget="radio"/>
-
-                    <group string="CANCELADO" attrs="{'invisible': [('estado_radio','!=', '2')]}" colspan="2" col="2">
-                        <field name="fecha_cancelado"/>
-                        <field name="observaciones_cancelado"/>
-                    </group>
-
-                    <group string="DESIERTA" attrs="{'invisible': [('estado_radio','!=', '3')]}" colspan="2" col="2">
-                        <field name="fecha_desierta"/>
-                        <field name="observaciones_desierta"/>
-                    </group>
-                </group>
-            </group>
 
             <group>
               <group string="Seleccionar Obra" colspan="1" col="2">
                 <field name="programa_inversion" string="Programa de Inversión" />
                 <field name="name"/>
+                <field name="estado_obra" widget="statinfo" invisible="1"/>
+                <field name="estado_obra_cancelar" widget="statinfo" invisible="1"/>
               </group>
               <group string="Datos De La Licitación" colspan="1" col="2">
                 <field name="tipolicitacion"/>
@@ -198,7 +288,6 @@
               <group string="Fallo" colspan="1" col="2">
                 <field name="fallofechahora"/>
                 <field name="fallolugar"/>
-
               </group>
             </group>
           </sheet>
@@ -206,17 +295,16 @@
       </field>
     </record>
 
-
-
-
-    <!-- ACCIONES VENTANA -->
+    <!-- ACCIONES VENTANA LICITACIONES -->
     <record model="ir.actions.act_window" id="proc_contratacion.licitacion_action_window">
       <field name="name">Registro de licitaciones</field>
       <field name="type">ir.actions.act_window</field>
       <field name="res_model">proceso.licitacion</field>
       <field name="view_mode">tree,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+        (0, 0, {'view_mode': 'tree', 'view_id': ref('proc_contratacion.licitacion_tree')}),
+        (0, 0, {'view_mode': 'form', 'view_id': ref('proc_contratacion.licitacion_form')})]"/>
     </record>
-
 
     <!-- TREE VIEW REPORTE-->
     <record model="ir.ui.view" id="proc_contratacion.licitacion_tree2">
@@ -233,9 +321,6 @@
       </field>
     </record>
 
-    <!-- TREE VIEW REPORTE-->
-
-
      <!-- ACCIONES PARA ELIMINAR EL BOTON DELETE -->
     <record id="licitacion_tree_no_delete" model="ir.ui.view">
         <field name="name">licitacion.tree.no.delete</field>
@@ -244,13 +329,9 @@
         <field name="arch" type="xml">
             <xpath expr="//tree" position="attributes">
                 <attribute name="delete">false</attribute>
-
             </xpath>
         </field>
     </record>
-
-     <!-- ACCIONES PARA ELIMINAR EL BOTON DELETE -->
-
 
     <!-- ACTION DE CALENDARIO DE EVENTOS-->
      <act_window id="calendario_eventos"
@@ -261,9 +342,9 @@
     key2="client_action_multi" target="new"
     view_id="proc_contratacion.licitacion_tree2"
     />
-    <!-- CHEECAAR ARRIBAAAA-->
+
     <!-- ACTION DE LISTADO DE LICITACIONES-->
-<act_window id="listado_licitaciones"
+    <act_window id="listado_licitaciones"
     name="Listado de Licitaciones"
     src_model="proceso.licitacion"
     res_model="proceso.licitacion"
@@ -271,8 +352,6 @@
     key2="client_action_multi" target="new"
     view_id="proc_contratacion.licitacion_tree2"
     />
-
-
 
     <!-- ACCIONES VENTANA DE REPORTE -->
     <record model="ir.actions.act_window" id="proc_contratacion.licitacion_action_window2">
@@ -282,8 +361,6 @@
       <field name="view_id" ref="proc_contratacion.licitacion_tree2"/>
       <field name="view_mode">tree</field>
     </record>
-
-
 
     <!-- MENUS -->
     <menuitem name="Proceso de contratación" id="proc_contratacion.menu_root" sequence="0"/>

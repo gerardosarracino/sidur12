@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_autorizacion_obra_autorizacion_obra,autorizacion_obra.oficios_autorizacion,model_autorizacion_obra_oficios_autorizacion,,1,1,1,1
+access_autorizacion_obra_at,autorizacion_obra.at,model_autorizacion_obra_at,,1,1,1,1

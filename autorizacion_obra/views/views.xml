@@ -1,0 +1,173 @@
+<odoo>
+  <data>
+    <record model="ir.actions.act_window" id="autorizacion_obra.action">
+        <field name="name">Oficio de autorización</field>
+        <field name="res_model">autorizacion_obra.oficios_autorizacion</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+      <record model="ir.actions.act_window" id="autorizacion_obra.anexo_taction">
+        <field name="name">Anexo técnico del oficio</field>
+        <field name="res_model">autorizacion_obra.at</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.ui.view" id="autorizacion_obra.tree">
+    <field name="name">Oficio de autorización</field>
+    <field name="model">autorizacion_obra.oficios_autorizacion</field>
+    <field name="arch" type="xml">
+      <tree>
+          <field name="numero_de_oficio"/>
+          <field name="fecha_actual"/>
+          <field name="fecha_de_recibido"/>
+          <field name="fecha_de_vencimiento"/>
+          <field name="variable_count" string='Número de Anexos técnicos'/>
+          <field name="importe"/>
+          
+      </tree>
+     </field>
+    </record>
+
+    <record model="ir.ui.view" id="autorizacion_obra.search">
+         <field name="name">Oficio de autorización</field>
+         <field name="model">autorizacion_obra.oficios_autorizacion</field>
+         <field name="arch" type="xml">
+            <search>
+                <field name="numero_de_oficio"/>
+                <field name="fecha_actual"/>
+                <field name="fecha_de_recibido"/>
+                <field name="fecha_de_vencimiento"/>
+                <field name="importe"/>
+            </search>
+         </field>
+      </record>
+
+    <record model="ir.ui.view" id="autorizacion_obra_form">
+      <field name="name">Oficio de autorización</field>
+      <field name="model">autorizacion_obra.oficios_autorizacion</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <div class="oe_button_box oe_read_only" name="button_box">
+              <button string=' Agregar Anexo técnico' name='anexoTecnico' type='object' class='btn-primary' icon='fa-plus'/>
+             
+                     <button class="oe_stat_button" type="action" name="%(autorizacion_obra.anexo_taction)d" context="{
+                       'search_default_numero_de_oficio': active_id,
+                       'default_numero_de_oficio': active_id
+                       }" icon="fa-file">
+                        <field name="variable_count" string=' Anexos técnicos' widget="statinfo" />
+                     </button>
+              </div>
+           
+            <group string="Autorización de obra" class="text-center">
+              <h1><field name="numero_de_oficio" placeholder="Número de oficio"/></h1>
+            </group>
+            <group>
+              <field name="fecha_actual"/>
+              <field name="fecha_de_recibido"/>
+              <field name="fecha_de_vencimiento"/>
+              <field name="importe"/>
+             </group>
+          </sheet>
+        </form>
+      </field>
+    </record>  
+
+
+
+    <record model="ir.ui.view" id="autorizacion_obra.at_search">
+         <field name="name">Anexo técnico del oficio</field>
+         <field name="model">autorizacion_obra.at</field>
+         <field name="arch" type="xml">
+            <search>
+                <field name="numero_de_oficio"/>
+                <field name="clave_de_obra"/>
+                <field name="clave_presupuestal"/>
+                <field name="monto_federal"/>
+                <field name="monto_estatal"/>
+                <field name="monto_municipal"/>
+                <field name="otros"/>
+            </search>
+         </field>
+      </record>
+
+
+    <record model="ir.ui.view" id="autorizacion_obra.at_tree">
+    <field name="name">Anexo técnico del oficion</field>
+    <field name="model">autorizacion_obra.at</field>
+    <field name="arch" type="xml">
+      <tree>
+          <field name="numero_de_oficio"/>
+          <field name="clave_de_obra"/>
+          <field name="clave_presupuestal"/>
+          <field name="monto_federal"/>
+          <field name="monto_estatal"/>
+          <field name="monto_municipal"/>
+          <field name="otros"/>
+      </tree>
+    </field>
+    </record>
+
+    <record model="ir.ui.view" id="autorizacion_obra_anexo_tform">
+      <field name="name">Anexo técnico del oficio</field>
+      <field name="model">autorizacion_obra.at</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group string="Anexo técnico" class="text-center">
+              <h1><field name="clave_de_obra" placeholder="Clave de obra"/></h1>
+            </group>
+            <group>
+              <field name="clave_presupuestal"/>
+            </group>
+            <group>
+              <field name="numero_de_oficio"/>
+            </group>
+            <group>
+                <group>
+                    <field name="monto_estatal"/>
+                </group>
+                <group>
+                    <field name="monto_estatal_indirecto"/>
+                </group>
+            </group>
+            <group>
+                <group>
+                    <field name="monto_federal"/>
+                </group>
+                <group>
+                    <field name="monto_federal_indirecto"/>
+                </group>
+            </group>
+            <group>
+                <group>
+                    <field name="monto_municipal"/>
+                </group>
+                <group>
+                    <field name="monto_municipal_indirecto"/>
+                </group>
+            </group>
+            <group>
+                <group>
+                    <field name="otros"/>
+                </group>
+                <group>
+                    <field name="monto_otros_indirecto"/>
+                </group>
+            </group>
+            <group>
+                <group>
+                    <field name="suma"/>
+                </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>  
+
+    <menuitem name="Autorización de obra" id="autorizacion_obra.menu_root" sequence="0"/>
+      <menuitem name="Oficios de Autorización" id="autorizacion_obra.oa_menu" parent="autorizacion_obra.menu_root" action="autorizacion_obra.action" sequence="1"/>
+      <menuitem name="Anexo técnico" id="autorizacion_obra.at_menu" parent="autorizacion_obra.menu_root" action="autorizacion_obra.anexo_taction" sequence="2"/>     
+         
+
+  </data>
+</odoo>
