@@ -44,6 +44,46 @@
          </field>
         </record>
 
+        <!--
+      <record id="seleccion_form" model="ir.ui.view">
+          <field name="name">seleccion_form</field>
+          <field name="model">proceso.elaboracion_contrato</field>
+          <field name="arch" type="xml">
+              <form string="">
+                  <sheet>
+                      <group>
+                          <notebook>
+                              <page string="Licitación">
+                                  <group>
+                                      <field name="obra" string="Seleccionar Licitacion" attrs="{'readonly': [('adjudicacion','!=', False)]}" />
+                                  </group>
+                              </page>
+                          </notebook>
+
+                          <notebook>
+                              <page string="Adjudicación Directa">
+                                  <group>
+                                      <field name="adjudicacion" string="Seleccionar Adjudicacion Directa" attrs="{'readonly': [('obra','!=', False)]}"/>
+                                  </group>
+                              </page>
+                          </notebook>
+
+
+                      </group>
+                  </sheet>
+              </form>
+          </field>
+      </record>
+
+    <record model="ir.actions.act_window" id="action_seleccion">
+        <field name="name">Seleccion</field>
+        <field name="res_model">proceso.elaboracion_contrato</field>
+        <field name="view_type">form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+        (0, 0, {'view_mode': 'form', 'view_id': ref('seleccion_form')})]"/>
+        <field name="target">new</field>
+    </record> -->
+
     <record model="ir.ui.view" id="proc_contratacion.elaboracion_contrato_form">
       <field name="name">proceso.elaboracion_contrato.form</field>
       <field name="model">proceso.elaboracion_contrato</field>
@@ -68,26 +108,25 @@
 
                 </div>
 
-            <notebook colspan="4">
+            <notebook colspan="1" col="2">
 
                     <page string="Datos Generales" icon="fa-bitbucket">
-                         <group>
-                          <group string="Contrato Datos Generales" colspan="1" col="2">
+                         <group colspan="1" col="2">
+                             <group string="Contrato Datos Generales" colspan="1" col="2">
 
-                          <field name="obra" string="Seleccionar Licitacion" attrs="{'readonly': [('adjudicacion','!=', False)]}" />
+                                <field name="obra" string="Seleccionar Licitacion" attrs="{'readonly': [('adjudicacion','!=', False)]}" />
+                                <field name="adjudicacion" string="Seleccionar Adjudicacion Directa" attrs="{'readonly': [('obra','!=', False)]}"/>
 
-                          <field name="adjudicacion" string="Seleccionar Adjudicacion Directa" attrs="{'readonly': [('obra','!=', False)]}"/>
+                                <hr/>
 
-                              <hr/>
-
-                            <field name="fecha" class="oe_inline"/>
-                            <field name="contrato"/>
-                            <field name="name"/>
-                            <field name="descripciontrabajos"/>
-                            <field name="unidadresponsableejecucion"/>
-                            <field name="supervisionexterna"/>
-                            <field name="supervisionexterna1"/>
-                          </group>
+                                <field name="fecha" class="oe_inline"/>
+                                <field name="contrato"/>
+                                <field name="name"/>
+                                <field name="descripciontrabajos"/>
+                                <field name="unidadresponsableejecucion"/>
+                                <field name="supervisionexterna"/>
+                                <field name="supervisionexterna1"/>
+                             </group>
 
                              <group colspan="1" col="2" attrs="{'invisible': [('obra' and 'adjudicacion', '=', False)]}">
                                  <field name="importe_contrato"/>
@@ -104,9 +143,6 @@
                             <field name="periodicidadretencion" class="oe_inline"/>
                             <field name="retencion"/>
                           </group>
-
-
-
                         </group>
                     </page>
 
@@ -144,13 +180,12 @@
       </field>
     </record>
 
-
 <record model="ir.ui.view" id="proceso_anticipo_contratos_search">
          <field name="name">anticipo contratos</field>
          <field name="model">proceso.anticipo_contratos</field>
          <field name="arch" type="xml">
             <search>
-                  <field name="contrato"/>
+                <field name="contrato"/>
                 <field name="fecha_anticipo"/>
                 <field name="porcentaje_anticipo"/>
                 <field name="total_anticipo_porcentaje"/>

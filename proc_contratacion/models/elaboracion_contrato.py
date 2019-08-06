@@ -3,8 +3,7 @@
 from odoo import models, fields, api
 
 
-class elaboracioncontratos(models.Model):
-
+class ElaboracionContratos(models.Model):
     _name = "proceso.elaboracion_contrato"
     _rec_name = 'contrato'
 
@@ -12,6 +11,7 @@ class elaboracioncontratos(models.Model):
 
     obra = fields.Many2one('proceso.licitacion', string="Seleccionar obra")
     adjudicacion = fields.Many2one('proceso.adjudicacion_directa', string="Seleccionar obra")
+
     fecha = fields.Date(string="Fecha", required=True)
 
     contrato = fields.Char(string="Contrato", required=True)
@@ -64,7 +64,6 @@ class elaboracioncontratos(models.Model):
 
     @api.multi
     def conveniosModificados(self):
-
         return {
             'type': 'ir.actions.act_window',
             'name': 'Convenios Modificatorios',
@@ -94,6 +93,16 @@ class elaboracioncontratos(models.Model):
             'view_mode': 'tree,form',
             'view_type': 'form',
             'target': 'current',
+        }
+
+    @api.multi
+    def Seleccion(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Seleccion de Obra',
+            'res_model': 'proceso.elaboracion_contrato',
+            'view_type': 'form',
+            'target': 'new',
         }
 
 

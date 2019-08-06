@@ -61,11 +61,11 @@
       <field name="name">proceso.licitacion.tree</field>
       <field name="model">proceso.licitacion</field>
       <field name="arch" type="xml">
-        <tree decoration-muted="estado_obra, '>=', '1'" decoration-danger="estado_obra_cancelar, '>=', '1'">
-          <field name="estado_obra" invisible="1"/>
+        <tree decoration-muted="estado_obra_desierta, '>=', '1'" decoration-danger="estado_obra_cancelar, '>=', '1'">
+          <field name="estado_obra_desierta" invisible="1"/>
           <field name="estado_obra_cancelar" invisible="1"/>
           <field name="tipolicitacion" />
-          <field name="numerolicitacion"/>
+          <field name="numerolicitacion" string="Licitación"/>
           <field name="convocatoria"/>
           <field name="name"/>
           <field name="normatividad"/>
@@ -97,7 +97,7 @@
          <field name="model">proceso.estado_obra_desierta</field>
          <field name="arch" type="xml">
             <search>
-                <field name="estado_obra"/>
+                <field name="estado_obra_desierta"/>
                 <field name="numerolicitacion"/>
                 <field name="fecha_desierta"/>
                 <field name="observaciones_desierta"/>
@@ -166,7 +166,7 @@
                 <form string="">
                     <sheet>
                         <group colspan="1" col="2" string="Estado de la obra Desierta">
-                            <field name="estado_obra"/>
+                            <field name="estado_obra_desierta"/>
                             <field name="numerolicitacion"/>
                             <field name="fecha_desierta"/>
                             <field name="observaciones_desierta"/>
@@ -220,7 +220,7 @@
               <button type="action" icon="fa-calendar" string="Eventos"></button>
 
               <button class="oe_stat_button"  type='action' name='%(action_cancelar)d' icon="fa-times-circle"
-                      attrs="{'invisible': [('estado_obra','>=', '1')]}"
+                      attrs="{'invisible': [('estado_obra_desierta','>=', '1')]}"
                       context="{
                        'search_default_numerolicitacion': active_id,
                        'default_numerolicitacion': active_id
@@ -240,7 +240,7 @@
               <group string="Seleccionar Obra" colspan="1" col="2">
                 <field name="programa_inversion" string="Programa de Inversión" />
                 <field name="name"/>
-                <field name="estado_obra" widget="statinfo" invisible="1"/>
+                <field name="estado_obra_desierta" widget="statinfo" invisible="1"/>
                 <field name="estado_obra_cancelar" widget="statinfo" invisible="1"/>
               </group>
               <group string="Datos De La Licitación" colspan="1" col="2">

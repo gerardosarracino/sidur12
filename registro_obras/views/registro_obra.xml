@@ -1,0 +1,479 @@
+<odoo>
+  <data>
+        <record model="ir.actions.act_window" id="registro_obras.proyectoej_action_window">
+      <field name="name">Proyecto ejecutivo</field>
+      <field name="res_model">registro.proyectoejecutivo</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+        <record model="ir.actions.act_window" id="registro_obras.seguimientoobra_action">
+      <field name="name">Seguimiento de obra</field>
+      <field name="res_model">registro.seguimientoobra</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="registro_obras.programarobra_action">
+      <field name="name">Programar obra</field>
+      <field name="res_model">registro.programarobra</field>
+      <field name="target">new</field>
+      <field name="view_mode">form,tree</field>
+    </record>
+
+    <!-- EJERCICIO -->
+    <record model="ir.ui.view" id="registro_obras.ejercicio_tree">
+      <field name="name">registro.ejercicio.tree</field>
+      <field name="model">registro.ejercicio</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="registro_obras.ejercicio_form">
+      <field name="name">registro.ejercicio.form</field>
+      <field name="model">registro.ejercicio</field>
+      <field name="arch" type="xml">
+        <form>
+          <group colspan="2" col="2">
+          <field name="name"/>
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <!-- UNIDAD ADMINISTRATIVA SOLICITANTE -->
+    <record model="ir.ui.view" id="registro_obras.unidadadminsol_tree">
+      <field name="name">registro.unidadadminsol.tree</field>
+      <field name="model">registro.unidadadminsol</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="registro_obras.unidadadminsol_form">
+      <field name="name">registro.unidadadminsol.form</field>
+      <field name="model">registro.unidadadminsol</field>
+      <field name="arch" type="xml">
+        <form>
+          <group colspan="2" col="2">
+          <field name="name"/>
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <!-- TIPO PROYECTO -->
+    <record model="ir.ui.view" id="registro_obras.tipoproyecto_tree">
+      <field name="name">registro.tipoproyecto.tree</field>
+      <field name="model">registro.tipoproyecto</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="registro_obras.tipoproyecto_form">
+      <field name="name">registro.tipoproyecto.form</field>
+      <field name="model">registro.tipoproyecto</field>
+      <field name="arch" type="xml">
+        <form>
+          <group colspan="2" col="2">
+          <field name="name"/>
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <!-- TIPO OBRA ETAPA -->
+    <record model="ir.ui.view" id="registro_obras.tipoobraetapa_tree">
+      <field name="name">registro.tipoobraetapa.tree</field>
+      <field name="model">registro.tipoobraetapa</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="registro_obras.tipoobraetapa_form">
+      <field name="name">registro.tipoobraetapa.form</field>
+      <field name="model">registro.tipoobraetapa</field>
+      <field name="arch" type="xml">
+        <form>
+          <group colspan="2" col="2">
+          <field name="name"/>
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <!-- TIPO LOCALIDAD -->
+    <record model="ir.ui.view" id="registro_obras.tipolocalidad_tree">
+      <field name="name">registro.tipolocalidad.tree</field>
+      <field name="model">registro.tipolocalidad</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="registro_obras.tipolocalidad_form">
+      <field name="name">registro.tipolocalidad.form</field>
+      <field name="model">registro.tipolocalidad</field>
+      <field name="arch" type="xml">
+        <form>
+          <group colspan="2" col="2">
+          <field name="name"/>
+          </group>
+        </form>
+      </field>
+    </record>
+
+    <!-- UNIDAD MEDIDA -->
+    <record model="ir.ui.view" id="registro_obras.unidadm_tree">
+      <field name="name">registro.unidadm.tree</field>
+      <field name="model">registro.unidadm</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="registro_obras.unidadm_form">
+      <field name="name">registro.unidadm.form</field>
+      <field name="model">registro.unidadm</field>
+      <field name="arch" type="xml">
+        <form>
+          <group colspan="2" col="2">
+          <field name="name"/>
+          </group>
+        </form>
+      </field>
+    </record>
+
+
+
+    <!-- REGISTRO OBRA -->
+    <record model="ir.ui.view" id="registro_obras.obra_tree">
+      <field name="name">Registro de obras</field>
+      <field name="model">registro.obra</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="monto"/>
+          <field name="descripcion"/>
+          <field name="tipoObra" string="Tipo de obra"/>
+          <field name="estado" string="Estado"/>
+          <field name="municipio" string="Municipio"/>
+          <field name="ubicacion"/>
+          <field name="localidad"/>
+          <field name="create_date" string="Fecha reg."/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="registro_obras.obra_form">
+      <field name="name">Planear nueva obra</field>
+      <field name="model">registro.obra</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+          	<div class="oe_button_box oe_read_only" name="button_box">
+          		<button type="action" name="%(registro_obras.proyectoej_action_window)d" icon="fa-file" context="{
+                       'search_default_name': active_id,
+                       'default_name': active_id
+                       }"><field string="Proy. Ejecutivo" name="proyecto_ejecutivo" widget="statinfo"/></button>
+              <button type="action" name="%(registro_obras.seguimientoobra_action)d" icon="fa-calendar" context="{
+                       'search_default_name': active_id,
+                       'default_name': active_id
+                       }"><field string="Seg. Obra" name="seguimientoc" widget="statinfo"/></button>
+              <button type="action" name="%(registro_obras.programarobra_action)d" icon="fa-clock-o" context="{
+                       'search_default_name': active_id,
+                       'default_name': active_id
+                       }"><field string="Progr. Obra" name="programada" widget="statinfo"/></button>
+          	</div>
+            <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" placeholder="Número de obra" required="True"/>
+                            </h1>
+                        </div>
+            <group>
+            <group string="Datos generales de la obra" colspan="1" col="2">
+              <!--field name="name"/-->
+              <field name="ejercicio"/>
+              <field name="grupoObra"/>
+              <field name="origen" string="Origen"/>
+              <field name="monto"/>
+              <field name="descripcion"/>
+              <field name="problematica"/>
+              <field name="unidadadminsol"/>
+              <field name="tipoObra" string="Tipo de obra"/>
+              <field name="tipoproyecto"/>
+              <field name="tipoobraetapa" string="Tipo de obra etapa"/>
+            </group>
+            <group string="Ubicación de la obra" colspan="1" col="2">
+              <field name="estado" string="Estado"/>
+              <field name="municipio" string="Municipio"/>
+              <field name="ubicacion" string="Ubicación"/>
+              <field name="localidad" string="Localidad"/>
+              <field name="cabeceraMunicipal"/>
+              <field name="tipolocalidad"/>
+              <field name="latitud"/>
+              <field name="longitud"/>
+            </group>
+            <group string="Impacto de la obra" colspan="2" col="2">
+              <field name="beneficiados"/>
+              <field name="metaFisicaProyecto"/>
+              <field name="metaProyectoUnidad"/>
+              <field name="metaEjercicio"/>
+              <field name="metaEjercicioUnidad"/>
+              <field name="justificacionTecnica"/>
+              <field name="justificacionSocial"/>
+            </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+        <!-- PROYECTO EJECUTIVO -->    
+    <record model="ir.ui.view" id="registro_obras.proyectoejecutivo_search">
+      <field name="name">Proyecto Ejecutivo</field>
+      <field name="model">registro.proyectoejecutivo</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="name1"/>
+          <field name="name"/>
+          <field name="documento"/>
+          <field name="nombre"/>
+          <field name="observaciones"/>
+         </search>
+        </field>
+     </record>
+    
+    <record model="ir.ui.view" id="registro_obras.proyectoejecutivo_tree">
+      <field name="name">registro.proyectoejecutivo.tree</field>
+      <field name="model">registro.proyectoejecutivo</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name1" string="Apartado"/>
+          <field name="name" string="Obra"/>
+          <field name="documento"/>
+          <field name="nombre"/>
+          <field name="observaciones"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="registro_obras.proyectoejecutivo_form">
+      <field name="name">registro.proyectoejecutivo.form</field>
+      <field name="model">registro.proyectoejecutivo</field>
+      <field name="arch" type="xml">
+        <form>
+        <sheet>
+        <group>
+          <group string="Proyecto Ejecutivo" colspan="2" col="2">
+          <field name="name1" string="Apartado"/>
+          <field name="name" string="Obra"/>
+          <field name="documento"/>
+          <field name="nombre"/>
+          <field name="observaciones"/>
+          </group>
+         </group>
+         </sheet>
+         </form>
+      </field>
+    </record>
+
+            <!-- SEGUIMIENTO DE OBRA -->    
+    <record model="ir.ui.view" id="registro_obras.seguimientoobra_search">
+      <field name="name">Seguimiento de obra</field>
+      <field name="model">registro.seguimientoobra</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="name"/>
+          <field name="seguimiento"/>
+         </search>
+        </field>
+     </record>
+    
+    <record model="ir.ui.view" id="registro_obras.seguimientoobra_tree">
+      <field name="name">registro.seguimientoobra.tree</field>
+      <field name="model">registro.seguimientoobra</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name" string="Obra"/>
+          <field name="seguimiento"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="registro_obras.seguimientoobra_form">
+      <field name="name">registro.seguimientoobra.form</field>
+      <field name="model">registro.seguimientoobra</field>
+      <field name="arch" type="xml">
+        <form>
+        <sheet>
+        <group>
+          <group string="Seguimiento de obra" colspan="2" col="2">
+          <field name="name" string="Obra"/>
+          <field name="seguimiento"/>
+          </group>
+        </group>
+        </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- PROGRAMAR OBRA -->    
+    <record model="ir.ui.view" id="registro_obras.programarobra_search">
+      <field name="name">Programar obra</field>
+      <field name="model">registro.programarobra</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="name"/>
+          <field name="programaInversion"/>
+          <field name="categoriaProgramatica"/>
+          <field name="fechaProbInicio"/>
+          <field name="fechaProbTermino"/>
+          <field name="descripTotalObra"/>
+          <field name="conceptoEjecutar"/>
+          <field name="modalidadEjecucion"/>
+          <field name="avanceFisicoActual"/>
+          <field name="avanceProgCierreEjerci"/>
+         </search>
+        </field>
+     </record>
+    
+    <record model="ir.ui.view" id="registro_obras.programarobra_tree">
+      <field name="name">registro.programarobra.tree</field>
+      <field name="model">registro.programarobra</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name" string="Obra"/>
+          <field name="programaInversion" string="Programa de Inversión"/>
+          <field name="categoriaProgramatica" string="Categoría programática"/>
+          <field name="fechaProbInicio"/>
+          <field name="fechaProbTermino"/>
+          <field name="descripTotalObra"/>
+          <field name="conceptoEjecutar"/>
+          <field name="modalidadEjecucion"/>
+          <field name="avanceFisicoActual"/>
+          <field name="avanceProgCierreEjerci"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="registro_obras.programarobra_form">
+      <field name="name">registro.programarobra.form</field>
+      <field name="model">registro.programarobra</field>
+      <field name="arch" type="xml">
+        <form>
+        <sheet>
+        <group>
+          <group string="Programar obra" colspan="2" col="2">
+          <group>
+          <field name="name" string="Obra"/>
+          <field name="programaInversion" string="Programa de Inversión" />
+          <field name="categoriaProgramatica" string="Categoría programática" domain="[('name','=',programaInversion)]" />
+          <field name="fechaProbInicio"/>
+          <field name="fechaProbTermino"/>
+          <field name="descripTotalObra"/>
+          <field name="conceptoEjecutar"/>
+          </group>
+          <group>
+          <field name="modalidadEjecucion"/>
+          <field name="avanceFisicoActual"/>
+          <field name="avanceProgCierreEjerci"/>
+          <field name="imagen1"/>
+          <field name="imagen2"/>
+          <field name="imagen3"/>
+          <field name="imagen4"/>
+          </group>
+          </group>
+        </group>
+        </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- ACCIONES VENTANA -->
+    <record model="ir.actions.act_window" id="registro_obras.obra_action_window">
+      <field name="name">Registro de obras</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">registro.obra</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+
+    <!-- MENUS -->
+    <menuitem name="Registro de obras" id="registro_obras.menu_root" sequence="0"/>
+      <menuitem name="Registro de obra" id="registro_obras.obra_menu" parent="registro_obras.menu_root" action="registro_obras.obra_action_window" sequence="1"/>
+      <menuitem name="Obras programadas" id="registro_obras.obra_programada_menu" parent="registro_obras.menu_root" action="registro_obras.obra_action_window" sequence="2"/>
+      <menuitem name="Solicitudes de autorización" id="registro_obras.solicitud_autoriza_menu" parent="registro_obras.menu_root" action="registro_obras.obra_action_window" sequence="3"/>
+
+    <!-- explicit list view definition -->
+    <!--
+    <record model="ir.ui.view" id="registro_obras.list">
+      <field name="name">registro_obras list</field>
+      <field name="model">registro_obras.registro_obras</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+    -->
+
+    <!-- actions opening views on models -->
+    <!--
+    <record model="ir.actions.act_window" id="registro_obras.action_window">
+      <field name="name">registro_obras window</field>
+      <field name="res_model">registro_obras.registro_obras</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+    -->
+
+    <!-- server action to the one above -->
+    <!--
+    <record model="ir.actions.server" id="registro_obras.action_server">
+      <field name="name">registro_obras server</field>
+      <field name="model_id" ref="model_registro_obras_registro_obras"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": self._name,
+        }
+      </field>
+    </record>
+    -->
+
+    <!-- Top menu item -->
+    <!--
+    <menuitem name="registro_obras" id="registro_obras.menu_root"/>
+    -->
+    <!-- menu categories -->
+    <!--
+    <menuitem name="Menu 1" id="registro_obras.menu_1" parent="registro_obras.menu_root"/>
+    <menuitem name="Menu 2" id="registro_obras.menu_2" parent="registro_obras.menu_root"/>
+    -->
+    <!-- actions -->
+    <!--
+    <menuitem name="List" id="registro_obras.menu_1_list" parent="registro_obras.menu_1"
+              action="registro_obras.action_window"/>
+    <menuitem name="Server to list" id="registro_obras" parent="registro_obras.menu_2"
+              action="registro_obras.action_server"/>
+    -->
+  </data>
+</odoo>

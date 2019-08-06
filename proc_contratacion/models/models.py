@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api, exceptions
+from odoo import models, fields, api
 
 
 class Licitacion(models.Model):
@@ -16,7 +16,7 @@ class Licitacion(models.Model):
 
     numerolicitacion = fields.Char(string="Número de Licitación", required=True)
 
-    estado_obra = fields.Integer(compute='estadoObra')
+    estado_obra_desierta = fields.Integer(compute='estadoObraDesierta')
     estado_obra_cancelar = fields.Integer(compute='estadoObraCancelar')
 
     convocatoria = fields.Char(string="Convocatoria", required=True)
@@ -60,9 +60,9 @@ class Licitacion(models.Model):
         self.variable_count = count
 
     @api.one
-    def estadoObra(self):
+    def estadoObraDesierta(self):
         resultado = self.env['proceso.estado_obra_desierta'].search_count([('numerolicitacion', '=', self.id)])
-        self.estado_obra = resultado
+        self.estado_obra_desierta = resultado
 
     @api.one
     def estadoObraCancelar(self):
@@ -89,12 +89,12 @@ class Participante(models.Model):
 
 class EstadoObraDesierta(models.Model):
     _name = 'proceso.estado_obra_desierta'
-    _rec_name = 'estado_obra'
+    _rec_name = 'estado_obra_desierta'
 
-    obra_id = fields.Char(compute="estadoObra", store=True)
+    obra_id_desierta = fields.Char(compute="estadoObra", store=True)
 
     licitacion_id = fields.Char(compute="nombre", store=True)
-    estado_obra = fields.Char(string="estado obra", default="Desierta", readonly=True)
+    estado_obra_desierta = fields.Char(string="estado obra", default="Desierta", readonly=True)
     numerolicitacion = fields.Many2one('proceso.licitacion', string='Numero Licitación:',
                                        readonly=True)
 
@@ -103,7 +103,7 @@ class EstadoObraDesierta(models.Model):
 
     @api.one
     def estadoObra(self):
-        self.obra_id = self.estado_obra
+        self.obra_id_desierta = self.estado_obra_desierta
 
     @api.one
     def nombre(self):
@@ -121,15 +121,6 @@ class EstadoObraCancelar(models.Model):
                                        readonly=True)
     fecha_cancelado = fields.Date(string="Fecha de Cancelacion:")
     observaciones_cancelado = fields.Text(string="Observaciones:")
-
-    @api.model
-    def create(self, values):
-        # res = super(FirmasLogos, self).create(values)
-        limit = len(self.search([]))
-        if limit >= 1:
-            raise exceptions.Warning('Esta Obra ya fue Cancelada!')
-        else:
-            return super(EstadoObraCancelar, self).create(values)
 
     @api.one
     def estadoObraCancelar(self):
