@@ -206,3 +206,52 @@ class AnticipoContratos(models.Model):
     @api.one
     def nombre(self):
         self.contrato_id = self.id
+
+
+class categoria(models.Model):
+    _name = "proceso.categoria"
+    name = fields.Char()
+
+
+class concepto(models.Model):
+    _name = "proceso.concepto"
+    name = fields.Char()
+
+
+class grupo(models.Model):
+    _name = "proceso.grupo"
+    name = fields.Char()
+
+
+class medida(models.Model):
+    _name = "proceso.medida"
+    name = fields.Char()
+
+
+class conceptos_partidas(models.Model):
+    _name = "proceso.conceptos_part"
+
+    # name = fields.Many2one('proceso.elaboracion_contrato')
+    categoria = fields.Many2one('proceso.categoria')
+    concepto = fields.Many2one('proceso.concepto')
+    grupo = fields.Many2one('proceso.grupo')
+    medida = fields.Many2one('proceso.medida')
+    precio_unitario = fields.Integer()
+    cantidad = fields.Integer()
+    importe = fields.Integer()
+
+#La vista sera de aqui
+class conceptos_model(models.Model):
+    _name = "proceso.conceptos_contratos"
+
+    conceptos_partidas = fields.Many2many('proceso.conceptos_part')
+    name = fields.Many2one('proceso.elaboracion_contrato', readonly=True)
+    total = fields.Integer(readonly=True)
+    total_contrato = fields.Integer(readonly=True)
+    diferencia = fields.Integer(compute="sumaConcepto")
+    nombre_contrato = fields.Char()
+
+    @api.one
+    def sumaConcepto(self):
+        self.diferencia = 5
+#fin

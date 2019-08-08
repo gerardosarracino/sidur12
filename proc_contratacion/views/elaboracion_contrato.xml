@@ -2,7 +2,64 @@
   <data>
 
 
+   <!-- CONCEPTOS CATALOGO TREE-->
+    <record model="ir.ui.view" id="proceso_conceptos_model">
+      <field name="name">proceso.conceptos_model.tree</field>
+      <field name="model">proceso.conceptos_contratos</field>
+      <field name="arch" type="xml">
+        <tree >
+            <field name="conceptos_partidas" string="# Concepto de partidas"/>
+            <field name="name" string="# Contrato"/>
+            <field name="total" string="Total"/>
+            <field name="total_contrato" string="Total Contrato"/>
+            <field name="diferencia" string="Diferencia"/>
+        </tree>
+      </field>
+    </record>
+<!--CONCEPTOS CATALOGO FORM -->
+    <record id="proceso_conceptos_contratos" model="ir.ui.view">
+        <field name="name">proceso.conceptos_model.form</field>
+        <field name="model">proceso.conceptos_contratos</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                    <group>
+                        <group colspan="2" col="2">
+                            <group string="Catálogo de Niveles/Conceptos del Contrato:"></group>
+                            <group><field name="name" string="" class="o_light_label"/></group>
+                        </group>
 
+                        <group colspan="2" col="3">
+                            <group><field name="total" string="Total"/></group>
+                            <group> <field name="total_contrato" string="Total Contrato"/></group>
+                            <group><field name="diferencia" string="Diferencia" class="o_light_label"/></group>
+
+                            <!--<field name="nombre_contrato" string="Nombre del Contrato"/>-->
+                        </group>
+
+                        <field name="conceptos_partidas" string="# Concepto de partidas" >
+                            <tree editable="top">
+                                <control>
+                                    <create string="Agregar Categoria"/>
+                                </control>
+                                <field name="categoria" />
+                                <field name="concepto"/>
+                                <field name="grupo"/>
+                                <field name="medida"/>
+                                <field name="precio_unitario"/>
+                                <field name="cantidad"/>
+                                <field name="importe"/>
+                            </tree>
+                        </field>
+
+
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+      <!-- Ejemplo de grafico prueba -->
 <record model="ir.ui.view" id="view_grafica">
     <field name="name">grafica</field>
     <field name="model">proceso.elaboracion_contrato</field>
@@ -15,7 +72,7 @@
     </field>
     </record>
 
-    <!-- LICITACIONES -->
+    <!-- LICITACIONES  TREE-->
     <record model="ir.ui.view" id="proc_contratacion.elaboracion_contratos_tree">
       <field name="name">proceso.elaboracion_contrato.tree</field>
       <field name="model">proceso.elaboracion_contrato</field>
@@ -29,7 +86,7 @@
         </tree>
       </field>
     </record>
-
+    <!-- ELABORACION DE CONTRATO SEARCH-->
       <record model="ir.ui.view" id="proceso_contrato_search">
          <field name="name">elaboracion contrato</field>
          <field name="model">proceso.elaboracion_contrato</field>
@@ -67,8 +124,6 @@
                                   </group>
                               </page>
                           </notebook>
-
-
                       </group>
                   </sheet>
               </form>
@@ -84,6 +139,7 @@
         <field name="target">new</field>
     </record> -->
 
+    <!-- ELABORACION DE CONTRATO FORM-->
     <record model="ir.ui.view" id="proc_contratacion.elaboracion_contrato_form">
       <field name="name">proceso.elaboracion_contrato.form</field>
       <field name="model">proceso.elaboracion_contrato</field>
@@ -173,13 +229,12 @@
                         </group>
                     </page>
             </notebook>
-
-
           </sheet>
         </form>
       </field>
     </record>
 
+      <!-- ANTICIPO DE CONTRATOS SEARCH-->
 <record model="ir.ui.view" id="proceso_anticipo_contratos_search">
          <field name="name">anticipo contratos</field>
          <field name="model">proceso.anticipo_contratos</field>
@@ -201,6 +256,7 @@
          </field>
         </record>
 
+      <!-- ANTICIPO DE CONTRATOS TREE-->
 <record model="ir.ui.view" id="proc_contratacion.anticipo_tree">
       <field name="name">proceso.anticipo.tree</field>
       <field name="model">proceso.anticipo_contratos</field>
@@ -219,6 +275,7 @@
       </field>
     </record>
 
+      <!-- ANTICIPO DE CONTRATOS FORM-->
 <record model="ir.ui.view" id="proc_contratacion.anticipo_form">
       <field name="name">proceso.anticipo.form</field>
       <field name="model">proceso.anticipo_contratos</field>
@@ -290,6 +347,8 @@
     </record>
 
 
+
+
      <!-- ACCIONES PARA ELIMINAR EL BOTON DELETE DE SEGUIMIENTO DE CONTRATO -->
     <record id="partner_tree_no_delete" model="ir.ui.view">
         <field name="name">contrato.tree.no.delete</field>
@@ -314,15 +373,19 @@
         </field>
     </record>
 
-
-  <!-- ACTION DE LISTADO DETALLADO-->
-<act_window id="listado_detallado"
-    name="Listado Detallado"
+    <!-- ACTION DE CATALOGO-->
+<act_window id="Catalogo"
+    name="Catalogó"
     src_model="proceso.elaboracion_contrato"
-    res_model="proceso.elaboracion_contrato"
+    res_model="proceso.conceptos_contratos"
     view_type="form" view_mode="form"
-    key2="client_action_multi" target="new"
+    context="{'default_name': active_id}"
+    key2="client_action_multi" target="current"
     />
+
+
+
+
 
     <!-- ACCIONES VENTANA -->
     <record model="ir.actions.act_window" id="proc_contratacion.seguimiento_contrato_action_window">
