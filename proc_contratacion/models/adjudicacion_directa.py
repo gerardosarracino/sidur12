@@ -6,29 +6,29 @@ from odoo import models, fields, api
 class adjudicaciondirecta(models.Model):
     _name = "proceso.adjudicacion_directa"
 
+    #  HACER LOS FILTROS DE RELACION DE PROGRAMAS DE INVERSION CON OBRAS PROGRAMADAS(partidas)
     programas_inversion_adjudicacion = fields.Many2one('generales.programas_inversion', 'name')
+    # /// Partidas
+    programar_obra = fields.Many2many("proceso.adjudicacion_partidas", string="Partida(s):")
 
-    partidaimporte = fields.Float(string="Importe", required=True)
-    partidiva = fields.Float(string="Importe IVA", required=True, default="0.16")
-    partidatotal = fields.Float(string="Total", required=True, compute="sumaProgramas")
+    iva = fields.Float(string="I.V.A", default=0.16, required=True)
+    partidaimporte = fields.Float(string="Importe de Adjudicación:", required=True)
+    partidiva = fields.Float(string="Importe de I.V.A:", readonly=True)
+    partidatotal = fields.Float(string="Total Adjudicado:", readonly=True, compute="sumaProgramas")
 
     name = fields.Text(string="Descripción/Meta", required=True)
-
     numerocontrato = fields.Char(string="Numero Contrato", required=True)
     fechaadjudicacion = fields.Date(string="Fecha de Adjudicación", required=True)
     dictamen = fields.Char(string="Dictamen", required=True)
     select = [('1', 'Federal'), ('2', 'Estatal')]
     normatividad = fields.Selection(select, string="Normatividad", default="1", required=True)
     importeadjudicacion = fields.Float(string="Importe de Adjudicación", required=True)
-    iva = fields.Float(string="I.V.A", default="0.16", required=True)
-    importeiva = fields.Float(string="Importe de I.V.A", required=True)
-    totaladjudicado = fields.Float(string="Total Adjudicado", required=True)
+
     anticipoinicio = fields.Float(string="Anticipo Inicio %")
     anticipomaterial = fields.Float(string="Anticipo Material %")
     fechainicio = fields.Date(string="Fecha de Inicio", required=True)
     fechatermino = fields.Date(string="Fecha termino", required=True)
     plazodias = fields.Integer(string="Plazo/Días", required=True)
-
     contratista = fields.Many2many('contratista.contratista', string='Contratista')
 
     # Recursos
@@ -48,6 +48,7 @@ class adjudicaciondirecta(models.Model):
 
     total_recurso = fields.Float(string="Total", compute='sumaRecursos')
 
+    # Meotod de suma de los recursos
     @api.depends('recurso_federal', 'recurso_federal_indirecto', 'recurso_estatal', 'recurso_estatal_indirecto',
                  'recurso_municipal', 'recurso_municipal_indirecto', 'recurso_otros')
     def sumaRecursos(self):
@@ -58,9 +59,35 @@ class adjudicaciondirecta(models.Model):
                                   rec.recurso_otros)
             })
 
+    # MODIFICAR ESTE METODO CONFORME A monto_partida, iva_partida y total_partida de la clase AdjudicacionPartidas, igual a sideop
     @api.depends('partidaimporte', 'partidiva')
     def sumaProgramas(self):
         for rec in self:
             rec.update({
-                'partidatotal': (rec.partidaimporte * rec.partidiva)+rec.partidaimporte
+                'partidatotal': (rec.partidaimporte * rec.iva)+rec.partidaimporte
+            })
+
+
+class AdjudicacionPartidas(models.Model):
+    _name = 'proceso.adjudicacion_partidas'
+
+    obra = fields.Many2one('registro.programarobra')
+    monto_partida = fields.Float(string="Monto",  required=False, )
+    iva_partida = fields.Float(string="Iva",  required=False, compute="iva")
+    total_partida = fields.Float(string="Total",  required=False, compute="sumaPartidas")
+
+    # NOTA CAMBIAR DESPUES LOS VALORES DE IVA A PERSONALIZADOS NO FIJOS
+    # METODOS DE SUMA DEL MANY2MANY 'programar_obra'
+    @api.depends('monto_partida')
+    def sumaPartidas(self):
+        for rec in self:
+            rec.update({
+                'total_partida': (rec.monto_partida * 0.16) + rec.monto_partida
+            })
+
+    @api.depends('monto_partida')
+    def iva(self):
+        for rec in self:
+            rec.update({
+                'iva_partida': (rec.monto_partida * 0.16)
             })

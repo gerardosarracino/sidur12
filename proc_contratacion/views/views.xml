@@ -239,6 +239,15 @@
             <group>
               <group string="Seleccionar Obra" colspan="1" col="2">
                 <field name="programa_inversion" string="Programa de Inversión" />
+                <field name="obra" string="Partidas:" widget='one2many'>
+                    <tree editable="top">
+                        <control>
+                             <create string="Agregar Partida"/>
+                        </control>
+                        <field name="obra"/>
+                    </tree>
+                </field>
+
                 <field name="name"/>
                 <field name="estado_obra_desierta" widget="statinfo" invisible="1"/>
                 <field name="estado_obra_cancelar" widget="statinfo" invisible="1"/>
@@ -367,64 +376,8 @@
     <menuitem name="Registro de licitaciones" id="proc_contratacion.consulta_menu" parent="proc_contratacion.menu_root"
               action="proc_contratacion.licitacion_action_window" sequence="1"/>
 
-     <menuitem name="Consulta de licitaciones" id="proc_contratacion.licitacion_menu"
-     parent="proc_contratacion.menu_root" action="proc_contratacion.licitacion_action_window2" sequence="2"/>
+    <!-- <menuitem name="Consulta de licitaciones" id="proc_contratacion.licitacion_menu"
+     parent="proc_contratacion.menu_root" action="proc_contratacion.licitacion_action_window2" sequence="2"/>-->
 
-    <!-- explicit list view definition -->
-    <!--
-    <record model="ir.ui.view" id="proc_contratacion.list">
-      <field name="name">proc_contratacion list</field>
-      <field name="model">proc_contratacion.proc_contratacion</field>
-      <field name="arch" type="xml">
-        <tree>
-          <field name="name"/>
-          <field name="value"/>
-          <field name="value2"/>
-        </tree>
-      </field>
-    </record>
-    -->
-
-    <!-- actions opening views on models -->
-    <!--
-    <record model="ir.actions.act_window" id="proc_contratacion.action_window">
-      <field name="name">proc_contratacion window</field>
-      <field name="res_model">proc_contratacion.proc_contratacion</field>
-      <field name="view_mode">tree,form</field>
-    </record>
-    -->
-
-    <!-- server action to the one above -->
-    <!--
-    <record model="ir.actions.server" id="proc_contratacion.action_server">
-      <field name="name">proc_contratacion server</field>
-      <field name="model_id" ref="model_proc_contratacion_proc_contratacion"/>
-      <field name="state">code</field>
-      <field name="code">
-        action = {
-          "type": "ir.actions.act_window",
-          "view_mode": "tree,form",
-          "res_model": self._name,
-        }
-      </field>
-    </record>
-    -->
-
-    <!-- Top menu item -->
-    <!--
-    <menuitem name="proc_contratacion" id="proc_contratacion.menu_root"/>
-    -->
-    <!-- menu categories -->
-    <!--
-    <menuitem name="Menu 1" id="proc_contratacion.menu_1" parent="proc_contratacion.menu_root"/>
-    <menuitem name="Menu 2" id="proc_contratacion.menu_2" parent="proc_contratacion.menu_root"/>
-    -->
-    <!-- actions -->
-    <!--
-    <menuitem name="List" id="proc_contratacion.menu_1_list" parent="proc_contratacion.menu_1"
-              action="proc_contratacion.action_window"/>
-    <menuitem name="Server to list" id="proc_contratacion" parent="proc_contratacion.menu_2"
-              action="proc_contratacion.action_server"/>
-    -->
   </data>
 </odoo>

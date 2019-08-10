@@ -3,11 +3,13 @@
 from odoo import models, fields, api, exceptions
 from datetime import datetime
 
+
 class ejercicio(models.Model):
 	_name = "registro.ejercicio"
 
 	name = fields.Integer(string="Ejercicio", required=True)
 	#ejercicio = fields.One2many("registro.obra", "ejercicio")
+
 
 class unidadAdminSol(models.Model):
 	_name = "registro.unidadadminsol"
@@ -15,11 +17,13 @@ class unidadAdminSol(models.Model):
 	name = fields.Char(string="Descripción", required=True)
 	unidad = fields.One2many("registro.obra", "unidadadminsol")
 
+
 class tipoProyecto(models.Model):
 	_name = "registro.tipoproyecto"
 
 	name = fields.Char(string="Tipo de proyecto", required=True)
 	tipoproyecto = fields.One2many("registro.obra", "tipoproyecto")
+
 
 class tipoObraEtapa(models.Model):
 	_name = "registro.tipoobraetapa"
@@ -27,11 +31,13 @@ class tipoObraEtapa(models.Model):
 	name = fields.Char(string="Tipo de proyecto", required=True)
 	tipoobraetapa = fields.One2many("registro.obra", "tipoobraetapa")
 
+
 class tipoLocalidad(models.Model):
 	_name = "registro.tipolocalidad"
 
 	name = fields.Char(string="Tipo localidad", required=True)
 	tipolocalidad = fields.One2many("registro.obra", "tipolocalidad")
+
 
 class unidadMedida(models.Model):
 	_name = "registro.unidadm"
@@ -39,6 +45,7 @@ class unidadMedida(models.Model):
 	name = fields.Char(string="Unidad medida", required=True)
 	unidadm = fields.One2many("registro.obra", "metaProyectoUnidad")
 	unidadm1 = fields.One2many("registro.obra", "metaEjercicioUnidad")
+
 
 class registro_obra(models.Model):
 	_name = "registro.obra"
@@ -106,7 +113,8 @@ class registro_obra(models.Model):
 		'target': 'new',
 		}
 
-class ProyectoEjecutivo(models.TransientModel):
+
+class ProyectoEjecutivo(models.Model):
 	_name = 'registro.proyectoejecutivo'
 
 	name1 = fields.Many2one('generales.apartados_proyectos', required=True)
@@ -115,13 +123,15 @@ class ProyectoEjecutivo(models.TransientModel):
 	nombre = fields.Char(string="Nombre", required=True)
 	observaciones = fields.Text(string="Observaciones", required=True)
 
-class SeguimientoObra(models.TransientModel):
+
+class SeguimientoObra(models.Model):
 	_name = 'registro.seguimientoobra'
 
 	name = fields.Many2one('registro.obra', readonly=True)
 	seguimiento = fields.Html(string="Seguimiento", required=True)
-	
-class ProgramarObra(models.TransientModel):
+
+
+class ProgramarObra(models.Model):
 	_name = 'registro.programarobra'
 	
 	name = fields.Many2one('registro.obra', readonly=True)

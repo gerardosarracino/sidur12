@@ -3,6 +3,12 @@
 from odoo import models, fields, api
 
 
+class ProcesoPartidas(models.Model):
+    _name = 'proceso.partidas'
+
+    obra = fields.Many2one('registro.programarobra')
+
+
 class Licitacion(models.Model):
     _name = "proceso.licitacion"
     _rec_name = 'numerolicitacion'
@@ -10,6 +16,8 @@ class Licitacion(models.Model):
     licitacion_id = fields.Char(compute="nombre", store=True)
 
     programa_inversion = fields.Many2one('generales.programas_inversion', 'name')
+    obra = fields.Many2many('proceso.partidas')
+
     name = fields.Text(string="Objeto De La Licitación", required=True)
     select = [('1', 'Licitación publica'), ('2', 'Licitación simplificada/Por invitación')]
     tipolicitacion = fields.Selection(select, string="Tipo de Licitación", default="1", required=True)

@@ -1,7 +1,5 @@
 <odoo>
   <data>
-
-
    <!-- CONCEPTOS CATALOGO TREE-->
     <record model="ir.ui.view" id="proceso_conceptos_model">
       <field name="name">proceso.conceptos_model.tree</field>
@@ -16,6 +14,7 @@
         </tree>
       </field>
     </record>
+
 <!--CONCEPTOS CATALOGO FORM -->
     <record id="proceso_conceptos_contratos" model="ir.ui.view">
         <field name="name">proceso.conceptos_model.form</field>
@@ -37,10 +36,10 @@
                             <!--<field name="nombre_contrato" string="Nombre del Contrato"/>-->
                         </group>
 
-                        <field name="conceptos_partidas" string="# Concepto de partidas" >
+                        <field name="conceptos_partidas" string="# Concepto de partidas" widget='one2many'>
                             <tree editable="top">
                                 <control>
-                                    <create string="Agregar Categoria"/>
+                                    <create string="Agregar Nivel"/>
                                 </control>
                                 <field name="categoria" />
                                 <field name="concepto"/>
@@ -51,8 +50,6 @@
                                 <field name="importe"/>
                             </tree>
                         </field>
-
-
                     </group>
                 </sheet>
             </form>
@@ -101,44 +98,6 @@
          </field>
         </record>
 
-        <!--
-      <record id="seleccion_form" model="ir.ui.view">
-          <field name="name">seleccion_form</field>
-          <field name="model">proceso.elaboracion_contrato</field>
-          <field name="arch" type="xml">
-              <form string="">
-                  <sheet>
-                      <group>
-                          <notebook>
-                              <page string="Licitación">
-                                  <group>
-                                      <field name="obra" string="Seleccionar Licitacion" attrs="{'readonly': [('adjudicacion','!=', False)]}" />
-                                  </group>
-                              </page>
-                          </notebook>
-
-                          <notebook>
-                              <page string="Adjudicación Directa">
-                                  <group>
-                                      <field name="adjudicacion" string="Seleccionar Adjudicacion Directa" attrs="{'readonly': [('obra','!=', False)]}"/>
-                                  </group>
-                              </page>
-                          </notebook>
-                      </group>
-                  </sheet>
-              </form>
-          </field>
-      </record>
-
-    <record model="ir.actions.act_window" id="action_seleccion">
-        <field name="name">Seleccion</field>
-        <field name="res_model">proceso.elaboracion_contrato</field>
-        <field name="view_type">form</field>
-        <field name="view_ids" eval="[(5, 0, 0),
-        (0, 0, {'view_mode': 'form', 'view_id': ref('seleccion_form')})]"/>
-        <field name="target">new</field>
-    </record> -->
-
     <!-- ELABORACION DE CONTRATO FORM-->
     <record model="ir.ui.view" id="proc_contratacion.elaboracion_contrato_form">
       <field name="name">proceso.elaboracion_contrato.form</field>
@@ -147,33 +106,25 @@
         <form>
           <sheet>
               <div class="oe_button_box oe_read_only" name="button_box">
-                     <!--<button name='finiquitarContrato'  type='object' class='btn-primary' icon="fa-clock-o"
-                              string="Finiquitar Contrato Anticipadamente"></button> -->
                     <button class="oe_stat_button" type="object" name="finiquitarContrato" context="{
                        'search_default_contrato': active_id,
                        'default_contrato': active_id
                        }" icon="fa-clock-o" string=' FiniquitarContratoAnticipadamente'>
                      </button>
-                     <!-- <button name='conveniosModificados'  type='object' class='btn-primary' icon="fa-pencil-square-o"
-                              string="Convenios Modificados"></button> -->
                      <button class="oe_stat_button" type="object" name="conveniosModificados" context="{
                        'search_default_contrato': active_id,
                        'default_contrato': active_id
                        }" icon="fa-pencil-square-o" string='Convenios Modificados' >
                      </button>
-
                 </div>
-
             <notebook colspan="1" col="2">
-
                     <page string="Datos Generales" icon="fa-bitbucket">
                          <group colspan="1" col="2">
                              <group string="Contrato Datos Generales" colspan="1" col="2">
-
                                 <field name="obra" string="Seleccionar Licitacion" attrs="{'readonly': [('adjudicacion','!=', False)]}" />
                                 <field name="adjudicacion" string="Seleccionar Adjudicacion Directa" attrs="{'readonly': [('obra','!=', False)]}"/>
 
-                                <hr/>
+                                 <hr/>
 
                                 <field name="fecha" class="oe_inline"/>
                                 <field name="contrato"/>
@@ -303,9 +254,6 @@
       </field>
 </record>
 
-
-
-
     <!-- ACCIONES VENTANA -->
     <record model="ir.actions.act_window" id="proc_contratacion.elaboracion_contrato_action_window">
       <field name="name">Contratos</field>
@@ -313,8 +261,6 @@
       <field name="res_model">proceso.elaboracion_contrato</field>
       <field name="view_mode">tree,form</field>
     </record>
-
-
 
     <!-- SEGUIMIENTO DE CONTRATOS -->
     <record model="ir.ui.view" id="proc_contratacion.elaboracion_contrato_2">
@@ -345,9 +291,6 @@
         </tree>
       </field>
     </record>
-
-
-
 
      <!-- ACCIONES PARA ELIMINAR EL BOTON DELETE DE SEGUIMIENTO DE CONTRATO -->
     <record id="partner_tree_no_delete" model="ir.ui.view">
@@ -383,18 +326,14 @@
     key2="client_action_multi" target="current"
     />
 
-
-
-
-
     <!-- ACCIONES VENTANA -->
-    <record model="ir.actions.act_window" id="proc_contratacion.seguimiento_contrato_action_window">
+    <!--<record model="ir.actions.act_window" id="proc_contratacion.seguimiento_contrato_action_window">
       <field name="name">Seguimiento de Contratos</field>
       <field name="type">ir.actions.act_window</field>
       <field name="res_model">proceso.elaboracion_contrato</field>
       <field name="view_id" ref="proc_contratacion.elaboracion_contrato_2"/>
       <field name="view_mode">tree,form,graph</field>
-    </record>
+    </record>-->
 
   <!-- ACCIONES VENTANA -->
     <record model="ir.actions.act_window" id="proc_contratacion.concepto_contratados_action_window">
@@ -410,12 +349,12 @@
                 parent="proc_contratacion.menu_root" action="proc_contratacion.elaboracion_contrato_action_window" sequence="4"/>
 
     <!-- MENUS -->
-      <menuitem name="Seguimiento de contratos" id="proc_contratacion.seguimiento_contratos"
-                parent="proc_contratacion.menu_root" action="proc_contratacion.seguimiento_contrato_action_window" sequence="5"/>
+      <!--<menuitem name="Seguimiento de contratos" id="proc_contratacion.seguimiento_contratos"
+                parent="proc_contratacion.menu_root" action="proc_contratacion.seguimiento_contrato_action_window" sequence="5"/>-->
 
     <!-- MENUS -->
       <menuitem name="Conceptos Contratados" id="proc_contratacion.conceptos_contratados"
-                parent="proc_contratacion.menu_root" action="proc_contratacion.concepto_contratados_action_window" sequence="6"/>
+                parent="proc_contratacion.menu_root" action="proc_contratacion.concepto_contratados_action_window" sequence="5"/>
 
 </data>
 </odoo>
