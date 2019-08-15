@@ -14,6 +14,8 @@ access_proceso_categoria,proceso.categoria,model_proceso_categoria,,1,1,1,1
 access_proceso_concepto,proceso.concepto,model_proceso_concepto,,1,1,1,1
 access_proceso_grupo,proceso.grupo,model_proceso_grupo,,1,1,1,1
 access_proceso_medida,proceso.medida,model_proceso_medida,,1,1,1,1
+access_proceso_adjudicacion_partidas,proceso.adjudicacion_partidas,model_proceso_adjudicacion_partidas,,1,1,1,1
+access_proceso_contrato_partidas,proceso.contrato_partidas,model_proceso_contrato_partidas,,1,1,1,1
 
 
 

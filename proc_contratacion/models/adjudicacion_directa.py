@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+from odoo import api, fields, models, exceptions
 
 
-class adjudicaciondirecta(models.Model):
+class AdjudicacionDirecta(models.Model):
     _name = "proceso.adjudicacion_directa"
 
     #  HACER LOS FILTROS DE RELACION DE PROGRAMAS DE INVERSION CON OBRAS PROGRAMADAS(partidas)
@@ -12,9 +12,11 @@ class adjudicaciondirecta(models.Model):
     programar_obra = fields.Many2many("proceso.adjudicacion_partidas", string="Partida(s):")
 
     iva = fields.Float(string="I.V.A", default=0.16, required=True)
-    partidaimporte = fields.Float(string="Importe de Adjudicación:", required=True)
-    partidiva = fields.Float(string="Importe de I.V.A:", readonly=True)
-    partidatotal = fields.Float(string="Total Adjudicado:", readonly=True, compute="sumaProgramas")
+
+    # partidaimporte = fields.Float(string="Importe de Adjudicación:", readonly=True, compute="ejemplo")
+    #
+    # partidiva = fields.Float(string="Importe de I.V.A:", readonly=True, compute='sumaAdjudicacion')
+    # partidatotal = fields.Float(string="Total Adjudicado:", readonly=True, compute="sumaProgramas")
 
     name = fields.Text(string="Descripción/Meta", required=True)
     numerocontrato = fields.Char(string="Numero Contrato", required=True)
@@ -22,12 +24,14 @@ class adjudicaciondirecta(models.Model):
     dictamen = fields.Char(string="Dictamen", required=True)
     select = [('1', 'Federal'), ('2', 'Estatal')]
     normatividad = fields.Selection(select, string="Normatividad", default="1", required=True)
-    importeadjudicacion = fields.Float(string="Importe de Adjudicación", required=True)
 
     anticipoinicio = fields.Float(string="Anticipo Inicio %")
     anticipomaterial = fields.Float(string="Anticipo Material %")
-    fechainicio = fields.Date(string="Fecha de Inicio", required=True)
-    fechatermino = fields.Date(string="Fecha termino", required=True)
+
+    fechainicio = fields.Date(string="Fecha de Inicio", required=True, default=fields.Date.today())
+
+    fechatermino = fields.Date(string="Fecha termino", required=True, )
+
     plazodias = fields.Integer(string="Plazo/Días", required=True)
     contratista = fields.Many2many('contratista.contratista', string='Contratista')
 
@@ -47,6 +51,15 @@ class adjudicaciondirecta(models.Model):
     recurso_otros = fields.Float(string="Otros")
 
     total_recurso = fields.Float(string="Total", compute='sumaRecursos')
+
+    @api.onchange('fechatermino')
+    @api.depends('fechatermino', 'fechainicio')
+    def onchange_date(self):
+        if str(self.fechatermino) < str(self.fechainicio):
+            raise exceptions.Warning('No se puede seleccionar una Fecha anterior a la actual, '
+                                     'por favor seleccione una fecha actual o posterior')
+        else:
+            return False
 
     # Meotod de suma de los recursos
     @api.depends('recurso_federal', 'recurso_federal_indirecto', 'recurso_estatal', 'recurso_estatal_indirecto',
@@ -70,14 +83,17 @@ class adjudicaciondirecta(models.Model):
 
 class AdjudicacionPartidas(models.Model):
     _name = 'proceso.adjudicacion_partidas'
+    _rec_name = "obra"
 
     obra = fields.Many2one('registro.programarobra')
+    programaInversion = fields.Many2one('generales.programas_inversion', related="obra.programaInversion")
     monto_partida = fields.Float(string="Monto",  required=False, )
     iva_partida = fields.Float(string="Iva",  required=False, compute="iva")
     total_partida = fields.Float(string="Total",  required=False, compute="sumaPartidas")
 
     # NOTA CAMBIAR DESPUES LOS VALORES DE IVA A PERSONALIZADOS NO FIJOS
     # METODOS DE SUMA DEL MANY2MANY 'programar_obra'
+
     @api.depends('monto_partida')
     def sumaPartidas(self):
         for rec in self:

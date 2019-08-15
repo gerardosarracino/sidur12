@@ -62,10 +62,17 @@ class Licitacion(models.Model):
 
     variable_count = fields.Integer(compute='contar')
 
+    cuadro = fields.Integer(compute='contar2')
+
     @api.one
     def contar(self):
         count = self.env['proceso.participante'].search_count([('numerolicitacion', '=', self.id)])
         self.variable_count = count
+
+    @api.one
+    def contar2(self):
+        count = self.env['proceso.participante'].search_count([('numerolicitacion', '=', self.id)])
+        self.cuadro = count
 
     @api.one
     def estadoObraDesierta(self):

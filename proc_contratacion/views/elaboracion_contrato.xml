@@ -19,17 +19,19 @@
     <record id="proceso_conceptos_contratos" model="ir.ui.view">
         <field name="name">proceso.conceptos_model.form</field>
         <field name="model">proceso.conceptos_contratos</field>
+        <field name="context">{'default_name': active_id}</field>
         <field name="arch" type="xml">
             <form string="">
                 <sheet>
                     <group>
+
                         <group colspan="2" col="2">
                             <group string="Catálogo de Niveles/Conceptos del Contrato:"></group>
                             <group><field name="name" string="" class="o_light_label"/></group>
                         </group>
 
-                        <group colspan="2" col="3">
-                            <group><field name="total" string="Total"/></group>
+                        <group colspan="2" col="3" style="font-size: 18px; color: #C81717">
+                            <group><field name="total" string="Total" /></group>
                             <group> <field name="total_contrato" string="Total Contrato"/></group>
                             <group><field name="diferencia" string="Diferencia" class="o_light_label"/></group>
 
@@ -50,23 +52,15 @@
                                 <field name="importe"/>
                             </tree>
                         </field>
+
+                        <group>
+                            <field name="tabla"/>
+                        </group>
+
                     </group>
                 </sheet>
             </form>
         </field>
-    </record>
-
-      <!-- Ejemplo de grafico prueba -->
-<record model="ir.ui.view" id="view_grafica">
-    <field name="name">grafica</field>
-    <field name="model">proceso.elaboracion_contrato</field>
-    <field name="arch" type="xml">
-        <graph string="Sales Orders">
-            <field name="contrato"/>
-            <field name="fecha" interval="day" />
-            <field name="total" type="measure"/>
-        </graph>
-    </field>
     </record>
 
     <!-- LICITACIONES  TREE-->
@@ -121,12 +115,23 @@
                     <page string="Datos Generales" icon="fa-bitbucket">
                          <group colspan="1" col="2">
                              <group string="Contrato Datos Generales" colspan="1" col="2">
-                                <field name="obra" string="Seleccionar Licitacion" attrs="{'readonly': [('adjudicacion','!=', False)]}" />
-                                <field name="adjudicacion" string="Seleccionar Adjudicacion Directa" attrs="{'readonly': [('obra','!=', False)]}"/>
+                              <!--  <field name="obra" string="Seleccionar Licitacion" attrs="{'readonly': [('adjudicacion','!=', False)]}" />-->
+                                <field name="adjudicacion" />
 
-                                 <hr/>
+                                 <field name="contrato_partida" widget='one2many'>
+                                    <tree >
+                                        <field name="name" />
+                                        <field name="programaInversion" />
+                                        <field name="monto_partida" sum="Monto" widget="monetary"/>
+                                        <field name="iva_partida" readonly="True" sum="I.V.A" widget="monetary"/>
+                                        <field name="total_partida" readonly="True" sum="Total" widget="monetary"/>
+                                </tree>
+                                </field>
 
                                 <field name="fecha" class="oe_inline"/>
+
+
+
                                 <field name="contrato"/>
                                 <field name="name"/>
                                 <field name="descripciontrabajos"/>
@@ -135,7 +140,8 @@
                                 <field name="supervisionexterna1"/>
                              </group>
 
-                             <group colspan="1" col="2" attrs="{'invisible': [('obra' and 'adjudicacion', '=', False)]}">
+                             <!-- attrs="{'invisible': [('obra' and 'adjudicacion', '=', False)]}" -->
+                             <group colspan="1" col="2" >
                                  <field name="importe_contrato"/>
                                  <field name="iva_contrato"/>
                                  <field name="portentaje_iva_contrato"/>
@@ -322,7 +328,16 @@
     src_model="proceso.elaboracion_contrato"
     res_model="proceso.conceptos_contratos"
     view_type="form" view_mode="form"
+    multi="False"
     context="{'default_name': active_id}"
+    key2="client_action_multi" target="current"
+    />
+
+<act_window id="Catalogos"
+    name="Ver Catalogós"
+    src_model="proceso.elaboracion_contrato"
+    res_model="proceso.conceptos_contratos"
+    view_type="form" view_mode="tree,form"
     key2="client_action_multi" target="current"
     />
 

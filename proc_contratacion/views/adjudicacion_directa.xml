@@ -8,10 +8,21 @@
         <tree>
           <field name="numerocontrato"/>
           <field name="name"/>
-          <field name="importeadjudicacion"/>
           <field name="normatividad"/>
         </tree>
       </field>
+    </record>
+
+      <!-- ACCION DE CONTRATOS DENTRO DE ADUJUDICACION-->
+   <record model="ir.actions.act_window" id="action_contrato">
+        <field name="name">Elaboracion Contrato</field>
+        <field name="res_model">proceso.elaboracion_contrato</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="context">{'default_adjudicacion': active_id}</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('proc_contratacion.elaboracion_contrato_form')})]"/>
+        <field name="target">new</field>
     </record>
 
     <record model="ir.ui.view" id="proc_contratacion.adjudicacion_directa_form">
@@ -20,6 +31,15 @@
       <field name="arch" type="xml">
         <form>
           <sheet>
+
+              <!-- BOTON HACIA CONTRATOS -->
+           <div class="oe_button_box oe_read_only" name="button_box">
+
+                  <button class="oe_stat_button" type="action" name="%(action_contrato)d"  icon="fa-clipboard"
+                          string="Crear Contrato">
+                     </button>
+              </div>
+
             <notebook colspan="4">
 
                     <page string="Adjudicación Directa">
@@ -28,22 +48,24 @@
                             <!-- PROGRAMAS DE INVERSION -->
                             <field name="programas_inversion_adjudicacion" string="Programa de inversión"/>
                             <!-- PARTIDAS -->
-                            <field name="programar_obra" widget='one2many'>
+
+                            <field name="programar_obra" widget='one2many' >
                                 <tree editable="top">
                                     <control>
                                          <create string="Agregar Partida"/>
                                     </control>
-                                        <field name="obra" />
-                                        <field name="monto_partida"/>
-                                        <field name="iva_partida" readonly="True"/>
-                                        <field name="total_partida" readonly="True"/>
+                                        <field name="obra" domain="[('programaInversion.id', '=', parent.programas_inversion_adjudicacion)]"/>
+                                        <field name="programaInversion" />
+                                        <field name="monto_partida" sum="Monto" widget="monetary"/>
+                                        <field name="iva_partida" readonly="True" sum="I.V.A" widget="monetary"/>
+                                        <field name="total_partida" readonly="True" sum="Total" widget="monetary"/>
                                 </tree>
                             </field>
 
                             <field name="iva"/>
-                            <field name="partidaimporte"/>
+                            <!--<field name="partidaimporte"/>
                             <field name="partidiva"/>
-                            <field name="partidatotal"/>
+                            <field name="partidatotal"/>-->
                             <field name="name"/>
                           </group>
                           <group colspan="1" col="2">
@@ -57,8 +79,8 @@
 
                             <field name="anticipoinicio"/>
                             <field name="anticipomaterial"/>
-                            <field name="fechainicio"/>
-                            <field name="fechatermino"/>
+                            <field name="fechainicio" />
+                            <field name="fechatermino" />
                             <field name="plazodias"/>
                           </group>
 
@@ -117,8 +139,19 @@
       <field name="view_mode">tree,form</field>
     </record>
 
+       <!-- ACCIONES VENTANA -->
+   <!-- <record model="ir.actions.act_window" id="prueba01">
+      <field name="name">ver datos</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">proceso.adjudicacion_partidas</field>
+      <field name="view_mode">tree,form</field>
+    </record> -->
+
     <!-- MENUS -->
       <menuitem name="Adjudicación directa" id="proc_contratacion.adjudicacion_directa_menu"
                 parent="proc_contratacion.menu_root" action="proc_contratacion.adjudicacion_directa_action_window" sequence="3"/>
+
+     <!-- <menuitem name="Ver" id="proc_contratacion.adjudicacion_directa_menu"
+                parent="proc_contratacion.menu_root" action="prueba01" sequence="0"/>-->
   </data>
 </odoo>
