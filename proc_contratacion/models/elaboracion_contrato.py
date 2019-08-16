@@ -8,10 +8,11 @@ class ElaboracionContratos(models.Model):
     _rec_name = 'contrato'
 
     contrato_partida = fields.Many2many('proceso.contrato_partidas')
+
     contrato_id = fields.Char(compute="nombre", store=True)
     obra = fields.Many2one('proceso.licitacion', string="Seleccionar obra")
 
-    adjudicacion = fields.Many2one('proceso.adjudicacion_directa', string="Nombre de Adjudicacion", readonly=True)
+    adjudicacion = fields.Many2one('proceso.adjudicacion_directa', string="Nombre de Adjudicacion")
 
     fecha = fields.Date(string="Fecha", required=True)
     contrato = fields.Char(string="Contrato")
@@ -36,6 +37,9 @@ class ElaboracionContratos(models.Model):
     select = [('1', 'Diario'), ('2', 'Mensual'), ('3', 'Ninguno')]
     periodicidadretencion = fields.Selection(select, string="Periodicidad Retención", required=True, default="3")
     retencion = fields.Float(string="% Retencion")
+
+    new_field_ids = fields.Many2many(comodel_name="proceso.anticipo_contratos")
+
     # FALTA HACER LOS CAMPOS DE LA TABLA EN MODO EDITAR, CLAVE PRESUPUESTAL, RECURSOS AUTORIZADOS ETC...
     # RELACION CON REGISTRO DE OBRAS Y/0 OBRAS AUTORIZADAS
     # Fianzas
@@ -107,6 +111,29 @@ class ElaboracionContratos(models.Model):
             'view_type': 'form',
             'target': 'new',
         }
+
+
+class AnticipoContratos(models.Model):
+    _name = "proceso.anticipo_contratos"
+
+    contrato = fields.Many2one('proceso.elaboracion_contrato', string='Numero Contrato:', readonly=True )
+
+    contrato_id = fields.Char(compute="nombre", store=True)
+    fecha_anticipo = fields.Date(string="Fecha Anticipo")
+    porcentaje_anticipo = fields.Float(string="Anticipo Inicio")
+    total_anticipo_porcentaje = fields.Float(string="Total Anticipo")
+    anticipo_material = fields.Float(string="Anticipo Material")
+    importe = fields.Float(string="Importe Contratado")
+    anticipo = fields.Integer(string="Anticipo")
+    iva = fields.Float(string="I.V.A")
+    total_anticipo = fields.Integer(string="Total Anticipo")
+    numero_fianza = fields.Float(string="# Fianza")
+    afianzadora = fields.Char(string="Afianzadora")
+    fecha_fianza = fields.Date(string="Fecha Fianza")
+
+    @api.one
+    def nombre(self):
+        self.contrato_id = self.id
 
 
 # MODELO DE PARTIDAS
@@ -213,29 +240,6 @@ class FiniquitarContratoAnticipadamente(models.Model):
     observaciones = fields.Text(string="Observaciones:")
 
 
-class AnticipoContratos(models.Model):
-    _name = "proceso.anticipo_contratos"
-
-    contrato_id = fields.Char(compute="nombre", store=True)
-    contrato = fields.Many2one('proceso.elaboracion_contrato', string='Numero Contrato:', readonly=True)
-
-    fecha_anticipo = fields.Date(string="Fecha Anticipo")
-    porcentaje_anticipo = fields.Float(string="Anticipo Inicio")
-    total_anticipo_porcentaje = fields.Float(string="Total Anticipo")
-    anticipo_material = fields.Float(string="Anticipo Material")
-    importe = fields.Float(string="Importe Contratado")
-    anticipo = fields.Integer(string="Anticipo")
-    iva = fields.Float(string="I.V.A")
-    total_anticipo = fields.Integer(string="Total Anticipo")
-    numero_fianza = fields.Float(string="# Fianza")
-    afianzadora = fields.Char(string="Afianzadora")
-    fecha_fianza = fields.Date(string="Fecha Fianza")
-
-    @api.one
-    def nombre(self):
-        self.contrato_id = self.id
-
-
 class categoria(models.Model):
     _name = "proceso.categoria"
     name = fields.Char()
@@ -264,9 +268,16 @@ class conceptos_partidas(models.Model):
     concepto = fields.Many2one('proceso.concepto')
     grupo = fields.Many2one('proceso.grupo')
     medida = fields.Many2one('proceso.medida')
-    precio_unitario = fields.Integer()
+    precio_unitario = fields.Float()
     cantidad = fields.Integer()
-    importe = fields.Integer()
+    importe = fields.Float(compute="sumaCantidad")
+
+    @api.depends('precio_unitario', 'cantidad')
+    def sumaCantidad(self):
+        for rec in self:
+            rec.update({
+                'importe': rec.cantidad * rec.precio_unitario
+            })
 
 
 #La vista sera de aqui
@@ -275,11 +286,16 @@ class conceptos_model(models.Model):
 
     conceptos_partidas = fields.Many2many('proceso.conceptos_part')
     name = fields.Many2one('proceso.elaboracion_contrato', readonly=True)
-    total = fields.Integer(readonly=True)
-    total_contrato = fields.Integer(readonly=True)
-    diferencia = fields.Integer(compute="sumaConcepto")
+    total = fields.Float(string="Monto Total del Contrato:", readonly=True)
+    total_contrato = fields.Float(string="Monto Total del Catalogo:", readonly=True, compute="xd")
+    diferencia = fields.Float(string="Diferencia:", compute="sumaConcepto")
     nombre_contrato = fields.Char()
     tabla = fields.Many2many("proceso.convenios_modificado", string="Tabla de Convenios Modificatorios", readonly=True)
+
+    @api.one
+    def xd(self):
+        xd = self.env['proceso.conceptos_part'].sumaCantidad()
+        return xd
 
     @api.one
     def sumaConcepto(self):

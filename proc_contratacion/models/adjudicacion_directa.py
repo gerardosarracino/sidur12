@@ -72,14 +72,6 @@ class AdjudicacionDirecta(models.Model):
                                   rec.recurso_otros)
             })
 
-    # MODIFICAR ESTE METODO CONFORME A monto_partida, iva_partida y total_partida de la clase AdjudicacionPartidas, igual a sideop
-    @api.depends('partidaimporte', 'partidiva')
-    def sumaProgramas(self):
-        for rec in self:
-            rec.update({
-                'partidatotal': (rec.partidaimporte * rec.iva)+rec.partidaimporte
-            })
-
 
 class AdjudicacionPartidas(models.Model):
     _name = 'proceso.adjudicacion_partidas'
@@ -90,6 +82,7 @@ class AdjudicacionPartidas(models.Model):
     monto_partida = fields.Float(string="Monto",  required=False, )
     iva_partida = fields.Float(string="Iva",  required=False, compute="iva")
     total_partida = fields.Float(string="Total",  required=False, compute="sumaPartidas")
+
 
     # NOTA CAMBIAR DESPUES LOS VALORES DE IVA A PERSONALIZADOS NO FIJOS
     # METODOS DE SUMA DEL MANY2MANY 'programar_obra'
