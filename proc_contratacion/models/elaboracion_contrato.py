@@ -15,7 +15,9 @@ class ElaboracionContratos(models.Model):
     adjudicacion = fields.Many2one('proceso.adjudicacion_directa', string="Nombre de Adjudicacion")
 
     fecha = fields.Date(string="Fecha", required=True)
+
     contrato = fields.Char(string="Contrato")
+
     name = fields.Text(string="Descripción/Meta", required=True)
     descripciontrabajos = fields.Text(string="Descripción trabajos:", required=True)
     unidadresponsableejecucion = fields.Char(string="Unidad responsable de su ejecución", required=True)
@@ -53,17 +55,14 @@ class ElaboracionContratos(models.Model):
     # Deducciones
     deducciones = fields.Many2many("generales.deducciones", string="Deducciones")
 
- # METODO FALLIDO
-    # @api.model
-    # def create(self, values, vals):
-    #     # values['contrato'] = "hola mundo"
-    #     # adirecta_id = self.env['proceso.adjudicacion_directa'].browse('adjudicacion')
-    #     monto_partida = {'monto_partida': 34.3}
-    #     values['contrato_partida'] = {
-    #         ['monto_partida']
-    #     }
-    #     id_contrato = super(ElaboracionContratos, self).create(values)
-    #     return id_contrato
+    @api.multi
+    @api.onchange('adjudicacion')  # if these fields are changed, call method
+    def check_change(self):
+        # adirecta_id = self.env['proceso.adjudicacion_directa'].browse('adjudicacion')
+        ids = [1]
+        self.update({
+            'contrato_partida': [[0, 0, {'monto_partida': 0.0}]]
+        })
 
     @api.one
     def nombre(self):
@@ -116,7 +115,7 @@ class ElaboracionContratos(models.Model):
 class AnticipoContratos(models.Model):
     _name = "proceso.anticipo_contratos"
 
-    contrato = fields.Many2one('proceso.elaboracion_contrato', string='Numero Contrato:', readonly=True )
+    contrato = fields.Many2one('proceso.elaboracion_contrato', string='Numero Contrato:', readonly=True)
 
     contrato_id = fields.Char(compute="nombre", store=True)
     fecha_anticipo = fields.Date(string="Fecha Anticipo")
@@ -270,7 +269,10 @@ class conceptos_partidas(models.Model):
     medida = fields.Many2one('proceso.medida')
     precio_unitario = fields.Float()
     cantidad = fields.Integer()
+
     importe = fields.Float(compute="sumaCantidad")
+
+    # importe2 = fields.Float(compute="xd")
 
     @api.depends('precio_unitario', 'cantidad')
     def sumaCantidad(self):
@@ -279,27 +281,58 @@ class conceptos_partidas(models.Model):
                 'importe': rec.cantidad * rec.precio_unitario
             })
 
-
-#La vista sera de aqui
-class conceptos_model(models.Model):
-    _name = "proceso.conceptos_contratos"
-
-    conceptos_partidas = fields.Many2many('proceso.conceptos_part')
-    name = fields.Many2one('proceso.elaboracion_contrato', readonly=True)
-    total = fields.Float(string="Monto Total del Contrato:", readonly=True)
-    total_contrato = fields.Float(string="Monto Total del Catalogo:", readonly=True, compute="xd")
-    diferencia = fields.Float(string="Diferencia:", compute="sumaConcepto")
-    nombre_contrato = fields.Char()
-    tabla = fields.Many2many("proceso.convenios_modificado", string="Tabla de Convenios Modificatorios", readonly=True)
-
-    @api.one
-    def xd(self):
-        xd = self.env['proceso.conceptos_part'].sumaCantidad()
-        return xd
-
-    @api.one
-    def sumaConcepto(self):
-        self.diferencia = 5
-#fin
-
-
+# La vista sera de aqui
+# class conceptos_model(models.Model):
+#     _name = "proceso.conceptos_contratos"
+#
+#     contrato_partida = fields.Many2many('proceso.contrato_partidas')
+#     conceptos_partidas = fields.Many2many('proceso.conceptos_part')
+#     name = fields.Many2one('proceso.elaboracion_contrato', readonly=True)
+#     total = fields.Float(string="Monto Total del Contrato:", readonly=True)
+#     total_contrato = fields.Float(string="Monto Total del Catalogo:", readonly=True, compute="xd")
+#     diferencia = fields.Float(string="Diferencia:", compute="sumaConcepto")
+#     nombre_contrato = fields.Char()
+#
+#     # tabla = fields.Many2many("proceso.convenios_modificado", string="Tabla de Convenios Modificatorios", readonly=True)
+#     # x = fields.Float(related="conceptos_partidas.importe2")
+#
+#     @api.multi
+#     @api.onchange('name') # if these fields are changed, call method
+#     def check_change(self):
+#         # adirecta_id = self.env['proceso.adjudicacion_directa'].browse('adjudicacion')
+#         ids = [1]
+#         self.update({
+#             'contrato_partida': [[0, 0, {'monto_partida': 0.0}]]
+#         })
+#
+#     @api.depends('importe')
+#     def xd(self):
+#         acum = 0
+#         # for i in self.env['proceso.conceptos_part'].sudo().search([('importe', 'in', self.ids)]):
+#         for i in self.importe:
+#             imp = i.importe
+#             acum = acum + imp
+#             i.update({
+#                     'importe2': self.importe2 + imp
+#                 })
+#
+#     @api.multi
+#     def xd(self):
+#         ids = self.env['proceso.conceptos_part'].search([('importe', '=', self.id)])
+#         # r = self.env['proceso.elaboracion_contrato'].sudo().search([('adjudicacion', '=', self.id)])
+#         suma = 0
+#         for i in ids:
+#             # imp = i.importe
+#             resultado = self.env['proceso.conceptos_part'].browse(i.id).importe
+#             suma = suma + resultado
+#             self.total_contrato = suma
+#
+#     @api.onchange('x')
+#     def xd(self):
+#         r = self.x
+#         self.total_contrato = r
+#
+#     @api.one
+#     def sumaConcepto(self):
+#         self.diferencia = 5
+# fin

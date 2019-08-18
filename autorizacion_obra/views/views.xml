@@ -1,13 +1,14 @@
 <odoo>
   <data>
+      <record model="ir.actions.act_window" id="autorizacion_obra.anexo_taction">
+        <field name="name">Anexo técnico del oficio</field>
+        <field name="res_model">autorizacion_obra.aut</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
     <record model="ir.actions.act_window" id="autorizacion_obra.action">
         <field name="name">Oficio de autorización</field>
         <field name="res_model">autorizacion_obra.oficios_autorizacion</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-      <record model="ir.actions.act_window" id="autorizacion_obra.anexo_taction">
-        <field name="name">Anexo técnico del oficio</field>
-        <field name="res_model">autorizacion_obra.at</field>
         <field name="view_mode">tree,form</field>
     </record>
 
@@ -15,18 +16,18 @@
     <field name="name">Oficio de autorización</field>
     <field name="model">autorizacion_obra.oficios_autorizacion</field>
     <field name="arch" type="xml">
-      <tree>
+      <tree  decoration-success="importe,'==', total_at"   decoration-danger="total_at &gt; importe">
           <field name="numero_de_oficio"/>
           <field name="fecha_actual"/>
           <field name="fecha_de_recibido"/>
           <field name="fecha_de_vencimiento"/>
           <field name="variable_count" string='Número de Anexos técnicos'/>
-          <field name="importe"/>
-          
+          <field name="importe" string='Importe'/>
+          <field name="total_at"/>
       </tree>
      </field>
     </record>
-
+   
     <record model="ir.ui.view" id="autorizacion_obra.search">
          <field name="name">Oficio de autorización</field>
          <field name="model">autorizacion_obra.oficios_autorizacion</field>
@@ -37,6 +38,7 @@
                 <field name="fecha_de_recibido"/>
                 <field name="fecha_de_vencimiento"/>
                 <field name="importe"/>
+                
             </search>
          </field>
       </record>
@@ -48,13 +50,13 @@
         <form>
           <sheet>
             <div class="oe_button_box oe_read_only" name="button_box">
-              <button string=' Agregar Anexo técnico' name='anexoTecnico' type='object' class='btn-primary' icon='fa-plus'/>
+              <button string=' Agregar Anexo técnico'  name='anexoTecnico' type='object' class='btn-primary' icon='fa-plus'/>
              
                      <button class="oe_stat_button" type="action" name="%(autorizacion_obra.anexo_taction)d" context="{
                        'search_default_numero_de_oficio': active_id,
                        'default_numero_de_oficio': active_id
                        }" icon="fa-file">
-                        <field name="variable_count" string=' Anexos técnicos' widget="statinfo" />
+                        <field name="variable_count" string=" Anexos técnicos" widget="statinfo" />
                      </button>
               </div>
            
@@ -76,7 +78,7 @@
 
     <record model="ir.ui.view" id="autorizacion_obra.at_search">
          <field name="name">Anexo técnico del oficio</field>
-         <field name="model">autorizacion_obra.at</field>
+         <field name="model">autorizacion_obra.aut</field>
          <field name="arch" type="xml">
             <search>
                 <field name="numero_de_oficio"/>
@@ -93,7 +95,7 @@
 
     <record model="ir.ui.view" id="autorizacion_obra.at_tree">
     <field name="name">Anexo técnico del oficion</field>
-    <field name="model">autorizacion_obra.at</field>
+    <field name="model">autorizacion_obra.aut</field>
     <field name="arch" type="xml">
       <tree>
           <field name="numero_de_oficio"/>
@@ -103,13 +105,14 @@
           <field name="monto_estatal"/>
           <field name="monto_municipal"/>
           <field name="otros"/>
+          <field name="suma_"/> 
       </tree>
     </field>
     </record>
 
     <record model="ir.ui.view" id="autorizacion_obra_anexo_tform">
       <field name="name">Anexo técnico del oficio</field>
-      <field name="model">autorizacion_obra.at</field>
+      <field name="model">autorizacion_obra.aut</field>
       <field name="arch" type="xml">
         <form>
           <sheet>
@@ -155,10 +158,16 @@
                 </group>
             </group>
             <group>
-                <group>
-                    <field name="suma"/>
+                <group class="oe_subtotal_footer">
+                    <field name="suma_" class="oe_subtotal_footer_separator"/>
                 </group>
             </group>
+            <group>
+                  <field name="obra_seleccionada"/>
+            </group> 
+            <group>
+                  <field name="obra_programada"/>
+            </group>  
           </sheet>
         </form>
       </field>
@@ -166,8 +175,7 @@
 
     <menuitem name="Autorización de obra" id="autorizacion_obra.menu_root" sequence="0"/>
       <menuitem name="Oficios de Autorización" id="autorizacion_obra.oa_menu" parent="autorizacion_obra.menu_root" action="autorizacion_obra.action" sequence="1"/>
-      <menuitem name="Anexo técnico" id="autorizacion_obra.at_menu" parent="autorizacion_obra.menu_root" action="autorizacion_obra.anexo_taction" sequence="2"/>     
-         
+       
 
   </data>
 </odoo>

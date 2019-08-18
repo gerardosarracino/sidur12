@@ -13,17 +13,6 @@
       </field>
     </record>
 
-      <!-- ACCION DE CONTRATOS DENTRO DE ADUJUDICACION-->
-   <record model="ir.actions.act_window" id="action_contrato">
-        <field name="name">Elaboracion Contrato</field>
-        <field name="res_model">proceso.elaboracion_contrato</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="view_type">form</field>
-        <field name="context">{'default_adjudicacion': active_id}</field>
-        <field name="view_ids" eval="[(5, 0, 0),
-            (0, 0, {'view_mode': 'form', 'view_id': ref('proc_contratacion.elaboracion_contrato_form')})]"/>
-        <field name="target">new</field>
-    </record>
 
     <record model="ir.ui.view" id="proc_contratacion.adjudicacion_directa_form">
       <field name="name">proceso.adjudicacion_directa.form</field>
@@ -35,9 +24,6 @@
               <!-- BOTON HACIA CONTRATOS -->
            <div class="oe_button_box oe_read_only" name="button_box">
 
-                  <button class="oe_stat_button" type="action" name="%(action_contrato)d"  icon="fa-clipboard"
-                          string="Crear Contrato">
-                     </button>
               </div>
 
             <notebook colspan="4">

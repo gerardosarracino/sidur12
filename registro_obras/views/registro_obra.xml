@@ -1,22 +1,45 @@
 <odoo>
   <data>
-        <record model="ir.actions.act_window" id="registro_obras.proyectoej_action_window">
+
+    <!-- ACCIONES VENTANA -->
+    <record model="ir.actions.act_window" id="registro_obras.obra_action_window">
+      <field name="name">Registro de obras</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">registro.obra</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="registro_obras.proyectoej_action_window">
       <field name="name">Proyecto ejecutivo</field>
       <field name="res_model">registro.proyectoejecutivo</field>
       <field name="view_mode">tree,form</field>
     </record>
 
-        <record model="ir.actions.act_window" id="registro_obras.seguimientoobra_action">
+    <record model="ir.actions.act_window" id="registro_obras.seguimientoobra_action">
       <field name="name">Seguimiento de obra</field>
       <field name="res_model">registro.seguimientoobra</field>
       <field name="view_mode">tree,form</field>
     </record>
 
-    <record model="ir.actions.act_window" id="registro_obras.programarobra_action">
-      <field name="name">Programar obra</field>
+
+
+    <record model="ir.actions.act_window" id="registro_obras.programarobratree_action">
+      <field name="name">Obras programadas</field>
       <field name="res_model">registro.programarobra</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="registro_obras.estructurafinanciera_action">
+      <field name="name">Estructura Financiera</field>
+      <field name="res_model">registro.estructurafinanciera</field>
       <field name="target">new</field>
       <field name="view_mode">form,tree</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="registro_obras.estructurafinanciera1_action">
+      <field name="name">Estructura Financiera</field>
+      <field name="res_model">registro.estructurafinanciera</field>
+      <field name="view_mode">tree,form</field>
     </record>
 
     <!-- EJERCICIO -->
@@ -157,25 +180,53 @@
       </field>
     </record>
 
-
-
     <!-- REGISTRO OBRA -->
+    <record model="ir.ui.view" id="registro_obras.obra_search">
+      <field name="name">Registro de obras</field>
+      <field name="model">registro.obra</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="name"/>
+          <field name="descripcion" string="Descripcion"/>
+          <field name="tipoObra" string="Tipo obra"/>
+          <field name="estado" string="Estado"/>
+          <field name="municipio" string="Municipio"/>
+          <field name="ubicacion" string="Ubicacion"/>
+          <field name="localidad" string="Localidad"/>
+         </search>
+        </field>
+     </record>
+
     <record model="ir.ui.view" id="registro_obras.obra_tree">
       <field name="name">Registro de obras</field>
       <field name="model">registro.obra</field>
       <field name="arch" type="xml">
         <tree>
           <field name="name"/>
-          <field name="monto"/>
-          <field name="descripcion"/>
           <field name="tipoObra" string="Tipo de obra"/>
+          <field name="descripcion"/>
+          <field name="estado_obra" string="Estatus"/>
           <field name="estado" string="Estado"/>
           <field name="municipio" string="Municipio"/>
           <field name="ubicacion"/>
           <field name="localidad"/>
+          <field name="monto"/>
           <field name="create_date" string="Fecha reg."/>
         </tree>
       </field>
+    </record>
+
+  <record model="ir.actions.act_window" id="registro_obras.programarobra_action">
+      <field name="name">Programar obra</field>
+      <field name="res_model">registro.programarobra</field>
+      <field name="target">new</field>
+      <field name="view_mode">form,tree</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="registro_obras.proyectoej_action_window">
+      <field name="name">Proyecto ejecutivo</field>
+      <field name="res_model">registro.proyectoejecutivo</field>
+      <field name="view_mode">tree,form</field>
     </record>
 
     <record model="ir.ui.view" id="registro_obras.obra_form">
@@ -183,6 +234,14 @@
       <field name="model">registro.obra</field>
       <field name="arch" type="xml">
         <form>
+        <!--header>
+          <button string="Cancelar" type="object" name="borrador_progressbar_respuesta" attrs="{'invisible': [('estado_obra', '=', 'planeada')]}"/>
+          <button string="Programar Obra" type="action" name="%(registro_obras.programarobra_action)d" class="oe_highlight" context="{
+                       'search_default_name': active_id,
+                       'default_name': active_id
+                       }"/>
+          <field name="estate" widget="statusbar"/>
+         </header-->
           <sheet>
           	<div class="oe_button_box oe_read_only" name="button_box">
           		<button type="action" name="%(registro_obras.proyectoej_action_window)d" icon="fa-file" context="{
@@ -196,7 +255,7 @@
               <button type="action" name="%(registro_obras.programarobra_action)d" icon="fa-clock-o" context="{
                        'search_default_name': active_id,
                        'default_name': active_id
-                       }"><field string="Progr. Obra" name="programada" widget="statinfo"/></button>
+                       }" attrs="{'invisible': [('estado_obra', '=', 'Programada')]}"><field string="Progr. Obra" name="programada" widget="statinfo"/></button>
           	</div>
             <div class="oe_title">
                             <label for="name" class="oe_edit_only"/>
@@ -206,7 +265,7 @@
                         </div>
             <group>
             <group string="Datos generales de la obra" colspan="1" col="2">
-              <!--field name="name"/-->
+              <field name="estado_obra" invisible="1"/>
               <field name="ejercicio"/>
               <field name="grupoObra"/>
               <field name="origen" string="Origen"/>
@@ -356,17 +415,14 @@
       <field name="name">registro.programarobra.tree</field>
       <field name="model">registro.programarobra</field>
       <field name="arch" type="xml">
-        <tree>
-          <field name="name" string="Obra"/>
-          <field name="programaInversion" string="Programa de Inversión"/>
-          <field name="categoriaProgramatica" string="Categoría programática"/>
-          <field name="fechaProbInicio"/>
-          <field name="fechaProbTermino"/>
-          <field name="descripTotalObra"/>
-          <field name="conceptoEjecutar"/>
-          <field name="modalidadEjecucion"/>
-          <field name="avanceFisicoActual"/>
-          <field name="avanceProgCierreEjerci"/>
+        <tree create="false">
+          <field name="tipo" string="Tipo"/>
+          <field name="descripcion"/>
+          <field name="estate2" string="Estatus"/>
+          <field name="estado"/>
+          <field name="municipio"/>
+          <field name="ubicacion"/>
+          <field name="monto" string="Programado"/>
         </tree>
       </field>
     </record>
@@ -375,14 +431,30 @@
       <field name="name">registro.programarobra.form</field>
       <field name="model">registro.programarobra</field>
       <field name="arch" type="xml">
-        <form>
+        <form create="false">
+        <header>
+          <button string="Cancelar" type="object" name="borrador_progressbar_respuesta" class="oe_highlight" attrs="{'invisible': [('estate2', '=', 'cancelado')]}" confirm="¿Esta seguro que desea cancelar este registro?"/>
+          <button string="Estructura financiera" type="action" name="%(registro_obras.estructurafinanciera_action)d" class="oe_highlight" context="{
+                       'search_default_name': active_id,
+                       'default_name': active_id
+                       }" attrs="{'invisible': ['|',('estruc_finan', '=', 1),('estate2', '=', 'cancelado')]}"/>
+            <button string="Estructura financiera" type="action" name="%(registro_obras.estructurafinanciera1_action)d" class="oe_highlight" context="{
+                       'search_default_name': active_id,
+                       'default_name': active_id
+                       }" attrs="{'invisible': ['|',('estruc_finan', '=', 0),('estate2', '=', 'cancelado')]}"/>
+          <field name="estate2" widget="statusbar"/>
+         </header>
         <sheet>
         <group>
-          <group string="Programar obra" colspan="2" col="2">
           <group>
           <field name="name" string="Obra"/>
-          <field name="programaInversion" string="Programa de Inversión" />
-          <field name="categoriaProgramatica" string="Categoría programática" domain="[('name','=',programaInversion)]" />
+          <field name="descripcion"/>
+          <field name="estruc_finan" invisible="1"/>
+          </group>
+          <group string="Programar obra" colspan="2" col="2">
+          <group>
+          <field name="programaInversion" string="Programa de Inversión"/>
+          <field name="categoriaProgramatica" string="Categoría programática"/>
           <field name="fechaProbInicio"/>
           <field name="fechaProbTermino"/>
           <field name="descripTotalObra"/>
@@ -404,20 +476,80 @@
       </field>
     </record>
 
-    <!-- ACCIONES VENTANA -->
-    <record model="ir.actions.act_window" id="registro_obras.obra_action_window">
-      <field name="name">Registro de obras</field>
-      <field name="type">ir.actions.act_window</field>
-      <field name="res_model">registro.obra</field>
-      <field name="view_mode">tree,form</field>
+    <!-- ESTRUCTURA FINANCIERA -->    
+    <record model="ir.ui.view" id="registro_obras.seguimientoobra_search">
+      <field name="name">Seguimiento de obra</field>
+      <field name="model">registro.seguimientoobra</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="name"/>
+         </search>
+        </field>
+     </record>
+    
+    <record model="ir.ui.view" id="registro_obras.estructurafinanciera_tree">
+      <field name="name">registro.estructurafinanciera.tree</field>
+      <field name="model">registro.estructurafinanciera</field>
+      <field name="arch" type="xml">
+        <tree create="false">
+          <field name="name" string="Obra"/>
+          <field name="descripcion"/>
+          <field name="sumaIaoe" string="Inversión otros ejercicios"/>
+          <field name="sumaIde" string="Inversión del ejercicio"/>
+          <field name="sumaIar" string="Inversión adicional requerida"/>
+          <field name="Total"/>
+        </tree>
+      </field>
     </record>
+
+    <record model="ir.ui.view" id="registro_obras.estructurafinanciera_form">
+      <field name="name">registro.estructurafinanciera.form</field>
+      <field name="model">registro.estructurafinanciera</field>
+      <field name="arch" type="xml">
+        <form create="false">
+        <sheet>
+        <group>
+          <group>
+          <field name="name" string="Obra"/>
+          <field name="descripcion" string="Descripcion"/>
+          <field name="monto" string="Monto programado"/>
+          </group>
+          <group string="Inversión aplicada en otros ejercicios" colspan="2" col="6">
+          <field name="iaoeFederal"/>
+          <field name="iaoeEstatal"/>
+          <field name="iaoeMunicipal"/>
+          <field name="iaoeInstitucional"/>
+          <field name="iaoeOtros"/>
+          <field name="sumaIaoe"/>
+          </group>
+          <group string="Inversión del ejercicio" colspan="2" col="6">
+          <field name="ideFederal"/>
+          <field name="ideEstatal"/>
+          <field name="ideMunicipal"/>
+          <field name="ideInstitucional"/>
+          <field name="ideOtros"/>
+          <field name="sumaIde"/>
+          </group>
+          <group string="Inversión adicional requerida" colspan="2" col="6">
+          <field name="iarFederal"/>
+          <field name="iarEstatal"/>
+          <field name="iarMunicipal"/>
+          <field name="iarInstitucional"/>
+          <field name="iarOtros"/>
+          <field name="sumaIar"/>
+          </group>
+        </group>
+        </sheet>
+        </form>
+      </field>
+    </record>
+
 
 
     <!-- MENUS -->
     <menuitem name="Registro de obras" id="registro_obras.menu_root" sequence="0"/>
       <menuitem name="Registro de obra" id="registro_obras.obra_menu" parent="registro_obras.menu_root" action="registro_obras.obra_action_window" sequence="1"/>
-      <menuitem name="Obras programadas" id="registro_obras.obra_programada_menu" parent="registro_obras.menu_root" action="registro_obras.obra_action_window" sequence="2"/>
-      <menuitem name="Solicitudes de autorización" id="registro_obras.solicitud_autoriza_menu" parent="registro_obras.menu_root" action="registro_obras.obra_action_window" sequence="3"/>
+      <menuitem name="Obras programadas" id="registro_obras.obra_programada_menu" parent="registro_obras.menu_root" action="registro_obras.programarobratree_action" sequence="2"/>
 
     <!-- explicit list view definition -->
     <!--

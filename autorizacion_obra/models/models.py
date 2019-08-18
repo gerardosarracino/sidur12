@@ -12,14 +12,25 @@ class AutorizacionDeObra(models.Model):
     fecha_de_recibido = fields.Date(string='Fecha de recibido', required=True)
     fecha_de_vencimiento = fields.Date(string='Fecha de vencimiento', required=True)
     importe = fields.Float(string='Importe', required=True)
-    variable_count = fields.Integer(compute='contar')
+    variable_count = fields.Integer(compute='contar') 
+    total_at = fields.Float(string='Total suma anexos',compute='suma_total_anexos')
+    
+    
+    @api.one
+    def suma_total_anexos(self):
+        ids = self.env['autorizacion_obra.aut'].search([('numero_de_oficio', '=', self.id)])
+        suma = 0
+        for i in ids:
+            resultado = self.env['autorizacion_obra.aut'].browse(i.id).suma_
+            suma += float(resultado)
+        self.total_at = suma
+
 
     @api.one
     def contar(self):
-        count = self.env['autorizacion_obra.at'].search_count([('numero_de_oficio', '=', self.id)])
+        count = self.env['autorizacion_obra.aut'].search_count([('numero_de_oficio', '=', self.id)])
         self.variable_count = count
     
-
 
     @api.one
     def nombre(self):
@@ -33,16 +44,15 @@ class AutorizacionDeObra(models.Model):
         }
         return {
                 'type': 'ir.actions.act_window',
-                'res_model': 'autorizacion_obra.at',
+                'res_model': 'autorizacion_obra.aut',
                 'view_mode': 'form',
                 'context': context,
                 'target': 'new',
                 }
-
-
-class AnexoTecnico(models.TransientModel): 
-    _name = 'autorizacion_obra.at'
-
+  
+class anexo_tecnico(models.Model): 
+    _name = 'autorizacion_obra.aut'
+    _rec_name = 'suma_'     
     name = fields.Char(compute="nombre",store=True)
     numero_de_oficio = fields.Many2one('autorizacion_obra.oficios_autorizacion',string='Número de oficio', readonly=True)
     clave_de_obra = fields.Char(string='Clave de obra', required=True)
@@ -55,9 +65,16 @@ class AnexoTecnico(models.TransientModel):
     monto_municipal_indirecto = fields.Float(string='Monto municipal indirecto')
     otros = fields.Float(string='Otros')
     monto_otros_indirecto = fields.Float(string='Otros indirecto')
-    suma = fields.Char(string='Total', compute='_suma')
+    suma_ = fields.Float(string='Total', compute='suma')
+    obra_programada = fields.Many2one('registro.obra',string='Seleccione la obra a la que corresponde los recursos')
+    obra_seleccionada = fields.Char(string='Concepto',compute='obra_selecc')
 
 
+    @api.onchange('obra_programada')
+    def obra_selecc(self):
+        resultado = self.env['registro.obra'].browse(int(self.obra_programada)).descripcion 
+        self.obra_seleccionada = resultado
+    
     @api.one
     def nombre(self):
         self.name = self.id
@@ -67,10 +84,11 @@ class AnexoTecnico(models.TransientModel):
                  'monto_estatal','monto_estatal_indirecto',
                  'monto_municipal','monto_municipal_indirecto',
                  'otros','monto_otros_indirecto')
-    def _suma(self):
+    
+    def suma(self):
         for rec in self: 
             rec.update({
-                'suma': sum([rec.monto_federal,
+                'suma_': sum([rec.monto_federal, 
                              rec.monto_federal_indirecto,
                              rec.monto_estatal,
                              rec.monto_estatal_indirecto,
@@ -79,4 +97,3 @@ class AnexoTecnico(models.TransientModel):
                              rec.monto_otros_indirecto],rec.otros)
             })
 
-    
