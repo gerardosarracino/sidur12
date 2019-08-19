@@ -238,13 +238,19 @@
 
             <group>
               <group string="Seleccionar Obra" colspan="1" col="2">
-                <field name="programa_inversion" string="Programa de Inversión" />
-                <field name="obra" string="Partidas:" widget='one2many'>
+                <field name="programa_inversion_licitacion" string="Programa de Inversión" />
+
+                <field name="programar_obra_licitacion" widget='one2many'
+                attrs="{'invisible': [('programa_inversion_licitacion', '=', False)]}">
                     <tree editable="top">
                         <control>
                              <create string="Agregar Partida"/>
                         </control>
-                        <field name="obra"/>
+                            <field name="obra" domain="[('programaInversion.id', '=', parent.programa_inversion_licitacion)]"/>
+                            <field name="programaInversion" />
+                            <field name="monto_partida" sum="Monto" widget="monetary"/>
+                            <field name="iva_partida" readonly="True" sum="I.V.A" widget="monetary"/>
+                            <field name="total_partida" readonly="True" sum="Total" widget="monetary"/>
                     </tree>
                 </field>
 

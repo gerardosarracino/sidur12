@@ -7,7 +7,9 @@ class ElaboracionContratos(models.Model):
     _name = "proceso.elaboracion_contrato"
     _rec_name = 'contrato'
 
-    contrato_partida = fields.Many2many('proceso.contrato_partidas')
+    contrato_partida_licitacion = fields.Many2many('proceso.contrato_licitacion')
+
+    contrato_partida_adjudicacion = fields.Many2many('proceso.contrato_partidas')
 
     contrato_id = fields.Char(compute="nombre", store=True)
     obra = fields.Many2one('proceso.licitacion', string="Seleccionar obra")
@@ -15,8 +17,7 @@ class ElaboracionContratos(models.Model):
     adjudicacion = fields.Many2one('proceso.adjudicacion_directa', string="Nombre de Adjudicacion")
 
     fecha = fields.Date(string="Fecha", required=True)
-
-    contrato = fields.Char(string="Contrato")
+    contrato = fields.Char(string="Contrato", required=True)
 
     name = fields.Text(string="Descripción/Meta", required=True)
     descripciontrabajos = fields.Text(string="Descripción trabajos:", required=True)
@@ -58,10 +59,17 @@ class ElaboracionContratos(models.Model):
     @api.multi
     @api.onchange('adjudicacion')  # if these fields are changed, call method
     def check_change(self):
+        self.update({
+            'contrato_partida_adjudicacion': [[0, 0, {'monto_partida': 0.0}]]
+        })
+
+    @api.multi
+    @api.onchange('obra')  # if these fields are changed, call method
+    def check_change_licitacion(self):
         # adirecta_id = self.env['proceso.adjudicacion_directa'].browse('adjudicacion')
         ids = [1]
         self.update({
-            'contrato_partida': [[0, 0, {'monto_partida': 0.0}]]
+            'contrato_partida_licitacion': [[0, 0, {'monto_partida': 0.0}]]
         })
 
     @api.one
@@ -136,8 +144,32 @@ class AnticipoContratos(models.Model):
 
 
 # MODELO DE PARTIDAS
-class ContratoPartidas(models.Model):
+class ContratoPartidasAdjudicacion(models.Model):
     _name = 'proceso.contrato_partidas'
+
+    name = fields.Many2one('registro.programarobra')
+    programaInversion = fields.Many2one('generales.programas_inversion', related="name.programaInversion")
+    monto_partida = fields.Float(string="Monto", required=False, )
+    iva_partida = fields.Float(string="Iva", required=False, compute="iva")
+    total_partida = fields.Float(string="Total", required=False, compute="sumaPartidas")
+
+    @api.depends('monto_partida')
+    def sumaPartidas(self):
+        for rec in self:
+            rec.update({
+                'total_partida': (rec.monto_partida * 0.16) + rec.monto_partida
+            })
+
+    @api.depends('monto_partida')
+    def iva(self):
+        for rec in self:
+            rec.update({
+                'iva_partida': (rec.monto_partida * 0.16)
+            })
+
+
+class ContratoPartidasL(models.Model):
+    _name = 'proceso.contrato_licitacion'
 
     name = fields.Many2one('registro.programarobra')
     programaInversion = fields.Many2one('generales.programas_inversion', related="name.programaInversion")

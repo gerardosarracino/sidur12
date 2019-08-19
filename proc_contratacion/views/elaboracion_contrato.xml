@@ -1,63 +1,5 @@
 <odoo>
   <data>
-      <!-- <act_window id="Catalogo"
-    name="Catalogó"
-    src_model="proceso.adjudicacion_partidas"
-    res_model="proceso.conceptos_contratos"
-    view_type="form" view_mode="form"
-    multi="False"
-    key2="client_action_multi" target="current"
-    /> -->
-
- <!-- <record model="ir.actions.act_window" id="action_conceptos">
-        <field name="name">Conceptos Contratados</field>
-        <field name="res_model">proceso.cc_partidas</field>
-        <field name="view_type">form</field>
-        <field name="view_ids" eval="[(5, 0, 0),
-        (0, 0, {'view_mode': 'form', 'view_id': ref('proceso_cc_partidas_form')})]"/>
-    </record> -->
-
-<!--CONCEPTOS CATALOGO FORM -->
-    <!-- <record id="proceso_conceptos_contratos" model="ir.ui.view">
-        <field name="name">proceso.conceptos_model.form</field>
-        <field name="model">proceso.conceptos_contratos</field>
-        <field name="arch" type="xml">
-            <form string="">
-                <sheet>
-                    <group>
-
-                        <group colspan="2" col="2">
-                            <group string="Catálogo de Niveles/Conceptos del Contrato:"></group>
-                            <group><field name="name" string="" class="o_light_label"/></group>
-                        </group>
-
-                        <group colspan="2" col="3">
-                            <group><field name="total" /></group>
-                            <group> <field name="total_contrato"/></group>
-                            <group><field name="diferencia"  class="o_light_label"/></group>
-                        </group>
-
-
-                        <field name="conceptos_partidas" string="# Concepto de partidas" widget='one2many'>
-                            <tree editable="top">
-                                <control>
-                                    <create string="Agregar Nivel"/>
-                                </control>
-                                <field name="categoria" />
-                                <field name="concepto"/>
-                                <field name="grupo"/>
-                                <field name="medida"/>
-                                <field name="precio_unitario"/>
-                                <field name="cantidad"/>
-                                <field name="importe" sum="importe"/>
-                            </tree>
-                        </field>
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record> -->
-
     <!-- LICITACIONES  TREE-->
     <record model="ir.ui.view" id="proc_contratacion.elaboracion_contratos_tree">
       <field name="name">proceso.elaboracion_contrato.tree</field>
@@ -107,49 +49,70 @@
                        }" icon="fa-pencil-square-o" string='Convenios Modificados' >
                      </button>
                 </div>
-            <notebook colspan="1" col="2">
+            <notebook >
                     <page string="Datos Generales" icon="fa-bitbucket">
-                         <group colspan="1" col="2">
-                             <group string="Contrato Datos Generales" colspan="1" col="2">
-                              <field name="obra" string="Seleccionar Licitacion"  />
-                                <field name="adjudicacion" />
 
-                                 <field name="contrato_partida" widget='one2many'>
-                                    <tree >
+                             <group string="Contrato Datos Generales">
+
+                                <field name="obra" string="Seleccionar Licitacion"  attrs="{'invisible':
+                                [('adjudicacion', '!=', False)]}"/>
+                                <field name="adjudicacion" attrs="{'invisible': [('obra', '!=', False)]}"/>
+
+                                 <field name="contrato_partida_adjudicacion" widget='one2many'
+                                 attrs="{'invisible': [('adjudicacion', '=', False)]}">
+                                    <tree>
                                         <field name="name" />
                                         <field name="programaInversion" />
                                         <field name="monto_partida" sum="Monto" widget="monetary"/>
                                         <field name="iva_partida" readonly="True" sum="I.V.A" widget="monetary"/>
                                         <field name="total_partida" readonly="True" sum="Total" widget="monetary"/>
-
-                                </tree>
+                                    </tree>
                                 </field>
 
-                                <field name="fecha" class="oe_inline"/>
-                                <field name="contrato"/>
-                                <field name="name"/>
-                                <field name="descripciontrabajos"/>
-                                <field name="unidadresponsableejecucion"/>
-                                <field name="supervisionexterna"/>
-                                <field name="supervisionexterna1"/>
+                                 <field name="contrato_partida_licitacion" widget='one2many'
+                                 attrs="{'invisible': [('obra', '=', False)]}">
+                                    <tree>
+                                        <field name="name" />
+                                        <field name="programaInversion" />
+                                        <field name="monto_partida" sum="Monto" widget="monetary"/>
+                                        <field name="iva_partida" readonly="True" sum="I.V.A" widget="monetary"/>
+                                        <field name="total_partida" readonly="True" sum="Total" widget="monetary"/>
+                                    </tree>
+                                </field>
                              </group>
 
+                                 <group colspan="1" col="2">
+                                    <group><field name="fecha" class="oe_inline"/></group>
+                                    <group><field name="contrato" /></group>
+                                </group>
+
+                                <group>
+
+                                <field name="name" class="oe_inline"/>
+                                <field name="descripciontrabajos" class="oe_inline"/>
+                                <field name="unidadresponsableejecucion" class="oe_inline"/>
+                                <field name="supervisionexterna" class="oe_inline"/>
+                                <field name="supervisionexterna1" class="oe_inline"/>
+                                <field name="total"/>
+
+
                              <!-- attrs="{'invisible': [('obra' and 'adjudicacion', '=', False)]}" -->
-                             <group colspan="1" col="2" >
+                             <!-- <group colspan="1" col="2" >
                                  <field name="importe_contrato"/>
                                  <field name="iva_contrato"/>
                                  <field name="portentaje_iva_contrato"/>
                                  <field name="total_contrato"/>
-                             </group>
-
-                         <group colspan="1" col="2">
-                            <field name="total"/>
+                             </group> -->
+                        </group>
+                        <group>
                             <field name="contratista"/>
-                            <field name="fechainicio" class="oe_inline"/>
-                            <field name="fechatermino" class="oe_inline"/>
-                            <field name="periodicidadretencion" class="oe_inline"/>
-                            <field name="retencion"/>
-                          </group>
+                        </group>
+
+                        <group colspan="1" col="2">
+                            <group><field name="fechainicio" class="oe_inline"/></group>
+                            <group><field name="fechatermino" class="oe_inline"/></group>
+                            <group><field name="periodicidadretencion" class="oe_inline"/></group>
+                            <group><field name="retencion" class="oe_inline"/></group>
                         </group>
                     </page>
 
@@ -278,20 +241,6 @@
       </field>
     </record>
 
-    <!-- CONCEPTOS CONTRATADOS -->
-    <!-- <record model="ir.ui.view" id="proc_contratacion.elaboracion_contrato_3">
-      <field name="name">proceso.elaboracion_contrato.tree3</field>
-      <field name="model">proceso.elaboracion_contrato</field>
-      <field name="arch" type="xml">
-        <tree create="false">
-            <field name="fecha"/>
-            <field name="contrato" string="# Contrato"/>
-            <field name="name" string="Objeto"/>
-            <field name="total" string="Monto"/>
-            <field name="contratista" string="Contratista"/>
-        </tree>
-      </field>
-    </record> -->
     <!-- FORMULARIOS Y TREE DE LAS PARTIDAS CON SUS CATALOGOS -->
       <record id="conceptos_contratados_partidas_form" model="ir.ui.view">
           <field name="name">conceptos contratados form</field>
@@ -336,6 +285,7 @@
                                 <field name="importe" sum="importe" widget="monetary"/>
                             </tree>
                         </field>
+
                     </group>
                   </sheet>
               </form>
@@ -382,15 +332,6 @@
     </record>
 
     <!-- ACTION DE CATALOGO   context="{'default_name': active_id}"-->
-
-<!--
-<act_window id="Catalogos"
-    name="Ver Catalogós"
-    src_model="proceso.adjudicacion_partidas"
-    res_model="proceso.conceptos_contratos"
-    view_type="form" view_mode="tree,form"
-    key2="client_action_multi" target="current"
-    /> -->
 
     <!-- ACCIONES VENTANA -->
     <!--<record model="ir.actions.act_window" id="proc_contratacion.seguimiento_contrato_action_window">

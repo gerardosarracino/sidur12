@@ -9,7 +9,7 @@ class AdjudicacionDirecta(models.Model):
     #  HACER LOS FILTROS DE RELACION DE PROGRAMAS DE INVERSION CON OBRAS PROGRAMADAS(partidas)
     programas_inversion_adjudicacion = fields.Many2one('generales.programas_inversion', 'name')
     # /// Partidas
-    programar_obra = fields.Many2many("proceso.adjudicacion_partidas", string="Partida(s):")
+    programar_obra_adjudicacion = fields.Many2many("proceso.adjudicacion_partidas", string="Partida(s):")
 
     iva = fields.Float(string="I.V.A", default=0.16, required=True)
 
@@ -73,6 +73,7 @@ class AdjudicacionDirecta(models.Model):
             })
 
 
+# CLASE DE LAS PARTIDAS Y CONCEPTOS CONTRATADOS
 class AdjudicacionPartidas(models.Model):
     _name = 'proceso.adjudicacion_partidas'
     _rec_name = "obra"
