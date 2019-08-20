@@ -1,0 +1,141 @@
+<odoo>
+  <data>
+
+
+    <record id="control_estimaciones_estimaciones_form" model="ir.ui.view">
+        <field name="name">control de estimaciones form</field>
+        <field name="model">control.estimaciones</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                    <group>
+                        <field name="tipo_estimacion"/>
+                        <field name="fecha_inicio_estimacion"/>
+                        <field name="fecha_termino_estimacion"/>
+                        <field name="estimado"/>
+                        <field name="amort_anticipo"/>
+                        <field name="estimacion_subtotal"/>
+                        <field name="estimacion_iva"/>
+                        <field name="estimacion_facturado"/>
+                        <field name="estimado_deducciones"/>
+                        <field name="ret_dev"/>
+                        <field name="sancion"/>
+                        <field name="a_pagar"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="control_estimaciones_estimaciones_tree" model="ir.ui.view">
+        <field name="name">control de estimaciones tree</field>
+        <field name="model">control.estimaciones</field>
+        <field name="arch" type="xml">
+            <tree string="">
+                <field name="tipo_estimacion"/>
+                <field name="fecha_inicio_estimacion"/>
+                <field name="fecha_termino_estimacion"/>
+                <field name="estimado"/>
+                <field name="amort_anticipo"/>
+                <field name="estimacion_subtotal"/>
+                <field name="estimacion_iva"/>
+                <field name="estimacion_facturado"/>
+                <field name="estimado_deducciones"/>
+                <field name="ret_dev"/>
+                <field name="sancion"/>
+                <field name="a_pagar"/>
+            </tree>
+        </field>
+    </record>
+
+ <!-- BOTON ESTIMACIONES -->
+<record model="ir.actions.act_window" id="action_estimaciones">
+        <field name="name">Estimaciones</field>
+        <field name="res_model">control.estimaciones</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+
+        <field name="view_ids" eval="[(5, 0, 0),
+    (0, 0, {'view_mode': 'tree', 'view_id': ref('control_estimaciones_estimaciones_tree')}),
+    (0, 0, {'view_mode': 'form', 'view_id': ref('control_estimaciones_estimaciones_form')})]"/>
+        <field name="target">current</field>
+    </record>
+
+    <record id="pb1" model="ir.ui.view">
+        <field name="name">pb1</field>
+        <field name="model">proceso.adjudicacion_partidas</field>
+        <field name="arch" type="xml">
+            <form string="" >
+                <sheet>
+                  <div class="oe_button_box oe_read_only" name="button_box">
+                    <button type="action" icon="fa-list-alt" string="Catálogo"></button>
+                    <button type="action" icon="fa-clock-o" string="Programa"></button>
+                    <button name="%(action_estimaciones)d" type="action" icon="fa-usd" string="Estimaciones"></button>
+                    <button type="action" icon="fa-list" string="Estado de Cuenta"></button>
+                </div>
+                  <div class="oe_button_box oe_read_only" name="button_box">
+                    <button type="action" icon="fa-users" string="Residencia"></button>
+                    <button type="action" icon="fa-money" string="Anticipos"></button>
+                    <button type="action" icon="fa-pencil-square-o" string="Conv. Modificatorios"></button>
+
+                </div>
+
+                    <group readonly="True">
+                      <group colspan="1" col="2" string="Partida:">
+                          <field name="obra" readonly="True"/>
+                          <field name="programaInversion" readonly="True"/>
+                          <field name="monto_partida" readonly="True" widget="monetary"/>
+                          <field name="iva_partida" readonly="True" widget="monetary"/>
+                          <field name="total_partida" readonly="True" widget="monetary"/>
+                      </group>
+
+                      <group>
+
+                        <group colspan="2" col="2">
+                            <group string="Catálogo de Niveles/Conceptos del Contrato:"></group>
+                            <group><field name="name" string="" class="o_light_label"/></group>
+                        </group>
+
+                        <group colspan="2" col="3">
+                            <group><field name="total" /></group>
+                            <group> <field name="total_contrato"/></group>
+                            <group><field name="diferencia"  class="o_light_label"/></group>
+                        </group>
+
+                        <field name="conceptos_partidas" string="# Concepto de partidas" readonly="True">
+                            <tree>
+                                <field name="display_type" invisible="1"/>
+                                <field name="categoria" />
+                                <field name="concepto"/>
+                                <field name="grupo"/>
+                                <field name="medida"/>
+                                <field name="precio_unitario" widget="monetary"/>
+                                <field name="cantidad"/>
+                                <field name="importe" sum="importe" widget="monetary"/>
+                            </tree>
+                        </field>
+
+                    </group>
+
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ACCIONES VENTANA LICITACIONES -->
+    <record model="ir.actions.act_window" id="ejecucion_obra.control_estimacion_action_window">
+      <field name="name">Control de Estimaciones</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">proceso.adjudicacion_partidas</field>
+      <field name="view_mode">tree,form</field>
+      <field name="view_ids" eval="[(5, 0, 0),
+        (0, 0, {'view_mode': 'tree', 'view_id': ref('proc_contratacion.elaboracion_contrato_3')}),
+        (0, 0, {'view_mode': 'form', 'view_id': ref('pb1')})]"/>
+    </record>
+
+    <menuitem name="Ejecución de Obra" id="ejecucion_obra.menu_root" sequence="0"/>
+    <menuitem name="Control de Estimaciones" id="control_esstimacion" parent="ejecucion_obra.menu_root"
+              action="ejecucion_obra.control_estimacion_action_window" sequence="1"/>
+  </data>
+</odoo>

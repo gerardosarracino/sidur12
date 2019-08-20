@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
+from odoo.exceptions import UserError
 
 
 class ElaboracionContratos(models.Model):
@@ -60,8 +61,17 @@ class ElaboracionContratos(models.Model):
     @api.onchange('adjudicacion')  # if these fields are changed, call method
     def check_change(self):
         self.update({
-            'contrato_partida_adjudicacion': [[0, 0, {'monto_partida': 0.0}]]
+            'contrato_partida_adjudicacion': [[0, 0, {'name': 0.0,
+                                                      'programaInversion': 0.0,
+                                                      'monto_partida': 0.0,
+                                                      'iva_partida': 0.0,
+                                                      'total_partida': 0.0}]]
         })
+
+        ''''contrato_partida_adjudicacion': [[0, 0, {'name': 0.0}], [0, 0, {'programaInversion': 0.0}],
+                                              [0, 0, {'monto_partida': 0.0}], [0, 0, {'iva_partida': 0.0}],
+                                              [0, 0, {'total_partida': 0.0}]]
+        })'''
 
     @api.multi
     @api.onchange('obra')  # if these fields are changed, call method
@@ -295,6 +305,10 @@ class conceptos_partidas(models.Model):
     _name = "proceso.conceptos_part"
 
     # name = fields.Many2one('proceso.elaboracion_contrato')
+    display_type = fields.Selection([
+        ('line_section', "Section"),
+        ('line_note', "Note")], default=False, help="Technical field for UX purpose.")
+
     categoria = fields.Many2one('proceso.categoria')
     concepto = fields.Many2one('proceso.concepto')
     grupo = fields.Many2one('proceso.grupo')
@@ -305,6 +319,21 @@ class conceptos_partidas(models.Model):
     importe = fields.Float(compute="sumaCantidad")
 
     # importe2 = fields.Float(compute="xd")
+
+    @api.model
+    def create(self, values):
+        if values.get('display_type', self.default_get(['display_type'])['display_type']):
+            values.update(categoria=False, concepto=False, grupo=False, medida=0, precio_unitario=0, cantidad=0, importe=0)
+        line = super(conceptos_partidas, self).create(values)
+        return line
+
+    @api.multi
+    def write(self, values):
+        if 'display_type' in values and self.filtered(lambda line: line.display_type != values.get('display_type')):
+            raise UserError(
+                "You cannot change the type of a sale order line. Instead you should delete the current line and create a new line of the proper type.")
+        result = super(conceptos_partidas, self).write(values)
+        return result
 
     @api.depends('precio_unitario', 'cantidad')
     def sumaCantidad(self):

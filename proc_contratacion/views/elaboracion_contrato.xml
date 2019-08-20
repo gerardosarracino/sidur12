@@ -1,6 +1,6 @@
 <odoo>
   <data>
-    <!-- LICITACIONES  TREE-->
+    <!-- CONTRATO  TREE-->
     <record model="ir.ui.view" id="proc_contratacion.elaboracion_contratos_tree">
       <field name="name">proceso.elaboracion_contrato.tree</field>
       <field name="model">proceso.elaboracion_contrato</field>
@@ -270,12 +270,20 @@
                             <group><field name="diferencia"  class="o_light_label"/></group>
                         </group>
 
-
-                        <field name="conceptos_partidas" string="# Concepto de partidas" widget='one2many'>
-                            <tree editable="top">
+                        <field name="conceptos_partidas" string="# Concepto de partidas" widget="section_and_note_one2many" >
+                            <tree editable="bottom">
                                 <control>
-                                    <create string="Agregar Nivel"/>
+                                    <create
+                                    string="Agregar Sección"
+                                    context="{'default_display_type': 'line_section'}"
+                                  />
+                                    <create string="Add a note" context="{'default_display_type': 'line_note'}"/>
+                                  <create
+                                    string="Agregar Nivel"
+                                  />
+
                                 </control>
+                                <field name="display_type" />
                                 <field name="categoria" />
                                 <field name="concepto"/>
                                 <field name="grupo"/>

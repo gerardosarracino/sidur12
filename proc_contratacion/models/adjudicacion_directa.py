@@ -92,8 +92,10 @@ class AdjudicacionPartidas(models.Model):
     conceptos_partidas = fields.Many2many('proceso.conceptos_part')
     name = fields.Many2one('proceso.elaboracion_contrato', readonly=True)
     total = fields.Float(string="Monto Total Contratado:", readonly=True, compute="totalContrato")
-    total_contrato = fields.Float(string="Monto Total del Catálogo:", readonly=True, compute="xd")
+    total_contrato = fields.Float(string="Monto Total del Catálogo:", readonly=True, compute="SumaImporte")
     diferencia = fields.Float(string="Diferencia:", compute="Diferencia")
+
+
 
     @api.one
     def sumaConcepto(self):
@@ -122,13 +124,13 @@ class AdjudicacionPartidas(models.Model):
             })
 
     # METODO PARA SUMAR LOS IMPORTES DE LOS CONCEPTOS
-    @api.multi
-    def xd(self):
-        ids = self.env['proceso.conceptos_part'].search([('importe', '=', self.id)])
+    @api.onchange('conceptos_partidas')
+    def SumaImporte(self):
+        # ids = self.env['proceso.conceptos_part'].search([('importe', '=', self.id)])
         # r = self.env['proceso.elaboracion_contrato'].sudo().search([('adjudicacion', '=', self.id)])
         suma = 0
-        for i in ids:
+        for i in self.conceptos_partidas:
             # imp = i.importe
-            resultado = self.env['proceso.conceptos_part'].browse(i.id).importe
+            resultado = i.importe
             suma = suma + resultado
             self.total_contrato = suma
