@@ -8,20 +8,63 @@
         <field name="arch" type="xml">
             <form string="">
                 <sheet>
-                    <group>
-                        <field name="tipo_estimacion"/>
-                        <field name="fecha_inicio_estimacion"/>
-                        <field name="fecha_termino_estimacion"/>
-                        <field name="estimado"/>
-                        <field name="amort_anticipo"/>
-                        <field name="estimacion_subtotal"/>
-                        <field name="estimacion_iva"/>
-                        <field name="estimacion_facturado"/>
-                        <field name="estimado_deducciones"/>
-                        <field name="ret_dev"/>
-                        <field name="sancion"/>
-                        <field name="a_pagar"/>
+                    <group string="Datos Generales De La Estimación" colspan="1" col="2">
+                        <group>
+                            <field name="obra"/>
+                            <field name="tipo_estimacion" widget="radio"/>
+                        </group>
+                        <group>
+                            <field name="numero_estimacion" attrs="{'readonly': [('tipo_estimacion','!=', '2')]}"/>
+                        </group>
                     </group>
+                    <group  colspan="2" col="2">
+
+                        <group string="Periodo de la Estimación">
+                            <field name="fecha_inicio_estimacion" class="oe_inline"/>
+                            <field name="fecha_termino_estimacion" class="oe_inline"/>
+                        </group>
+                        <group string="Seguimiento">
+                            <field name="fecha_presentacion" class="oe_inline"/>
+                            <field name="fecha_revision" class="oe_inline"/>
+                        </group>
+                        <group string="Indique si Aplica">
+                            <field name="si_aplica" widget="radio"/>
+                        </group>
+                        <group string="Notas:">
+                            <field name="notas"/>
+                        </group>
+                    </group>
+
+                     <button class="oe_highlight" type="action" icon="fa-road" string="Conceptos Ejecutados En El Periodo"></button>
+
+                    <group  colspan="1" col="2">
+                        <group string="Deducciones">
+
+                        </group>
+
+                        <group string="Cálculo De Estimación">
+                            <group>
+                                <field name="estimado"/>
+                                <field name="amort_anticipo" />
+                                <field name="estimacion_subtotal" readonly="1"/>
+                                <field name="estimacion_iva" readonly="1"/>
+                                <field name="estimacion_facturado" readonly="1"/>
+                                <field name="estimado_deducciones" readonly="1"/>
+                                <field name="ret_dev" readonly="1"/>
+                                <field name="sancion" readonly="1"/>
+                                <field name="a_pagar" readonly="1"  />
+                            </group>
+                        </group>
+
+                        <group string="Penas Convencionales">
+                            <field name="menos_clau_retraso" class="oe_inline"/>
+                            <field name="sancion_incump_plazo" class="oe_inline"/>
+                        </group>
+                    </group>
+
+
+
+
                 </sheet>
             </form>
         </field>
@@ -32,6 +75,7 @@
         <field name="model">control.estimaciones</field>
         <field name="arch" type="xml">
             <tree string="">
+                <field name="obra"/>
                 <field name="tipo_estimacion"/>
                 <field name="fecha_inicio_estimacion"/>
                 <field name="fecha_termino_estimacion"/>
@@ -54,7 +98,6 @@
         <field name="res_model">control.estimaciones</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_type">form</field>
-
         <field name="view_ids" eval="[(5, 0, 0),
     (0, 0, {'view_mode': 'tree', 'view_id': ref('control_estimaciones_estimaciones_tree')}),
     (0, 0, {'view_mode': 'form', 'view_id': ref('control_estimaciones_estimaciones_form')})]"/>
@@ -70,7 +113,13 @@
                   <div class="oe_button_box oe_read_only" name="button_box">
                     <button type="action" icon="fa-list-alt" string="Catálogo"></button>
                     <button type="action" icon="fa-clock-o" string="Programa"></button>
-                    <button name="%(action_estimaciones)d" type="action" icon="fa-usd" string="Estimaciones"></button>
+
+                    <button class="oe_stat_button" type="action" name="%(action_estimaciones)d" icon="fa-usd"
+                    context="{
+                       'search_default_obra': active_id,
+                       'default_obra': active_id
+                       }" string="Estimaciones"></button>
+
                     <button type="action" icon="fa-list" string="Estado de Cuenta"></button>
                 </div>
                   <div class="oe_button_box oe_read_only" name="button_box">
@@ -104,7 +153,6 @@
 
                         <field name="conceptos_partidas" string="# Concepto de partidas" readonly="True">
                             <tree>
-                                <field name="display_type" invisible="1"/>
                                 <field name="categoria" />
                                 <field name="concepto"/>
                                 <field name="grupo"/>

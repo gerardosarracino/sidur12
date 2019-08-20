@@ -305,6 +305,7 @@ class conceptos_partidas(models.Model):
     _name = "proceso.conceptos_part"
 
     # name = fields.Many2one('proceso.elaboracion_contrato')
+    sequence = fields.Integer(help="Gives the sequence when displaying a list of Contract.", default=10)
     display_type = fields.Selection([
         ('line_section', "Section"),
         ('line_note', "Note")], default=False, help="Technical field for UX purpose.")

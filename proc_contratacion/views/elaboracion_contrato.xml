@@ -248,6 +248,7 @@
           <field name="arch" type="xml">
               <form string="">
                   <sheet>
+
                       <group colspan="1" col="2" string="Partida:">
                           <field name="obra" readonly="True"/>
                           <field name="programaInversion" readonly="True"/>
@@ -270,7 +271,9 @@
                             <group><field name="diferencia"  class="o_light_label"/></group>
                         </group>
 
-                        <field name="conceptos_partidas" string="# Concepto de partidas" widget="section_and_note_one2many" >
+
+                        <field name="conceptos_partidas" string="# Concepto de partidas" widget="section_and_note_one2many"
+                        mode="tree">
                             <tree editable="bottom">
                                 <control>
                                     <create
@@ -283,7 +286,8 @@
                                   />
 
                                 </control>
-                                <field name="display_type" />
+                                <field name="sequence" widget="handle" />
+                                <field name="display_type" invisible="1"/>
                                 <field name="categoria" />
                                 <field name="concepto"/>
                                 <field name="grupo"/>

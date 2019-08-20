@@ -78,7 +78,11 @@ class AdjudicacionPartidas(models.Model):
     _name = 'proceso.adjudicacion_partidas'
     _rec_name = "obra"
 
-    obra = fields.Many2one('registro.programarobra')
+    # enlace
+    estimacion_id = fields.Char(compute="nombre", store=True)
+
+    obra = fields.Many2one('registro.programarobra', required=True)
+
     programaInversion = fields.Many2one('generales.programas_inversion', related="obra.programaInversion")
     monto_partida = fields.Float(string="Monto",  required=False, )
     iva_partida = fields.Float(string="Iva",  required=False, compute="iva")
@@ -94,8 +98,6 @@ class AdjudicacionPartidas(models.Model):
     total = fields.Float(string="Monto Total Contratado:", readonly=True, compute="totalContrato")
     total_contrato = fields.Float(string="Monto Total del Catálogo:", readonly=True, compute="SumaImporte")
     diferencia = fields.Float(string="Diferencia:", compute="Diferencia")
-
-
 
     @api.one
     def sumaConcepto(self):
@@ -134,3 +136,7 @@ class AdjudicacionPartidas(models.Model):
             resultado = i.importe
             suma = suma + resultado
             self.total_contrato = suma
+
+    @api.one
+    def nombre(self):
+        self.estimacion_id = self.obra
