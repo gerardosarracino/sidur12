@@ -20,12 +20,13 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'informacion_basica', 'proc_contratacion', 'autorizacion_obra', 'registro_obras'],
+    'depends': ['base', 'informacion_basica', 'proceso_contratacion', 'autorizacion_obra', 'registro_obras'],
 
     # always loaded
     'data': [
         'security/ir.model.access.csv',
         'views/control_estimaciones.xml',
+        'views/supervision_obra.xml',
         'views/templates.xml',
     ],
     # only loaded in demonstration mode

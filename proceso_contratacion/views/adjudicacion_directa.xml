@@ -1,7 +1,7 @@
 <odoo>
   <data>
     <!-- LICITACIONES -->
-    <record model="ir.ui.view" id="proc_contratacion.adjudicacion_directa">
+    <record model="ir.ui.view" id="proc_contratacion_adjudicacion_directa">
       <field name="name">proceso.adjudicacion_directa.tree</field>
       <field name="model">proceso.adjudicacion_directa</field>
       <field name="arch" type="xml">
@@ -14,7 +14,7 @@
     </record>
 
 
-    <record model="ir.ui.view" id="proc_contratacion.adjudicacion_directa_form">
+    <record model="ir.ui.view" id="proc_contratacion_adjudicacion_directa_form">
       <field name="name">proceso.adjudicacion_directa.form</field>
       <field name="model">proceso.adjudicacion_directa</field>
       <field name="arch" type="xml">
@@ -119,7 +119,7 @@
     </record>
 
     <!-- ACCIONES VENTANA -->
-    <record model="ir.actions.act_window" id="proc_contratacion.adjudicacion_directa_action_window">
+    <record model="ir.actions.act_window" id="proc_contratacion_adjudicacion_directa_action_window">
       <field name="name">Adjudicación directa</field>
       <field name="type">ir.actions.act_window</field>
       <field name="res_model">proceso.adjudicacion_directa</field>
@@ -130,15 +130,15 @@
    <!-- <record model="ir.actions.act_window" id="prueba01">
       <field name="name">ver datos</field>
       <field name="type">ir.actions.act_window</field>
-      <field name="res_model">proceso.adjudicacion_partidas</field>
+      <field name="res_model">partidas.partidas</field>
       <field name="view_mode">tree,form</field>
     </record> -->
 
     <!-- MENUS -->
-      <menuitem name="Adjudicación directa" id="proc_contratacion.adjudicacion_directa_menu"
-                parent="proc_contratacion.menu_root" action="proc_contratacion.adjudicacion_directa_action_window" sequence="3"/>
+      <menuitem name="Adjudicación directa" id="proc_contratacion_adjudicacion_directa_menu"
+                parent="proc_contratacion_menu_root" action="proc_contratacion_adjudicacion_directa_action_window" sequence="3"/>
 
-     <!-- <menuitem name="Ver" id="proc_contratacion.adjudicacion_directa_menu"
+     <!-- <menuitem name="Ver" id="proc_contratacion_adjudicacion_directa_menu"
                 parent="proc_contratacion.menu_root" action="prueba01" sequence="0"/>-->
   </data>
 </odoo>

@@ -8,15 +8,16 @@ access_proc_proceso_participantee,proceso.participante,model_proceso_participant
 access_proc_proceso_anticipo,proceso.anticipo_contratos,model_proceso_anticipo_contratos,,1,1,1,1
 access_proc_obra_estado_desierta,proceso.estado_obra_desierta,model_proceso_estado_obra_desierta,,1,1,1,1
 access_proc_obra_estado_obra_cancelar,proceso.estado_obra_cancelar,model_proceso_estado_obra_cancelar,,1,1,1,1
-access_proceso_conceptos_contratos,proceso.conceptos_contratos,model_proceso_conceptos_contratos,,1,1,1,1
 access_proceso_conceptos_part,proceso.conceptos_part,model_proceso_conceptos_part,,1,1,1,1
 access_proceso_categoria,proceso.categoria,model_proceso_categoria,,1,1,1,1
 access_proceso_concepto,proceso.concepto,model_proceso_concepto,,1,1,1,1
 access_proceso_grupo,proceso.grupo,model_proceso_grupo,,1,1,1,1
 access_proceso_medida,proceso.medida,model_proceso_medida,,1,1,1,1
-access_proceso_adjudicacion_partidas,proceso.adjudicacion_partidas,model_proceso_adjudicacion_partidas,,1,1,1,1
 access_proceso_contrato_partidas,proceso.contrato_partidas,model_proceso_contrato_partidas,,1,1,1,1
 access_proceso_contrato_licitacion,proceso_contrato_licitacion,model_proceso_contrato_licitacion,,1,1,1,1
+access_partidas_partidas,proceso_partidas_partidas,model_partidas_partidas,,1,1,1,1
+access_proceso_rc,proceso.rc,model_proceso_rc,,1,1,1,1
+access_proceso_programa,proceso.programa,model_proceso_programa,,1,1,1,1
 
 
 

@@ -9,7 +9,7 @@ class AdjudicacionDirecta(models.Model):
     #  HACER LOS FILTROS DE RELACION DE PROGRAMAS DE INVERSION CON OBRAS PROGRAMADAS(partidas)
     programas_inversion_adjudicacion = fields.Many2one('generales.programas_inversion', 'name')
     # /// Partidas
-    programar_obra_adjudicacion = fields.Many2many("proceso.adjudicacion_partidas", string="Partida(s):")
+    programar_obra_adjudicacion = fields.Many2many("partidas.partidas", string="Partida(s):")
 
     iva = fields.Float(string="I.V.A", default=0.16, required=True)
 
@@ -71,72 +71,3 @@ class AdjudicacionDirecta(models.Model):
                                   rec.recurso_estatal_indirecto + rec.recurso_municipal + rec.recurso_municipal_indirecto +
                                   rec.recurso_otros)
             })
-
-
-# CLASE DE LAS PARTIDAS Y CONCEPTOS CONTRATADOS
-class AdjudicacionPartidas(models.Model):
-    _name = 'proceso.adjudicacion_partidas'
-    _rec_name = "obra"
-
-    # enlace
-    estimacion_id = fields.Char(compute="nombre", store=True)
-
-    obra = fields.Many2one('registro.programarobra', required=True)
-
-    programaInversion = fields.Many2one('generales.programas_inversion', related="obra.programaInversion")
-    monto_partida = fields.Float(string="Monto",  required=False, )
-    iva_partida = fields.Float(string="Iva",  required=False, compute="iva")
-    total_partida = fields.Float(string="Total",  required=False, compute="sumaPartidas")
-
-    # NOTA CAMBIAR DESPUES LOS VALORES DE IVA A PERSONALIZADOS NO FIJOS
-    # METODOS DE SUMA DEL MANY2MANY 'programar_obra'
-
-    # CONCEPTOS CONTRATADOS DE PARTIDAS
-    contrato_partida = fields.Many2many('proceso.contrato_partidas')
-    conceptos_partidas = fields.Many2many('proceso.conceptos_part')
-    name = fields.Many2one('proceso.elaboracion_contrato', readonly=True)
-    total = fields.Float(string="Monto Total Contratado:", readonly=True, compute="totalContrato")
-    total_contrato = fields.Float(string="Monto Total del Catálogo:", readonly=True, compute="SumaImporte")
-    diferencia = fields.Float(string="Diferencia:", compute="Diferencia")
-
-    @api.one
-    def sumaConcepto(self):
-        self.diferencia = 5
-
-    @api.one
-    def totalContrato(self):
-        self.total = self.total_partida
-
-    @api.one
-    def Diferencia(self):
-        self.diferencia = self.total - self.total_contrato
-
-    @api.depends('monto_partida')
-    def sumaPartidas(self):
-        for rec in self:
-            rec.update({
-                'total_partida': (rec.monto_partida * 0.16) + rec.monto_partida
-            })
-
-    @api.depends('monto_partida')
-    def iva(self):
-        for rec in self:
-            rec.update({
-                'iva_partida': (rec.monto_partida * 0.16)
-            })
-
-    # METODO PARA SUMAR LOS IMPORTES DE LOS CONCEPTOS
-    @api.onchange('conceptos_partidas')
-    def SumaImporte(self):
-        # ids = self.env['proceso.conceptos_part'].search([('importe', '=', self.id)])
-        # r = self.env['proceso.elaboracion_contrato'].sudo().search([('adjudicacion', '=', self.id)])
-        suma = 0
-        for i in self.conceptos_partidas:
-            # imp = i.importe
-            resultado = i.importe
-            suma = suma + resultado
-            self.total_contrato = suma
-
-    @api.one
-    def nombre(self):
-        self.estimacion_id = self.obra

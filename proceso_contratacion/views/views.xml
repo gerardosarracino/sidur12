@@ -57,8 +57,8 @@
     </record>
 
     <!-- LICITACIONES TREE -->
-    <record model="ir.ui.view" id="proc_contratacion.licitacion_tree">
-      <field name="name">proceso.licitacion.tree</field>
+    <record model="ir.ui.view" id="proc_contratacion_licitacion_tree">
+      <field name="name">proceso licitacion tree</field>
       <field name="model">proceso.licitacion</field>
       <field name="arch" type="xml">
         <tree decoration-muted="estado_obra_desierta, '>=', '1'" decoration-danger="estado_obra_cancelar, '>=', '1'">
@@ -197,7 +197,7 @@
     </record>
 
 <!-- LICITACION FORM -->
-    <record model="ir.ui.view" id="proc_contratacion.licitacion_form">
+    <record model="ir.ui.view" id="proc_contratacion_licitacion_form">
       <field name="name">proceso.licitacion.form</field>
       <field name="model">proceso.licitacion</field>
       <field name="arch" type="xml">
@@ -310,20 +310,11 @@
       </field>
     </record>
 
-    <!-- ACCIONES VENTANA LICITACIONES -->
-    <record model="ir.actions.act_window" id="proc_contratacion.licitacion_action_window">
-      <field name="name">Registro de licitaciones</field>
-      <field name="type">ir.actions.act_window</field>
-      <field name="res_model">proceso.licitacion</field>
-      <field name="view_mode">tree,form</field>
-        <field name="view_ids" eval="[(5, 0, 0),
-        (0, 0, {'view_mode': 'tree', 'view_id': ref('proc_contratacion.licitacion_tree')}),
-        (0, 0, {'view_mode': 'form', 'view_id': ref('proc_contratacion.licitacion_form')})]"/>
-    </record>
+
 
     <!-- TREE VIEW REPORTE-->
-    <record model="ir.ui.view" id="proc_contratacion.licitacion_tree2">
-      <field name="name">proceso.licitacion.tree2</field>
+    <record model="ir.ui.view" id="proc_contratacion_licitacion_tree2">
+      <field name="name">proceso licitacion tree2</field>
       <field name="model">proceso.licitacion</field>
       <field name="arch" type="xml">
         <tree create="false" >
@@ -340,7 +331,7 @@
     <record id="licitacion_tree_no_delete" model="ir.ui.view">
         <field name="name">licitacion.tree.no.delete</field>
         <field name="model">proceso.licitacion</field>
-        <field name="inherit_id" ref="proc_contratacion.licitacion_tree2" />
+        <field name="inherit_id" ref="proc_contratacion_licitacion_tree2" />
         <field name="arch" type="xml">
             <xpath expr="//tree" position="attributes">
                 <attribute name="delete">false</attribute>
@@ -355,7 +346,7 @@
     res_model="proceso.licitacion"
     view_type="form" view_mode="form"
     key2="client_action_multi" target="new"
-    view_id="proc_contratacion.licitacion_tree2"
+    view_id="proc_contratacion_licitacion_tree2"
     />
 
     <!-- ACTION DE LISTADO DE LICITACIONES-->
@@ -365,25 +356,36 @@
     res_model="proceso.licitacion"
     view_type="form" view_mode="form"
     key2="client_action_multi" target="new"
-    view_id="proc_contratacion.licitacion_tree2"
+    view_id="proc_contratacion_licitacion_tree2"
     />
 
     <!-- ACCIONES VENTANA DE REPORTE -->
-    <record model="ir.actions.act_window" id="proc_contratacion.licitacion_action_window2">
+    <record model="ir.actions.act_window" id="proc_contratacion_licitacion_action_window2">
       <field name="name">Consulta de licitaciones</field>
       <field name="type">ir.actions.act_window</field>
       <field name="res_model">proceso.licitacion</field>
-      <field name="view_id" ref="proc_contratacion.licitacion_tree2"/>
+      <field name="view_id" ref="proc_contratacion_licitacion_tree2"/>
       <field name="view_mode">tree</field>
     </record>
 
+      <!-- ACCIONES VENTANA LICITACIONES -->
+    <record model="ir.actions.act_window" id="proc_contratacion_licitacion_action_window">
+      <field name="name">Registro de licitaciones</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">proceso.licitacion</field>
+      <field name="view_mode">tree,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+        (0, 0, {'view_mode': 'tree', 'view_id': ref('proc_contratacion_licitacion_tree')}),
+        (0, 0, {'view_mode': 'form', 'view_id': ref('proc_contratacion_licitacion_form')})]"/>
+    </record>
+
     <!-- MENUS -->
-    <menuitem name="Proceso de contratación" id="proc_contratacion.menu_root" sequence="0"/>
-    <menuitem name="Registro de licitaciones" id="proc_contratacion.consulta_menu" parent="proc_contratacion.menu_root"
-              action="proc_contratacion.licitacion_action_window" sequence="1"/>
+    <menuitem name="Proceso de contratación" id="proc_contratacion_menu_root" sequence="0"/>
+    <menuitem name="Registro de licitaciones" id="proc_contratacion_consulta_menu" parent="proc_contratacion_menu_root"
+              action="proc_contratacion_licitacion_action_window" sequence="1"/>
 
     <!-- <menuitem name="Consulta de licitaciones" id="proc_contratacion.licitacion_menu"
-     parent="proc_contratacion.menu_root" action="proc_contratacion.licitacion_action_window2" sequence="2"/>-->
+     parent="proc_contratacion_menu_root" action="proc_contratacion_licitacion_action_window2" sequence="2"/>-->
 
   </data>
 </odoo>

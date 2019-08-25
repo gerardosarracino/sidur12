@@ -1,181 +1,264 @@
 <odoo>
   <data>
-      <record model="ir.actions.act_window" id="autorizacion_obra.anexo_taction">
-        <field name="name">Anexo técnico del oficio</field>
-        <field name="res_model">autorizacion_obra.aut</field>
-        <field name="view_mode">tree,form</field>
+      <!-- ACCIONES VENTANA -->
+    <record model="ir.actions.act_window" id="autorizacion_obra.oficios_de_autorizacion_action_window">
+      <field name="name">Oficio de autorización</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">autorizacion_obra.oficios_de_autorizacion</field>
+      <field name="view_mode">tree,form</field>
     </record>
 
-    <record model="ir.actions.act_window" id="autorizacion_obra.action">
-        <field name="name">Oficio de autorización</field>
-        <field name="res_model">autorizacion_obra.oficios_autorizacion</field>
-        <field name="view_mode">tree,form</field>
+    <record model="ir.actions.act_window" id="autorizacion_obra.anexo_tecnico_action_window">
+      <field name="name">Anexo técnico</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">autorizacion_obra.anexo_tecnico</field>
+      <field name="target">new</field>
+      <field name="view_mode">form,tree</field>
     </record>
 
-    <record model="ir.ui.view" id="autorizacion_obra.tree">
-    <field name="name">Oficio de autorización</field>
-    <field name="model">autorizacion_obra.oficios_autorizacion</field>
-    <field name="arch" type="xml">
-      <tree  decoration-success="importe,'==', total_at"   decoration-danger="total_at &gt; importe">
-          <field name="numero_de_oficio"/>
+    <record model="ir.actions.act_window" id="autorizacion_obra.cancelarrecurso_action_window">
+      <field name="name">Cancelar recursos</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">autorizacion_obra.cancelarrecurso</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+   <!-- OFICIO DE AUTORIZACION -->    
+    <record model="ir.ui.view" id="autorizacion_obra.oficios_de_autorizacion_search">
+      <field name="name">Oficio de autorización</field>
+      <field name="model">autorizacion_obra.oficios_de_autorizacion</field>
+      <field name="arch" type="xml">
+        <search>
           <field name="fecha_actual"/>
           <field name="fecha_de_recibido"/>
           <field name="fecha_de_vencimiento"/>
-          <field name="variable_count" string='Número de Anexos técnicos'/>
-          <field name="importe" string='Importe'/>
-          <field name="total_at"/>
-      </tree>
-     </field>
+          <field name="name"/>
+          <field name="importe"/>
+         </search>
+        </field>
+     </record>
+    
+    <record model="ir.ui.view" id="autorizacion_obra.oficios_de_autorizacion_tree">
+      <field name="name">autorizacion_obra.oficios_de_autorizacion.tree</field>
+      <field name="model">autorizacion_obra.oficios_de_autorizacion</field>
+      <field name="arch" type="xml">
+        <tree decoration-success="importe,'==', total_atcancel" decoration-danger="total_atcancel &gt; importe">
+          <field name="name"/>
+          <field name="fecha_actual"/>
+          <field name="fecha_de_recibido"/>
+          <field name="fecha_de_vencimiento"/>
+          <field name="anexo_tec" string="No. Anexos"/>
+          <field name="importe"/>
+          <field name="total_atcancel"/>
+        </tree>
+      </field>
     </record>
-   
-    <record model="ir.ui.view" id="autorizacion_obra.search">
-         <field name="name">Oficio de autorización</field>
-         <field name="model">autorizacion_obra.oficios_autorizacion</field>
-         <field name="arch" type="xml">
-            <search>
-                <field name="numero_de_oficio"/>
-                <field name="fecha_actual"/>
-                <field name="fecha_de_recibido"/>
-                <field name="fecha_de_vencimiento"/>
-                <field name="importe"/>
-                
-            </search>
-         </field>
-      </record>
 
-    <record model="ir.ui.view" id="autorizacion_obra_form">
-      <field name="name">Oficio de autorización</field>
-      <field name="model">autorizacion_obra.oficios_autorizacion</field>
+    <record model="ir.ui.view" id="autorizacion_obra.oficios_de_autorizacion_form">
+      <field name="name">autorizacion_obra.oficios_de_autorizacion.form</field>
+      <field name="model">autorizacion_obra.oficios_de_autorizacion</field>
       <field name="arch" type="xml">
         <form>
-          <sheet>
-            <div class="oe_button_box oe_read_only" name="button_box">
-              <button string=' Agregar Anexo técnico'  name='anexoTecnico' type='object' class='btn-primary' icon='fa-plus'/>
-             
-                     <button class="oe_stat_button" type="action" name="%(autorizacion_obra.anexo_taction)d" context="{
-                       'search_default_numero_de_oficio': active_id,
-                       'default_numero_de_oficio': active_id
-                       }" icon="fa-file">
-                        <field name="variable_count" string=" Anexos técnicos" widget="statinfo" />
-                     </button>
-              </div>
-           
-            <group string="Autorización de obra" class="text-center">
-              <h1><field name="numero_de_oficio" placeholder="Número de oficio"/></h1>
-            </group>
-            <group>
-              <field name="fecha_actual"/>
-              <field name="fecha_de_recibido"/>
-              <field name="fecha_de_vencimiento"/>
-              <field name="importe"/>
-             </group>
-          </sheet>
-        </form>
+        <sheet>
+        <div class="oe_button_box oe_read_only" name="button_box">
+          		<button type="action" name="%(autorizacion_obra.anexo_tecnico_action_window)d" string="Anexo técnico" icon="fa-file-text" context="{
+                       'search_default_name': active_id,
+                       'default_name': active_id
+                       }"></button>
+          	</div>
+        <group string="Oficio de autorización">
+        <field name="anexo_tec" invisible="1"/>
+        <group colspan="2" col="6">
+          <field name="fecha_actual"/>
+          <field name="fecha_de_recibido"/>
+          <field name="fecha_de_vencimiento"/>
+        </group>
+        <group colspan="6" col="6">
+          <field name="name"/>
+          <field name="importe" decoration-success="importe,'==', total_atcancel" decoration-danger="total_atcancel &gt; importe"/>
+          <field name="total_atcancel" attrs="{'invisible': [('anexo_tec', '=', 0)]}" decoration-success="importe,'==', total_atcancel" decoration-danger="total_atcancel &gt; importe"/>
+        </group>
+        <group string="Anexos técnicos" colspan="10" col="1" attrs="{'invisible': [('anexo_tec', '=', 0)]}">
+          <field name="anexos" nolabel="1" target="current">
+          <tree>
+            <field name="name" invisible="1"/>
+            <field name="claveobra"/>
+            <field name="federal"/>
+            <field name="estatal"/>
+            <field name="municipal"/>
+            <field name="otros"/>
+            <field name="total_ca"/>
+            <field name="total1"/>
+            <button type="action" name="%(autorizacion_obra.cancelarrecurso_action_window)d" string="Cancelar recurso" icon="fa-minus-square" context="{
+                       'search_default_name': active_id,
+                       'default_name': active_id
+                       }"/>
+          </tree>
+          </field>
+        </group>
+        </group>
+         </sheet>
+         </form>
       </field>
-    </record>  
+    </record>
 
-
-
-    <record model="ir.ui.view" id="autorizacion_obra.at_search">
-         <field name="name">Anexo técnico del oficio</field>
-         <field name="model">autorizacion_obra.aut</field>
-         <field name="arch" type="xml">
-            <search>
-                <field name="numero_de_oficio"/>
-                <field name="clave_de_obra"/>
-                <field name="clave_presupuestal"/>
-                <field name="monto_federal"/>
-                <field name="monto_estatal"/>
-                <field name="monto_municipal"/>
-                <field name="otros"/>
-            </search>
-         </field>
-      </record>
-
-
-    <record model="ir.ui.view" id="autorizacion_obra.at_tree">
-    <field name="name">Anexo técnico del oficion</field>
-    <field name="model">autorizacion_obra.aut</field>
-    <field name="arch" type="xml">
-      <tree>
-          <field name="numero_de_oficio"/>
-          <field name="clave_de_obra"/>
+    <!-- ANEXOS TECNICOS -->    
+    <record model="ir.ui.view" id="autorizacion_obra.anexo_tecnico_search">
+      <field name="name">Anexo técnico</field>
+      <field name="model">autorizacion_obra.anexo_tecnico</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="name"/>
+          <field name="claveobra"/>
           <field name="clave_presupuestal"/>
-          <field name="monto_federal"/>
-          <field name="monto_estatal"/>
-          <field name="monto_municipal"/>
+          <field name="concepto"/>
+          <field name="federal"/>
+          <field name="estatal"/>
+          <field name="municipal"/>
           <field name="otros"/>
-          <field name="suma_"/> 
-      </tree>
-    </field>
+          <field name="total_ca"/>
+          <field name="total1"/>
+         </search>
+        </field>
+     </record>
+    
+    <record model="ir.ui.view" id="autorizacion_obra.anexo_tecnico_tree">
+      <field name="name">autorizacion_obra.anexo_tecnico.tree</field>
+      <field name="model">autorizacion_obra.anexo_tecnico</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name" invisible="1"/>
+          <field name="claveobra"/>
+          <field name="clave_presupuestal"/>
+          <field name="federal"/>
+          <field name="estatal"/>
+          <field name="municipal"/>
+          <field name="otros"/>
+          <field name="total_ca"/>
+          <field name="total1"/>
+          <!--button type="action" name="%(autorizacion_obra.cancelarrecurso_action_window)d" string="Cancelar recurso" icon="fa-minus-square" context="{
+                       'search_default_name': active_id,
+                       'default_name': active_id
+                       }"/-->
+        </tree>
+      </field>
     </record>
 
-    <record model="ir.ui.view" id="autorizacion_obra_anexo_tform">
-      <field name="name">Anexo técnico del oficio</field>
-      <field name="model">autorizacion_obra.aut</field>
+    <record model="ir.ui.view" id="autorizacion_obra.anexo_tecnico_form">
+      <field name="name">autorizacion_obra.anexo_tecnico.form</field>
+      <field name="model">autorizacion_obra.anexo_tecnico</field>
       <field name="arch" type="xml">
         <form>
-          <sheet>
-            <group string="Anexo técnico" class="text-center">
-              <h1><field name="clave_de_obra" placeholder="Clave de obra"/></h1>
-            </group>
-            <group>
-              <field name="clave_presupuestal"/>
-            </group>
-            <group>
-              <field name="numero_de_oficio"/>
-            </group>
-            <group>
-                <group>
-                    <field name="monto_estatal"/>
-                </group>
-                <group>
-                    <field name="monto_estatal_indirecto"/>
-                </group>
-            </group>
-            <group>
-                <group>
-                    <field name="monto_federal"/>
-                </group>
-                <group>
-                    <field name="monto_federal_indirecto"/>
-                </group>
-            </group>
-            <group>
-                <group>
-                    <field name="monto_municipal"/>
-                </group>
-                <group>
-                    <field name="monto_municipal_indirecto"/>
-                </group>
-            </group>
-            <group>
-                <group>
-                    <field name="otros"/>
-                </group>
-                <group>
-                    <field name="monto_otros_indirecto"/>
-                </group>
-            </group>
-            <group>
-                <group class="oe_subtotal_footer">
-                    <field name="suma_" class="oe_subtotal_footer_separator"/>
-                </group>
-            </group>
-            <group>
-                  <field name="obra_seleccionada"/>
-            </group> 
-            <group>
-                  <field name="obra_programada"/>
-            </group>  
-          </sheet>
-        </form>
+        <sheet>
+        <!--div class="oe_button_box oe_read_only" name="button_box">
+          		<button type="action" name="%(autorizacion_obra.cancelarrecurso_action_window)d" string="Cancelar recurso" icon="fa-file-text" context="{
+                       'search_default_name': active_id,
+                       'default_name': active_id
+                       }"></button>
+          	</div-->
+        <group string="Anexo técnico del oficio">
+        <field name="id" invisible="1"/>
+        <field name="name" invisible="1"/>
+        <field name="cancelados" invisible="1"/>
+        <group colspan="2" col="4">
+          <field name="claveobra"/>
+          <field name="clave_presupuestal"/>
+        </group>
+        <group colspan="10" col="2">
+          <field name="concepto"/>
+        </group>
+        <group string="Montos" colspan="6" col="6">
+          <field name="federal"/>
+          <field name="estatal"/>
+          <field name="municipal"/>
+          <field name="otros"/>
+          <field name="total_ca" attrs="{'invisible': [('cancelados', '=', 0)]}"/>
+          <field name="total1"/>
+        </group>
+        <group string="Recursos cancelados" colspan="10" col="1" attrs="{'invisible': [('cancelados', '=', 0)]}">
+          <field name="cancelado" nolabel="1">
+          <tree>
+          <field name="name" invisible="1"/>
+          <field name="nooficio"/>
+          <field name="fecha"/>
+          <field name="federalc"/>
+          <field name="estatalc"/>
+          <field name="municipalc"/>
+          <field name="otrosc"/>
+          <field name="totalc" string="Total"/>
+          </tree>
+          </field>
+        </group>
+        </group>
+         </sheet>
+         </form>
       </field>
-    </record>  
+    </record>
 
-    <menuitem name="Autorización de obra" id="autorizacion_obra.menu_root" sequence="0"/>
-      <menuitem name="Oficios de Autorización" id="autorizacion_obra.oa_menu" parent="autorizacion_obra.menu_root" action="autorizacion_obra.action" sequence="1"/>
-       
+    <!-- CANCELAR RECURSOS -->    
+    <record model="ir.ui.view" id="autorizacion_obra.cancelarrecurso_search">
+      <field name="name">Cancelar recursos</field>
+      <field name="model">autorizacion_obra.cancelarrecurso</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="name"/>
+          <field name="nooficio"/>
+          <field name="fecha"/>
+          <field name="federalc"/>
+          <field name="estatalc"/>
+          <field name="municipalc"/>
+          <field name="otrosc"/>
+          <field name="totalc" string="Total"/>
+         </search>
+        </field>
+     </record>
+    
+    <record model="ir.ui.view" id="autorizacion_obra.cancelarrecurso_tree">
+      <field name="name">autorizacion_obra.cancelarrecurso.tree</field>
+      <field name="model">autorizacion_obra.cancelarrecurso</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name" invisible="1"/>
+          <field name="nooficio"/>
+          <field name="fecha"/>
+          <field name="federalc"/>
+          <field name="estatalc"/>
+          <field name="municipalc"/>
+          <field name="otrosc"/>
+          <field name="totalc" string="Total"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="autorizacion_obra.cancelarrecurso_form">
+      <field name="name">autorizacion_obra.cancelarrecurso.form</field>
+      <field name="model">autorizacion_obra.cancelarrecurso</field>
+      <field name="arch" type="xml">
+        <form>
+        <sheet>
+        <group string="Cancelar recursos">
+        <field name="name" invisible="1"/>
+        <group colspan="2" col="4">
+          <field name="nooficio"/>
+          <field name="fecha"/>
+        </group>
+        <group string="Recursos" colspan="2" col="6">
+          <field name="federalc"/>
+          <field name="estatalc"/>
+          <field name="municipalc"/>
+          <field name="otrosc"/>
+          <field name="totalc" string="Total"/>
+        </group>
+        </group>
+         </sheet>
+         </form>
+      </field>
+    </record>
+
+
+
+    <!-- MENUS -->
+    <menuitem name="Autorizacion de obra" id="autorizacion_obra.menu_root" sequence="0"/>
+      <menuitem name="Oficios de autorización" id="autorizacion_obra.obra_menu" parent="autorizacion_obra.menu_root" action="autorizacion_obra.oficios_de_autorizacion_action_window" sequence="1"/>
 
   </data>
 </odoo>

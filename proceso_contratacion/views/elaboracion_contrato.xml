@@ -1,7 +1,7 @@
 <odoo>
   <data>
     <!-- CONTRATO  TREE-->
-    <record model="ir.ui.view" id="proc_contratacion.elaboracion_contratos_tree">
+    <record model="ir.ui.view" id="proc_contratacion_elaboracion_contratos_tree">
       <field name="name">proceso.elaboracion_contrato.tree</field>
       <field name="model">proceso.elaboracion_contrato</field>
       <field name="arch" type="xml">
@@ -31,7 +31,7 @@
         </record>
 
     <!-- ELABORACION DE CONTRATO FORM-->
-    <record model="ir.ui.view" id="proc_contratacion.elaboracion_contrato_form">
+    <record model="ir.ui.view" id="proc_contratacion_elaboracion_contrato_form">
       <field name="name">proceso.elaboracion_contrato.form</field>
       <field name="model">proceso.elaboracion_contrato</field>
       <field name="arch" type="xml">
@@ -116,15 +116,30 @@
                         </group>
                     </page>
 
-                    <page string="Anticipo" class="oe_read_only">
-                        <div >
+                <!-- PAGINA DE ANTICIPOS -->
+                    <page string="Anticipo" class="oe_read_only" widget='one2many'>
+                        <group>
+                            <field name="anticipos">
+                                <tree>
+                                    <field name="obra"/>
+                                    <field name="fecha_anticipo"/>
+                                    <field name="porcentaje_anticipo"/>
+                                    <field name="importe"/>
+                                    <field name="iva"/>
+                                    <field name="total_anticipo"/>
+                                    <field name="numero_fianza"/>
+                                    <field name="afianzadora"/>
+                                    <field name="fecha_fianza"/>
+                                </tree>
+                            </field>
+                        </group>
 
-                            <button class="oe_stat_button" type="object" name="AnticipoContrato" context="{
+                            <!--<button class="oe_stat_button" type="object" name="AnticipoContrato" context="{
                                'search_default_contrato': active_id,
                                'default_contrato': active_id
                                }" icon="fa-pencil-square-o" string='Ver o Agregar Anticipos' >
-                     </button>
-                        </div>
+                     </button> -->
+
 
                     </page>
 
@@ -150,7 +165,7 @@
     </record>
 
       <!-- ANTICIPO DE CONTRATOS SEARCH-->
-<record model="ir.ui.view" id="proceso_anticipo_contratos_search">
+<!-- <record model="ir.ui.view" id="proceso_anticipo_contratos_search">
          <field name="name">anticipo contratos</field>
          <field name="model">proceso.anticipo_contratos</field>
          <field name="arch" type="xml">
@@ -169,10 +184,10 @@
                 <field name="fecha_fianza"/>
             </search>
          </field>
-        </record>
+        </record> -->
 
       <!-- ANTICIPO DE CONTRATOS TREE-->
-<record model="ir.ui.view" id="proc_contratacion.anticipo_tree">
+<!-- <record model="ir.ui.view" id="proc_contratacion_anticipo_tree">
       <field name="name">proceso.anticipo.tree</field>
       <field name="model">proceso.anticipo_contratos</field>
       <field name="arch" type="xml">
@@ -188,10 +203,10 @@
           <field name="fecha_fianza"/>
         </tree>
       </field>
-    </record>
+    </record> -->
 
       <!-- ANTICIPO DE CONTRATOS FORM-->
-<record model="ir.ui.view" id="proc_contratacion.anticipo_form">
+<!-- <record model="ir.ui.view" id="proc_contratacion_anticipo_form">
       <field name="name">proceso.anticipo.form</field>
       <field name="model">proceso.anticipo_contratos</field>
       <field name="arch" type="xml">
@@ -216,10 +231,10 @@
       </sheet>
         </form>
       </field>
-</record>
+</record> -->
 
     <!-- ACCIONES VENTANA -->
-    <record model="ir.actions.act_window" id="proc_contratacion.elaboracion_contrato_action_window">
+    <record model="ir.actions.act_window" id="proc_contratacion_elaboracion_contrato_action_window">
       <field name="name">Contratos</field>
       <field name="type">ir.actions.act_window</field>
       <field name="res_model">proceso.elaboracion_contrato</field>
@@ -227,7 +242,7 @@
     </record>
 
     <!-- SEGUIMIENTO DE CONTRATOS -->
-    <record model="ir.ui.view" id="proc_contratacion.elaboracion_contrato_2">
+    <record model="ir.ui.view" id="proc_contratacion_elaboracion_contrato_2">
       <field name="name">proceso.elaboracion_contrato.tree2</field>
       <field name="model">proceso.elaboracion_contrato</field>
       <field name="arch" type="xml">
@@ -244,11 +259,10 @@
     <!-- FORMULARIOS Y TREE DE LAS PARTIDAS CON SUS CATALOGOS -->
       <record id="conceptos_contratados_partidas_form" model="ir.ui.view">
           <field name="name">conceptos contratados form</field>
-          <field name="model">proceso.adjudicacion_partidas</field>
+          <field name="model">partidas.partidas</field>
           <field name="arch" type="xml">
               <form string="">
                   <sheet>
-
                       <group colspan="1" col="2" string="Partida:">
                           <field name="obra" readonly="True"/>
                           <field name="programaInversion" readonly="True"/>
@@ -258,6 +272,7 @@
                       </group>
 
                      <hr/>
+
                       <group>
 
                         <group colspan="2" col="2">
@@ -271,23 +286,16 @@
                             <group><field name="diferencia"  class="o_light_label"/></group>
                         </group>
 
-
-                        <field name="conceptos_partidas" string="# Concepto de partidas" widget="section_and_note_one2many"
-                        mode="tree">
+                        <field name="conceptos_partidas" string="# Concepto de partidas" widget="section_and_note_one2many" >
                             <tree editable="bottom">
                                 <control>
-                                    <create
-                                    string="Agregar Sección"
-                                    context="{'default_display_type': 'line_section'}"
-                                  />
+                                    <create string="Agregar Sección" context="{'default_display_type': 'line_section'}"/>
                                     <create string="Add a note" context="{'default_display_type': 'line_note'}"/>
-                                  <create
-                                    string="Agregar Nivel"
-                                  />
-
+                                    <create string="Agregar Nivel"/>
                                 </control>
-                                <field name="sequence" widget="handle" />
-                                <field name="display_type" invisible="1"/>
+                                <field name="name" widget="section_and_note_Text" />
+                                <field name="sequence" type="handle" invisible="1"/>
+                                <field name="display_type" invisible="1" />
                                 <field name="categoria" />
                                 <field name="concepto"/>
                                 <field name="grupo"/>
@@ -304,9 +312,9 @@
           </field>
       </record>
 
-     <record model="ir.ui.view" id="proc_contratacion.elaboracion_contrato_3">
+     <record model="ir.ui.view" id="proc_contratacion_elaboracion_contrato_3">
       <field name="name">proceso.elaboracion_contrato.tree3</field>
-      <field name="model">proceso.adjudicacion_partidas</field>
+      <field name="model">partidas.partidas</field>
       <field name="arch" type="xml">
         <tree create="false">
             <field name="obra"/>
@@ -323,7 +331,7 @@
     <!-- <record id="partner_tree_no_delete" model="ir.ui.view">
         <field name="name">contrato.tree.no.delete</field>
         <field name="model">proceso.elaboracion_contrato</field>
-        <field name="inherit_id" ref="proc_contratacion.elaboracion_contrato_2" />
+        <field name="inherit_id" ref="proc_contratacion_elaboracion_contrato_2" />
         <field name="arch" type="xml">
             <xpath expr="//tree" position="attributes">
                 <attribute name="delete">false</attribute>
@@ -334,8 +342,8 @@
     <!-- ACCIONES PARA ELIMINAR EL BOTON DELETE DE CONCEPTOS DE CONTRATO -->
     <record id="partner_tree_no_delete_concepto" model="ir.ui.view">
         <field name="name">contrato.tree.no.delete.concepto</field>
-        <field name="model">proceso.adjudicacion_partidas</field>
-        <field name="inherit_id" ref="proc_contratacion.elaboracion_contrato_3" />
+        <field name="model">partidas.partidas</field>
+        <field name="inherit_id" ref="proc_contratacion_elaboracion_contrato_3" />
         <field name="arch" type="xml">
             <xpath expr="//tree" position="attributes">
                 <attribute name="delete">false</attribute>
@@ -350,30 +358,32 @@
       <field name="name">Seguimiento de Contratos</field>
       <field name="type">ir.actions.act_window</field>
       <field name="res_model">proceso.elaboracion_contrato</field>
-      <field name="view_id" ref="proc_contratacion.elaboracion_contrato_2"/>
+      <field name="view_id" ref="proc_contratacion_elaboracion_contrato_2"/>
       <field name="view_mode">tree,form,graph</field>
     </record>-->
 
   <!-- ACCIONES VENTANA -->
-    <record model="ir.actions.act_window" id="proc_contratacion.concepto_contratados_action_window">
+    <record model="ir.actions.act_window" id="proc_contratacion_concepto_contratados_action_window">
       <field name="name">Conceptos de Contratados</field>
       <field name="type">ir.actions.act_window</field>
-      <field name="res_model">proceso.adjudicacion_partidas</field>
-      <field name="view_id" ref="proc_contratacion.elaboracion_contrato_3"/>
-      <field name="view_mode">tree,form</field>
+      <field name="res_model">partidas.partidas</field>
+      <field name="view_ids" eval="[(5, 0, 0),
+    (0, 0, {'view_mode': 'tree', 'view_id': ref('proc_contratacion_elaboracion_contrato_3')}),
+    (0, 0, {'view_mode': 'form', 'view_id': ref('conceptos_contratados_partidas_form')})]"/>
+      <field name="view_mode">form</field>
     </record>
 
     <!-- MENUS -->
-      <menuitem name="Elaboración de contratos" id="proc_contratacion.elaboracion_contrato"
-                parent="proc_contratacion.menu_root" action="proc_contratacion.elaboracion_contrato_action_window" sequence="4"/>
+      <menuitem name="Elaboración de contratos" id="proc_contratacion_elaboracion_contrato"
+                parent="proc_contratacion_menu_root" action="proc_contratacion_elaboracion_contrato_action_window" sequence="4"/>
 
     <!-- MENUS -->
       <!--<menuitem name="Seguimiento de contratos" id="proc_contratacion.seguimiento_contratos"
-                parent="proc_contratacion.menu_root" action="proc_contratacion.seguimiento_contrato_action_window" sequence="5"/>-->
+                parent="proc_contratacion_menu_root" action="proc_contratacion.seguimiento_contrato_action_window" sequence="5"/>-->
 
     <!-- MENUS -->
-      <menuitem name="Conceptos Contratados" id="proc_contratacion.conceptos_contratados"
-                parent="proc_contratacion.menu_root" action="proc_contratacion.concepto_contratados_action_window" sequence="5"/>
+      <menuitem name="Conceptos Contratados" id="proc_contratacion_conceptos_contratados"
+                parent="proc_contratacion_menu_root" action="proc_contratacion_concepto_contratados_action_window" sequence="5"/>
 
 </data>
 </odoo>

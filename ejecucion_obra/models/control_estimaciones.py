@@ -3,15 +3,19 @@ from odoo import models, fields, api, exceptions
 
 class Estimaciones(models.Model):
     _name = 'control.estimaciones'
+    _rec_name = 'obra'
 
     # enlace
     estimacion_id = fields.Char(compute="nombre", store=True)
-    obra = fields.Many2one('proceso.adjudicacion_partidas', string='Obra:', readonly=True)
+    obra = fields.Many2one('partidas.partidas', string='Obra:', readonly=True)
+    obra_id = fields.Char(compute="ConvenioEnlace", store=True)
 
     # ESTIMACIONES
     radio_estimacion = [(
         '1', "Estimacion"), ('2', "Escalatoria")]
     tipo_estimacion = fields.Selection(radio_estimacion, string="")
+
+    # estimacions_id = fields.Char(compute="estimacionId", store=True)
     numero_estimacion = fields.Integer(string="Número de Estimación:", required=False, )
 
     fecha_inicio_estimacion = fields.Date(string="Del:", required=False, )
@@ -24,6 +28,9 @@ class Estimaciones(models.Model):
     si_aplica = fields.Selection(radio_aplica, string="")
 
     notas = fields.Text(string="Notas:", required=False, )
+
+    # DEDUCCIONES
+    deducciones = fields.Many2many('generales.deducciones', string="Deducciones:" )
 
     # Calculados
     estimado = fields.Float(string="Importe ejecutado estimación:", required=False, )
@@ -40,6 +47,42 @@ class Estimaciones(models.Model):
     menos_clau_retraso = fields.Float(string="Menos Clausula Retraso:", required=False, )
     sancion_incump_plazo = fields.Integer(string="Sanción por Incump. de plazo:", required=False, )
 
+    # CONCEPTOS EJECUTADOS
+    conceptos_partidas = fields.Many2many('proceso.conceptos_part')
+
     @api.one
     def nombre(self):
         self.estimacion_id = self.id
+
+    @api.one
+    def ConvenioEnlace(self):
+        self.obra_id = self.obra
+
+
+class ConveniosModificatorios(models.Model):
+    _name = 'control.convenios_modificatorios'
+    _rec_name = 'obra'
+
+    obra = fields.Many2one('partidas.partidas', string='Obra:', readonly=True)
+    obra_id = fields.Char(compute="ConvenioEnlace", store=True)
+
+    fecha = fields.Date("Fecha:")
+    referencia = fields.Char("Referencia:")
+    observaciones = fields.Char("Observaciones:")
+    tipo_convenio = fields.Char("Tipo de Convenio:")
+    importe = fields.Float('Importe:')
+    iva = fields.Float('I.V.A:')
+    total = fields.Float('Total:')
+
+    @api.one
+    def ConvenioEnlace(self):
+        self.obra_id = self.id
+
+
+class Residencia(models.Model):
+    _name = 'control.residencia'
+
+    residente_obra = fields.Char()
+    supervision_externa = fields.Char()
+    director_obras = fields.Char()
+    puesto_director_obras = fields.Text()

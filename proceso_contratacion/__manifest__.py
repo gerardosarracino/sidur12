@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "proc_contratacion",
+    'name': "proceso_contratacion",
 
     'summary': """
         Short (1 phrase/line) summary of the module's purpose, used as

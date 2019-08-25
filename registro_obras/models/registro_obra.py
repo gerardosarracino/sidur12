@@ -154,6 +154,7 @@ class SeguimientoObra(models.TransientModel):
 	
 class ProgramarObra(models.Model):
 	_name = 'registro.programarobra'
+	_rec_name = 'descripcion'
 	
 	name = fields.Many2one('registro.obra', readonly=True)
 	programaInversion = fields.Many2one('generales.programas_inversion', required=True)
@@ -200,7 +201,7 @@ class ProgramarObra(models.Model):
 class EstructuraFinanciera(models.Model):
 	_name = "registro.estructurafinanciera"
 
-	name = fields.Many2one('registro.programarobra', readonly=True)
+	name = fields.Many2one('registro.programarobra',)
 	descripcion = fields.Text(related="name.descripcion")
 	monto = fields.Float(related="name.monto")
 	iaoeFederal = fields.Float(string="Federal")
