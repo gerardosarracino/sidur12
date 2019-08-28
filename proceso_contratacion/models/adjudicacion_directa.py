@@ -13,12 +13,8 @@ class AdjudicacionDirecta(models.Model):
 
     iva = fields.Float(string="I.V.A", default=0.16, required=True)
 
-    # partidaimporte = fields.Float(string="Importe de Adjudicación:", readonly=True, compute="ejemplo")
-    #
-    # partidiva = fields.Float(string="Importe de I.V.A:", readonly=True, compute='sumaAdjudicacion')
-    # partidatotal = fields.Float(string="Total Adjudicado:", readonly=True, compute="sumaProgramas")
-
     name = fields.Text(string="Descripción/Meta", required=True)
+
     numerocontrato = fields.Char(string="Numero Contrato", required=True)
     fechaadjudicacion = fields.Date(string="Fecha de Adjudicación", required=True)
     dictamen = fields.Char(string="Dictamen", required=True)
@@ -71,3 +67,10 @@ class AdjudicacionDirecta(models.Model):
                                   rec.recurso_estatal_indirecto + rec.recurso_municipal + rec.recurso_municipal_indirecto +
                                   rec.recurso_otros)
             })
+
+    @api.model
+    def create(self, values):
+        '''ok = self.programar_obra_adjudicacion
+        for i in ok:
+            ok['adjudicacion'] = self.id
+        return super(AdjudicacionDirecta, self).create(values)'''

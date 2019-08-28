@@ -259,9 +259,6 @@
                     <!--<button type="action" icon="fa-list-alt" string="Catálogo"></button>
                     <button type="action" icon="fa-clock-o" string="Programa"></button>
 
-
-
-
                 </div>
                   <div class="oe_button_box oe_read_only" name="button_box">
                     <button type="action" icon="fa-users" string="Residencia"></button>
@@ -273,12 +270,12 @@
                 </div>
 
                     <group readonly="True">
-                      <group colspan="1" col="2" string="Partida:">
-                          <field name="obra" readonly="True"/>
-                          <field name="programaInversion" readonly="True"/>
-                          <field name="monto_partida" readonly="True" widget="monetary"/>
-                          <field name="iva_partida" readonly="True" widget="monetary"/>
-                          <field name="total_partida" readonly="True" widget="monetary"/>
+                      <group string="Partida:" colspan="1" col="2">
+                          <group><field name="obra" readonly="True"/></group>
+                          <group><field name="programaInversion" readonly="True"/></group>
+                          <group><field name="monto_partida" readonly="True" widget="monetary"/></group>
+                          <group><field name="iva_partida" readonly="True" widget="monetary"/></group>
+                          <group><field name="total_partida" readonly="True" widget="monetary"/></group>
                       </group>
 
                       <!-- <group>
@@ -318,28 +315,42 @@
 
                     <notebook>
                         <page string="Residencia">
-                            <group>
-                                <field name="residente_obra"/>
-                                <field name="supervision_externa"/>
-                                <field name="director_obras"/>
-                                <field name="puesto_director_obras"/>
+                            <group string="Residencia">
+                                <group><field name="residente_obra"/></group>
+                                <group><field name="supervision_externa"/></group>
+                                <group><field name="director_obras"/></group>
+                                <group><field name="puesto_director_obras"/></group>
                             </group>
                         </page>
 
                         <page string="Anticipos">
-
+                            <group string="Anticipos">
+                                <field name="anticipos">
+                                    <tree>
+                                        <field name="obra"/>
+                                        <field name="fecha_anticipo"/>
+                                        <field name="porcentaje_anticipo"/>
+                                        <field name="importe"/>
+                                        <field name="iva"/>
+                                        <field name="total_anticipo"/>
+                                        <field name="numero_fianza"/>
+                                        <field name="afianzadora"/>
+                                        <field name="fecha_fianza"/>
+                                    </tree>
+                                </field>
+                            </group>
                         </page>
 
                         <!-- PAGINA DE CONV. MODIFICATORIOS -->
                         <page string="Conv. Modificatorios">
-                            <group>
-                                  <field name="fecha_convenios"/>
-                                  <field name="referencia_convenios"/>
-                                  <field name="observaciones_convenios"/>
-                                  <field name="tipo_convenio"/>
-                                  <field name="importe_convenios"/>
-                                  <field name="iva_convenios"/>
-                                  <field name="total_convenios"/>
+                            <group string="Conv. Modificatorios" >
+                                    <group><field name="fecha_convenios"/></group>
+                                    <group><field name="referencia_convenios"/></group>
+                                    <group><field name="observaciones_convenios"/></group>
+                                    <group><field name="tipo_convenio"/></group>
+                                    <group><field name="importe_convenios"/></group>
+                                    <group><field name="iva_convenios"/></group>
+                                    <group><field name="total_convenios"/></group>
                             </group>
                         </page>
 
@@ -381,7 +392,7 @@
                         </page>
 
                         <page string="Programa">
-                            <group>
+                            <group string="Programa">
                                 <group colspan="1" col="2">
                                     <group><field name="fecha_inicio_programa" readonly="1"/></group>
                                     <group><field name="fecha_termino_programa" readonly="1"/></group>

@@ -37,15 +37,18 @@
 
                             <field name="programar_obra_adjudicacion" widget='one2many'
                             attrs="{'invisible': [('programas_inversion_adjudicacion', '=', False)]}">
-                                <tree editable="top">
+                                <tree editable="bottom">
                                     <control>
                                          <create string="Agregar Partida"/>
                                     </control>
+
+
                                         <field name="obra" domain="[('programaInversion.id', '=', parent.programas_inversion_adjudicacion)]"/>
                                         <field name="programaInversion" />
                                         <field name="monto_partida" sum="Monto" widget="monetary"/>
                                         <field name="iva_partida" readonly="True" sum="I.V.A" widget="monetary"/>
                                         <field name="total_partida" readonly="True" sum="Total" widget="monetary"/>
+                                        <field name="adjudicacion"/>
                                 </tree>
                             </field>
 

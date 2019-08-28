@@ -9,12 +9,18 @@ class Partidas(models.Model):
     _name = 'partidas.partidas'
     _rec_name = "obra"
 
+    adjudicacion = fields.Many2one(comodel_name="proceso.adjudicacion_directa", string="PRUEBA", required=False, )
+
+    numero_contrato = fields.Many2one('proceso.elaboracion_contrato')
+    contrato_id = fields.Char(compute="contrato", store=True)
     # enlace
     estimacion_id = fields.Char(compute="nombre", store=True)
 
     obra = fields.Many2one('registro.programarobra', )
 
+    # PROGRAMA DE INVERSION
     programaInversion = fields.Many2one('generales.programas_inversion',)
+
     monto_partida = fields.Float(string="Monto",)
     iva_partida = fields.Float(string="Iva",   compute="iva")
     total_partida = fields.Float(string="Total",   compute="sumaPartidas")
@@ -23,7 +29,6 @@ class Partidas(models.Model):
     # METODOS DE SUMA DEL MANY2MANY 'programar_obra'
 
     # CONCEPTOS CONTRATADOS DE PARTIDAS
-    contrato_partida = fields.Many2many('proceso.contrato_partidas')
     conceptos_partidas = fields.Many2many('proceso.conceptos_part')
     name = fields.Many2one('proceso.elaboracion_contrato', readonly=True)
     total = fields.Float(string="Monto Total Contratado:", readonly=True, compute="totalContrato")
@@ -74,22 +79,23 @@ class Partidas(models.Model):
     fecha_convenios = fields.Date("Fecha:")
     referencia_convenios = fields.Char("Referencia:")
     observaciones_convenios = fields.Char("Observaciones:")
-    tipo_convenio = fields.Char("Tipo de Convenio:")
+    tipo_convenio = fields.Char("Tipo de Convenio:", default="Escalatorio", readonly="True")
     importe_convenios = fields.Float('Importe:')
     iva_convenios = fields.Float('I.V.A:')
     total_convenios = fields.Float('Total:')
 
     # RESIDENCIA
-    residente_obra = fields.Char('Residente obra:')
-    supervision_externa = fields.Char('Supervisión externa:')
+    residente_obra = fields.Many2one(
+        comodel_name='res.users',
+        string='Residente obra:',
+        default=lambda self: self.env.user.id,)
+    supervision_externa = fields.Many2one('proceso.elaboracion_contrato', string="Supervisión externa:")
     director_obras = fields.Char('Director de obras:')
     puesto_director_obras = fields.Text('Puesto director de obras:')
 
     # PROGRAMA
     fecha_inicio_programa = fields.Date('Fecha Inicio:', compute='fechaInicio')
     fecha_termino_programa = fields.Date('Fecha Término:', compute='fechaTermino')
-
-    # monto_programa = fields.Float(string="Monto Total:", compute='sumaPartidas')
 
     monto_programa_aux = fields.Float(compute='SumaProgramas')
 
@@ -99,6 +105,9 @@ class Partidas(models.Model):
     # Supervicion de obra (JFernandez)
     ruta_critica = fields.Many2many('proceso.rc')
     total_ = fields.Integer(compute='suma_importe')
+
+    # ANTICIPOS
+    anticipos = fields.Many2many('proceso.anticipo_contratos', string="Anticipos:")
 
     @api.onchange('ruta_critica')
     def suma_importe(self):
@@ -177,6 +186,10 @@ class Partidas(models.Model):
     @api.one
     def nombre(self):
         self.estimacion_id = self.obra
+
+    @api.one
+    def contrato(self):
+        self.contrato_id = self.id
 
 
 class ProgramaContrato(models.Model):

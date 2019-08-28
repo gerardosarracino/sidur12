@@ -60,26 +60,34 @@
 
                                  <field name="contrato_partida_adjudicacion" widget='one2many'
                                  attrs="{'invisible': [('adjudicacion', '=', False)]}">
-                                    <tree>
-                                        <field name="name" />
+                                    <tree editable="top">
+                                    <control>
+                                         <create string="Agregar Partida"/>
+                                    </control>
+                                        <field name="obra" />
                                         <field name="programaInversion" />
                                         <field name="monto_partida" sum="Monto" widget="monetary"/>
                                         <field name="iva_partida" readonly="True" sum="I.V.A" widget="monetary"/>
                                         <field name="total_partida" readonly="True" sum="Total" widget="monetary"/>
-                                    </tree>
-                                </field>
+                                        <field name="adjudicacion"/>
+                                </tree>
+                            </field>
 
                                  <field name="contrato_partida_licitacion" widget='one2many'
                                  attrs="{'invisible': [('obra', '=', False)]}">
-                                    <tree>
-                                        <field name="name" />
+                                    <tree editable="top">
+                                    <control>
+                                         <create string="Agregar Partida"/>
+                                    </control>
+                                        <field name="obra" />
                                         <field name="programaInversion" />
                                         <field name="monto_partida" sum="Monto" widget="monetary"/>
                                         <field name="iva_partida" readonly="True" sum="I.V.A" widget="monetary"/>
                                         <field name="total_partida" readonly="True" sum="Total" widget="monetary"/>
-                                    </tree>
-                                </field>
-                             </group>
+                                        <field name="adjudicacion"/>
+                                </tree>
+                            </field>
+                            </group>
 
                                  <group colspan="1" col="2">
                                     <group><field name="fecha" class="oe_inline"/></group>
@@ -94,16 +102,9 @@
                                 <field name="supervisionexterna" class="oe_inline"/>
                                 <field name="supervisionexterna1" class="oe_inline"/>
                                 <field name="total"/>
+                                </group>
 
 
-                             <!-- attrs="{'invisible': [('obra' and 'adjudicacion', '=', False)]}" -->
-                             <!-- <group colspan="1" col="2" >
-                                 <field name="importe_contrato"/>
-                                 <field name="iva_contrato"/>
-                                 <field name="portentaje_iva_contrato"/>
-                                 <field name="total_contrato"/>
-                             </group> -->
-                        </group>
                         <group>
                             <field name="contratista"/>
                         </group>
@@ -114,6 +115,7 @@
                             <group><field name="periodicidadretencion" class="oe_inline"/></group>
                             <group><field name="retencion" class="oe_inline"/></group>
                         </group>
+
                     </page>
 
                 <!-- PAGINA DE ANTICIPOS -->
@@ -164,75 +166,6 @@
       </field>
     </record>
 
-      <!-- ANTICIPO DE CONTRATOS SEARCH-->
-<!-- <record model="ir.ui.view" id="proceso_anticipo_contratos_search">
-         <field name="name">anticipo contratos</field>
-         <field name="model">proceso.anticipo_contratos</field>
-         <field name="arch" type="xml">
-            <search>
-                <field name="contrato"/>
-                <field name="fecha_anticipo"/>
-                <field name="porcentaje_anticipo"/>
-                <field name="total_anticipo_porcentaje"/>
-                <field name="anticipo_material"/>
-                <field name="importe"/>
-                <field name="anticipo"/>
-                <field name="iva"/>
-                <field name="total_anticipo"/>
-                <field name="numero_fianza"/>
-                <field name="afianzadora"/>
-                <field name="fecha_fianza"/>
-            </search>
-         </field>
-        </record> -->
-
-      <!-- ANTICIPO DE CONTRATOS TREE-->
-<!-- <record model="ir.ui.view" id="proc_contratacion_anticipo_tree">
-      <field name="name">proceso.anticipo.tree</field>
-      <field name="model">proceso.anticipo_contratos</field>
-      <field name="arch" type="xml">
-        <tree >
-          <field name="contrato"/>
-          <field name="fecha_anticipo"/>
-          <field name="porcentaje_anticipo"/>
-          <field name="importe"/>
-          <field name="iva"/>
-          <field name="total_anticipo"/>
-          <field name="numero_fianza"/>
-          <field name="afianzadora"/>
-          <field name="fecha_fianza"/>
-        </tree>
-      </field>
-    </record> -->
-
-      <!-- ANTICIPO DE CONTRATOS FORM-->
-<!-- <record model="ir.ui.view" id="proc_contratacion_anticipo_form">
-      <field name="name">proceso.anticipo.form</field>
-      <field name="model">proceso.anticipo_contratos</field>
-      <field name="arch" type="xml">
-        <form>
-      <sheet>
-          <group colspan="2" col="2">
-              <group string="Agregar Anticipo">
-                <field name="contrato"/>
-                <field name="fecha_anticipo"/>
-                <field name="porcentaje_anticipo"/>
-                <field name="total_anticipo_porcentaje"/>
-                <field name="anticipo_material"/>
-                <field name="importe"/>
-                <field name="anticipo"/>
-                <field name="iva"/>
-                <field name="total_anticipo"/>
-                <field name="numero_fianza"/>
-                <field name="afianzadora"/>
-                <field name="fecha_fianza"/>
-             </group>
-          </group>
-      </sheet>
-        </form>
-      </field>
-</record> -->
-
     <!-- ACCIONES VENTANA -->
     <record model="ir.actions.act_window" id="proc_contratacion_elaboracion_contrato_action_window">
       <field name="name">Contratos</field>
@@ -263,7 +196,11 @@
           <field name="arch" type="xml">
               <form string="">
                   <sheet>
+
                       <group colspan="1" col="2" string="Partida:">
+                          <field name="numero_contrato" context="{
+                       'default_numero_contrato': active_id
+                       }"/>
                           <field name="obra" readonly="True"/>
                           <field name="programaInversion" readonly="True"/>
                           <field name="monto_partida" readonly="True" widget="monetary"/>
@@ -286,8 +223,9 @@
                             <group><field name="diferencia"  class="o_light_label"/></group>
                         </group>
 
-                        <field name="conceptos_partidas" string="# Concepto de partidas" widget="section_and_note_one2many" >
-                            <tree editable="bottom">
+
+                        <field name="conceptos_partidas" widget="section_and_note_one2many" string="# Concepto de partidas"  >
+                            <tree editable="top">
                                 <control>
                                     <create string="Agregar Sección" context="{'default_display_type': 'line_section'}"/>
                                     <create string="Add a note" context="{'default_display_type': 'line_note'}"/>
@@ -317,6 +255,8 @@
       <field name="model">partidas.partidas</field>
       <field name="arch" type="xml">
         <tree create="false">
+            <field name="adjudicacion"/>
+            <field name="numero_contrato"/>
             <field name="obra"/>
             <field name="programaInversion" />
             <field name="monto_partida" />
@@ -325,7 +265,6 @@
         </tree>
       </field>
     </record>
-
 
      <!-- ACCIONES PARA ELIMINAR EL BOTON DELETE DE SEGUIMIENTO DE CONTRATO -->
     <!-- <record id="partner_tree_no_delete" model="ir.ui.view">

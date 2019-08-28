@@ -16,7 +16,7 @@ class Estimaciones(models.Model):
     tipo_estimacion = fields.Selection(radio_estimacion, string="")
 
     # estimacions_id = fields.Char(compute="estimacionId", store=True)
-    numero_estimacion = fields.Integer(string="Número de Estimación:", required=False, )
+    numero_estimacion = fields.Integer(string="Número de Estimación:", compute="_get_increment")
 
     fecha_inicio_estimacion = fields.Date(string="Del:", required=False, )
     fecha_termino_estimacion = fields.Date(string="Al:", required=False, )
@@ -49,6 +49,13 @@ class Estimaciones(models.Model):
 
     # CONCEPTOS EJECUTADOS
     conceptos_partidas = fields.Many2many('proceso.conceptos_part')
+
+
+
+    @api.one
+    def _get_increment(self):
+        numero = self.env['control.estimaciones'].search_count([('numero_estimacion', '=', self.id)])
+        self.numero_estimacion = numero
 
     @api.one
     def nombre(self):

@@ -13,8 +13,6 @@ access_proceso_categoria,proceso.categoria,model_proceso_categoria,,1,1,1,1
 access_proceso_concepto,proceso.concepto,model_proceso_concepto,,1,1,1,1
 access_proceso_grupo,proceso.grupo,model_proceso_grupo,,1,1,1,1
 access_proceso_medida,proceso.medida,model_proceso_medida,,1,1,1,1
-access_proceso_contrato_partidas,proceso.contrato_partidas,model_proceso_contrato_partidas,,1,1,1,1
-access_proceso_contrato_licitacion,proceso_contrato_licitacion,model_proceso_contrato_licitacion,,1,1,1,1
 access_partidas_partidas,proceso_partidas_partidas,model_partidas_partidas,,1,1,1,1
 access_proceso_rc,proceso.rc,model_proceso_rc,,1,1,1,1
 access_proceso_programa,proceso.programa,model_proceso_programa,,1,1,1,1

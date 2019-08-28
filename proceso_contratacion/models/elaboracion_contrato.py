@@ -8,9 +8,9 @@ class ElaboracionContratos(models.Model):
     _name = "proceso.elaboracion_contrato"
     _rec_name = 'contrato'
 
-    contrato_partida_licitacion = fields.Many2many('proceso.contrato_licitacion')
+    contrato_partida_licitacion = fields.Many2many('partidas.partidas')
 
-    contrato_partida_adjudicacion = fields.Many2many('proceso.contrato_partidas')
+    contrato_partida_adjudicacion = fields.Many2many('partidas.partidas')
 
     contrato_id = fields.Char(compute="nombre", store=True)
 
@@ -18,7 +18,7 @@ class ElaboracionContratos(models.Model):
     obra = fields.Many2one('proceso.licitacion', string="Seleccionar obra")
 
     # ADJUDICACION
-    adjudicacion = fields.Many2one('partidas.partidas', string="Nombre de Adjudicacion")
+    adjudicacion = fields.Many2one('proceso.adjudicacion_directa', string="Nombre de Adjudicacion")
 
     fecha = fields.Date(string="Fecha", required=True)
     contrato = fields.Char(string="Contrato", required=True)
@@ -38,14 +38,12 @@ class ElaboracionContratos(models.Model):
     total = fields.Float(string="Total", readonly=True)
 
     # falta relacion con el contratista de la obra seleccionada, nose cuando aparece
-    contratista = fields.Char(string="Contratista", readonly=True, default=".")
+    contratista = fields.Char(string="Contratista", readonly=True, default="POR ASIGNAR")
     fechainicio = fields.Date(string="Fecha de Inicio", required=True)
     fechatermino = fields.Date(string="Fecha de Termino", required=True)
     select = [('1', 'Diario'), ('2', 'Mensual'), ('3', 'Ninguno')]
     periodicidadretencion = fields.Selection(select, string="Periodicidad Retención", required=True, default="3")
     retencion = fields.Float(string="% Retencion")
-
-    new_field_ids = fields.Many2many(comodel_name="proceso.anticipo_contratos")
 
     # FALTA HACER LOS CAMPOS DE LA TABLA EN MODO EDITAR, CLAVE PRESUPUESTAL, RECURSOS AUTORIZADOS ETC...
     # RELACION CON REGISTRO DE OBRAS Y/0 OBRAS AUTORIZADAS
@@ -62,14 +60,21 @@ class ElaboracionContratos(models.Model):
     # ANTICIPOS
     anticipos = fields.Many2many('proceso.anticipo_contratos', string="Anticipos:")
 
-    # @api.multi
-    # @api.onchange('obra')  # if these fields are changed, call method
-    # def check_change_licitacion(self):
-    #     # adirecta_id = self.env['proceso.adjudicacion_directa'].browse('adjudicacion')
-    #     ids = [1]
-    #     self.update({
-    #         'contrato_partida_licitacion': [[0, 0, {'monto_partida': 0.0}]]
-    #     })
+    @api.multi
+    @api.onchange('adjudicacion')  # if these fields are changed, call method
+    def check_change_licitacion(self):
+        adirecta_id = self.env['partidas.partidas'].search([('adjudicacion', '=', self.adjudicacion.id)])
+        self.update({
+            'contrato_partida_adjudicacion': [[5]]
+        })
+        for partidas in adirecta_id:
+            self.update({
+                'contrato_partida_adjudicacion': [[0, 0, {'adjudicacion': partidas.adjudicacion, 'obra': partidas.obra,
+                                                          'programaInversion': partidas.programaInversion,
+                                                          'monto_partida': partidas.monto_partida,
+                                                          'iva_partida': partidas.iva_partida,
+                                                          'total_partida': partidas.total_partida}]]
+                     })
 
     @api.one
     def nombre(self):
@@ -99,18 +104,6 @@ class ElaboracionContratos(models.Model):
             'target': 'self',
         }
 
-    # ANTICIPO CONTRATO
-    '''@api.multi
-    def AnticipoContrato(self):
-        return {
-            'type': 'ir.actions.act_window',
-            'name': 'Anticipo Contrato',
-            'res_model': 'proceso.anticipo_contratos',
-            'view_mode': 'tree,form',
-            'view_type': 'form',
-            'target': 'current',
-        }'''
-
     #
     @api.multi
     def Seleccion(self):
@@ -126,10 +119,7 @@ class ElaboracionContratos(models.Model):
 class AnticipoContratos(models.Model):
     _name = "proceso.anticipo_contratos"
 
-    # contrato = fields.Many2one('proceso.elaboracion_contrato', string='Numero Contrato:', readonly=True)
-
-    # contrato_id = fields.Char(compute="nombre", store=True)
-    obra = fields.Many2one('proceso.contrato_partidas', string="Obra:")
+    obra = fields.Many2one('partidas.partidas', string="Obra:")
 
     fecha_anticipo = fields.Date(string="Fecha Anticipo")
     porcentaje_anticipo = fields.Float(string="Anticipo Inicio")
@@ -142,59 +132,6 @@ class AnticipoContratos(models.Model):
     numero_fianza = fields.Float(string="# Fianza")
     afianzadora = fields.Char(string="Afianzadora")
     fecha_fianza = fields.Date(string="Fecha Fianza")
-
-    '''@api.one
-    def nombre(self):
-        self.contrato_id = self.id'''
-
-
-# MODELO DE PARTIDAS
-class ContratoPartidasAdjudicacion(models.Model):
-    _name = 'proceso.contrato_partidas'
-
-    name = fields.Many2one('registro.programarobra')
-    programaInversion = fields.Many2one('generales.programas_inversion', related="name.programaInversion")
-    monto_partida = fields.Float(string="Monto", required=False, )
-    iva_partida = fields.Float(string="Iva", required=False, compute="iva")
-    total_partida = fields.Float(string="Total", required=False, compute="sumaPartidas")
-
-    @api.depends('monto_partida')
-    def sumaPartidas(self):
-        for rec in self:
-            rec.update({
-                'total_partida': (rec.monto_partida * 0.16) + rec.monto_partida
-            })
-
-    @api.depends('monto_partida')
-    def iva(self):
-        for rec in self:
-            rec.update({
-                'iva_partida': (rec.monto_partida * 0.16)
-            })
-
-
-class ContratoPartidasL(models.Model):
-    _name = 'proceso.contrato_licitacion'
-
-    name = fields.Many2one('registro.programarobra')
-    programaInversion = fields.Many2one('generales.programas_inversion', related="name.programaInversion")
-    monto_partida = fields.Float(string="Monto", required=False, )
-    iva_partida = fields.Float(string="Iva", required=False, compute="iva")
-    total_partida = fields.Float(string="Total", required=False, compute="sumaPartidas")
-
-    @api.depends('monto_partida')
-    def sumaPartidas(self):
-        for rec in self:
-            rec.update({
-                'total_partida': (rec.monto_partida * 0.16) + rec.monto_partida
-            })
-
-    @api.depends('monto_partida')
-    def iva(self):
-        for rec in self:
-            rec.update({
-                'iva_partida': (rec.monto_partida * 0.16)
-            })
 
 
 class ConveniosModificados(models.Model):
@@ -345,58 +282,4 @@ class conceptos_partidas(models.Model):
                 'importe': rec.cantidad * rec.precio_unitario
             })
 
-# La vista sera de aqui
-# class conceptos_model(models.Model):
-#     _name = "proceso.conceptos_contratos"
-#
-#     contrato_partida = fields.Many2many('proceso.contrato_partidas')
-#     conceptos_partidas = fields.Many2many('proceso.conceptos_part')
-#     name = fields.Many2one('proceso.elaboracion_contrato', readonly=True)
-#     total = fields.Float(string="Monto Total del Contrato:", readonly=True)
-#     total_contrato = fields.Float(string="Monto Total del Catalogo:", readonly=True, compute="xd")
-#     diferencia = fields.Float(string="Diferencia:", compute="sumaConcepto")
-#     nombre_contrato = fields.Char()
-#
-#     # tabla = fields.Many2many("proceso.convenios_modificado", string="Tabla de Convenios Modificatorios", readonly=True)
-#     # x = fields.Float(related="conceptos_partidas.importe2")
-#
-#     @api.multi
-#     @api.onchange('name') # if these fields are changed, call method
-#     def check_change(self):
-#         # adirecta_id = self.env['proceso.adjudicacion_directa'].browse('adjudicacion')
-#         ids = [1]
-#         self.update({
-#             'contrato_partida': [[0, 0, {'monto_partida': 0.0}]]
-#         })
-#
-#     @api.depends('importe')
-#     def xd(self):
-#         acum = 0
-#         # for i in self.env['proceso.conceptos_part'].sudo().search([('importe', 'in', self.ids)]):
-#         for i in self.importe:
-#             imp = i.importe
-#             acum = acum + imp
-#             i.update({
-#                     'importe2': self.importe2 + imp
-#                 })
-#
-#     @api.multi
-#     def xd(self):
-#         ids = self.env['proceso.conceptos_part'].search([('importe', '=', self.id)])
-#         # r = self.env['proceso.elaboracion_contrato'].sudo().search([('adjudicacion', '=', self.id)])
-#         suma = 0
-#         for i in ids:
-#             # imp = i.importe
-#             resultado = self.env['proceso.conceptos_part'].browse(i.id).importe
-#             suma = suma + resultado
-#             self.total_contrato = suma
-#
-#     @api.onchange('x')
-#     def xd(self):
-#         r = self.x
-#         self.total_contrato = r
-#
-#     @api.one
-#     def sumaConcepto(self):
-#         self.diferencia = 5
-# fin
+
