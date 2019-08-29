@@ -16,6 +16,9 @@ access_proceso_medida,proceso.medida,model_proceso_medida,,1,1,1,1
 access_partidas_partidas,proceso_partidas_partidas,model_partidas_partidas,,1,1,1,1
 access_proceso_rc,proceso.rc,model_proceso_rc,,1,1,1,1
 access_proceso_programa,proceso.programa,model_proceso_programa,,1,1,1,1
+access_partidas_adjudicacion,partidas.adjudicacion,model_partidas_adjudicacion,,1,1,1,1
+access_proceso_convenios,proceso.convenios,model_proceso_convenios,,1,1,1,1
+access_proceso_fianza,proceso.fianza,model_proceso_fianza,,1,1,1,1
 
 
 

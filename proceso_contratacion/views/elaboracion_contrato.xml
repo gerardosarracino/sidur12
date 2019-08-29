@@ -56,20 +56,19 @@
 
                                 <field name="obra" string="Seleccionar Licitacion"  attrs="{'invisible':
                                 [('adjudicacion', '!=', False)]}"/>
-                                <field name="adjudicacion" attrs="{'invisible': [('obra', '!=', False)]}"/>
+
+                                 <field name="adjudicacion" attrs="{'invisible': [('obra', '!=', False)],
+                                 'readonly': [('contrato_partida_adjudicacion', '=', True)]}"/>
 
                                  <field name="contrato_partida_adjudicacion" widget='one2many'
-                                 attrs="{'invisible': [('adjudicacion', '=', False)]}">
-                                    <tree editable="top">
-                                    <control>
-                                         <create string="Agregar Partida"/>
-                                    </control>
+                                 attrs="{'invisible': [('adjudicacion', '=', False)]}" >
+                                    <tree editable="bottom">
                                         <field name="obra" />
                                         <field name="programaInversion" />
-                                        <field name="monto_partida" sum="Monto" widget="monetary"/>
+                                        <field name="monto_partida" sum="Monto" widget="monetary" />
                                         <field name="iva_partida" readonly="True" sum="I.V.A" widget="monetary"/>
                                         <field name="total_partida" readonly="True" sum="Total" widget="monetary"/>
-                                        <field name="adjudicacion"/>
+                                        <field name="numero_contrato"/>
                                 </tree>
                             </field>
 
@@ -84,7 +83,7 @@
                                         <field name="monto_partida" sum="Monto" widget="monetary"/>
                                         <field name="iva_partida" readonly="True" sum="I.V.A" widget="monetary"/>
                                         <field name="total_partida" readonly="True" sum="Total" widget="monetary"/>
-                                        <field name="adjudicacion"/>
+                                        <field name="numero_contrato"/>
                                 </tree>
                             </field>
                             </group>
@@ -101,7 +100,6 @@
                                 <field name="unidadresponsableejecucion" class="oe_inline"/>
                                 <field name="supervisionexterna" class="oe_inline"/>
                                 <field name="supervisionexterna1" class="oe_inline"/>
-                                <field name="total"/>
                                 </group>
 
 
@@ -120,8 +118,8 @@
 
                 <!-- PAGINA DE ANTICIPOS -->
                     <page string="Anticipo" class="oe_read_only" widget='one2many'>
-                        <group>
-                            <field name="anticipos">
+                        <group string="Anticipos">
+                            <field name="anticipos" string="">
                                 <tree>
                                     <field name="obra"/>
                                     <field name="fecha_anticipo"/>
@@ -147,17 +145,21 @@
 
                     <page string="Fianzas" class="oe_read_only" >
                         <group string="Fianzas">
-                                <field name="tipo_fianza"/>
-                                <field name="numero_fianza_fianzas"/>
-                                <field name="monto"/>
-                                <field name="fecha_fianza_fianzas"/>
-                                <field name="afianzadora_fianzas"/>
+                            <field name="fianzas" widget="one2many" string="">
+                                <tree editable="bottom">
+                                    <field name="tipo_fianza"/>
+                                    <field name="numero_fianza_fianzas"/>
+                                    <field name="monto"/>
+                                    <field name="fecha_fianza_fianzas"/>
+                                    <field name="afianzadora_fianzas"/>
+                                </tree>
+                            </field>
                         </group>
                     </page>
 
                      <page string="Deducciones" class="oe_read_only">
                         <group string="Deducciones">
-                                <field name="deducciones"/>
+                                <field name="deducciones" string=""/>
                         </group>
                     </page>
             </notebook>
@@ -197,15 +199,16 @@
               <form string="">
                   <sheet>
 
-                      <group colspan="1" col="2" string="Partida:">
-                          <field name="numero_contrato" context="{
-                       'default_numero_contrato': active_id
-                       }"/>
-                          <field name="obra" readonly="True"/>
-                          <field name="programaInversion" readonly="True"/>
-                          <field name="monto_partida" readonly="True" widget="monetary"/>
-                          <field name="iva_partida" readonly="True" widget="monetary"/>
-                          <field name="total_partida" readonly="True" widget="monetary"/>
+                      <group colspan="1" col="3" string="Partida:">
+                         <group> <field name="numero_contrato" readonly="1"/> </group>
+                         <group> <field name="obra" readonly="True"/> </group>
+                         <group> <field name="programaInversion" readonly="True"/> </group>
+                      </group>
+
+                      <group colspan="1" col="3">
+                         <group> <field name="monto_partida" readonly="True" widget="monetary"/> </group>
+                         <group> <field name="iva_partida" readonly="True" widget="monetary"/> </group>
+                         <group> <field name="total_partida" readonly="True" widget="monetary"/> </group>
                       </group>
 
                      <hr/>
@@ -255,7 +258,6 @@
       <field name="model">partidas.partidas</field>
       <field name="arch" type="xml">
         <tree create="false">
-            <field name="adjudicacion"/>
             <field name="numero_contrato"/>
             <field name="obra"/>
             <field name="programaInversion" />

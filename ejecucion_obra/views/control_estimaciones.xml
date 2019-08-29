@@ -1,74 +1,6 @@
 <odoo>
   <data>
-        <!-- CONVENIOS FORM -->
-      <record id="convenios_modificatorios_form" model="ir.ui.view">
-          <field name="name">control convenios modificatorios form</field>
-          <field name="model">control.convenios_modificatorios</field>
-          <field name="arch" type="xml">
-              <form string="">
-                  <sheet>
-                      <group>
-                          <field name="obra"/>
-                          <field name="fecha"/>
-                          <field name="referencia"/>
-                          <field name="observaciones"/>
-                          <field name="tipo_convenio"/>
-                          <field name="importe"/>
-                          <field name="iva"/>
-                          <field name="total"/>
-                      </group>
-                  </sheet>
-              </form>
-          </field>
-      </record>
 
-      <!-- CONVENIOS SEARCH-->
-      <record model="ir.ui.view" id="partidas_estimaciones_search">
-         <field name="name">elaboracion contrato</field>
-         <field name="model">control.convenios_modificatorios</field>
-         <field name="arch" type="xml">
-            <search>
-              <field name="obra"/>
-              <field name="fecha"/>
-              <field name="referencia"/>
-              <field name="observaciones"/>
-              <field name="tipo_convenio"/>
-              <field name="importe"/>
-              <field name="iva"/>
-              <field name="total"/>
-            </search>
-         </field>
-        </record>
-
-      <!-- TREE CONVENIOS -->
-      <record id="convenios_modificatorios_tree" model="ir.ui.view">
-          <field name="name">control convenios modificatorios tree</field>
-          <field name="model">control.convenios_modificatorios</field>
-          <field name="arch" type="xml">
-              <tree string="">
-                  <field name="obra"/>
-                  <field name="fecha"/>
-                  <field name="referencia"/>
-                  <field name="observaciones"/>
-                  <field name="tipo_convenio"/>
-                  <field name="importe"/>
-                  <field name="iva"/>
-                  <field name="total"/>
-              </tree>
-          </field>
-      </record>
-
-      <!-- ACTION CONVENIOS -->
-    <record model="ir.actions.act_window" id="action_convenios_modificatorios">
-        <field name="name">Convenios Modificatorios</field>
-        <field name="res_model">control.convenios_modificatorios</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="view_type">form</field>
-        <field name="target">current</field>
-        <field name="view_ids" eval="[(5, 0, 0),
-            (0, 0, {'view_mode': 'tree', 'view_id': ref('convenios_modificatorios_tree')}),
-            (0, 0, {'view_mode': 'form', 'view_id': ref('convenios_modificatorios_form')})]"/>
-        </record>
 
     <!-- ESTIMACIONES FORM -->
   <record id="control_estimaciones_estimaciones_form" model="ir.ui.view">
@@ -149,17 +81,19 @@
                             <group>
                                 <field name="numero_estimacion" attrs="{'readonly': [('tipo_estimacion','!=', '2')]}"/>
 
+                                <field name="fecha_inicio_estimacion"/>
                                 <field name="conceptos_partidas" string="# Concepto de partidas" widget='one2many'>
                                     <tree editable="bottom" >
-                                        <field name="categoria" readonly="1"/>
-                                        <field name="concepto" readonly="1"/>
-                                        <field name="medida" readonly="1"/>
-                                        <field name="precio_unitario" readonly="1"/>
-                                        <field name="contratada" readonly="1"/>
-                                        <field name="est_ant" readonly="1"/>
-                                        <field name="pendiente" readonly="1"/>
+                                        <field name="categoria" />
+                                        <field name="concepto" />
+                                        <field name="medida" />
+                                        <field name="precio_unitario" />
+                                        <field name="contratada" />
+                                        <field name="est_ant" />
+                                        <field name="pendiente" />
                                         <field name="estimacion"/>
-                                        <field name="importe_ejecutado" readonly="1"/>
+                                        <field name="importe_ejecutado" />
+                                        <field name="obra" />
                                     </tree>
                                 </field>
                             </group>
@@ -256,26 +190,19 @@
                        'default_obra': active_id
                        }"></button>
                       <button type="action" icon="fa-list" string="Estado de Cuenta"></button>
-                    <!--<button type="action" icon="fa-list-alt" string="Catálogo"></button>
-                    <button type="action" icon="fa-clock-o" string="Programa"></button>
 
                 </div>
-                  <div class="oe_button_box oe_read_only" name="button_box">
-                    <button type="action" icon="fa-users" string="Residencia"></button>
-                    <button type="action" icon="fa-money" string="Anticipos"></button>
-                    <button name="%(action_convenios_modificatorios)d" type="action" icon="fa-pencil-square-o" string="Conv. Modificatorios" context="{
-                       'search_default_obra': active_id,
-                       'default_obra': active_id
-                       }"></button>-->
-                </div>
 
-                    <group readonly="True">
-                      <group string="Partida:" colspan="1" col="2">
-                          <group><field name="obra" readonly="True"/></group>
-                          <group><field name="programaInversion" readonly="True"/></group>
-                          <group><field name="monto_partida" readonly="True" widget="monetary"/></group>
-                          <group><field name="iva_partida" readonly="True" widget="monetary"/></group>
-                          <group><field name="total_partida" readonly="True" widget="monetary"/></group>
+                      <group colspan="1" col="3" string="Partida:">
+                         <group> <field name="numero_contrato" readonly="1"/> </group>
+                         <group> <field name="obra" readonly="True"/> </group>
+                         <group> <field name="programaInversion" readonly="True"/> </group>
+                      </group>
+
+                      <group colspan="1" col="3">
+                         <group> <field name="monto_partida" readonly="True" widget="monetary"/> </group>
+                         <group> <field name="iva_partida" readonly="True" widget="monetary"/> </group>
+                         <group> <field name="total_partida" readonly="True" widget="monetary"/> </group>
                       </group>
 
                       <!-- <group>
@@ -311,7 +238,6 @@
                             </tree>
                         </field>
                     </group> -->
-                    </group>
 
                     <notebook>
                         <page string="Residencia">
@@ -325,7 +251,8 @@
 
                         <page string="Anticipos">
                             <group string="Anticipos">
-                                <field name="anticipos">
+                            </group>
+                                <field name="anticipos" string="">
                                     <tree>
                                         <field name="obra"/>
                                         <field name="fecha_anticipo"/>
@@ -338,20 +265,25 @@
                                         <field name="fecha_fianza"/>
                                     </tree>
                                 </field>
-                            </group>
+
                         </page>
 
                         <!-- PAGINA DE CONV. MODIFICATORIOS -->
                         <page string="Conv. Modificatorios">
                             <group string="Conv. Modificatorios" >
-                                    <group><field name="fecha_convenios"/></group>
-                                    <group><field name="referencia_convenios"/></group>
-                                    <group><field name="observaciones_convenios"/></group>
-                                    <group><field name="tipo_convenio"/></group>
-                                    <group><field name="importe_convenios"/></group>
-                                    <group><field name="iva_convenios"/></group>
-                                    <group><field name="total_convenios"/></group>
                             </group>
+                                <field name="convenios_modificatorios" string="" widget="one2many">
+                                    <tree editable="bottom">
+                                        <field name="fecha_convenios"/>
+                                        <field name="referencia_convenios"/>
+                                        <field name="observaciones_convenios"/>
+                                        <field name="tipo_convenio"/>
+                                        <field name="importe_convenios"/>
+                                        <field name="iva_convenios"/>
+                                        <field name="total_convenios"/>
+                                    </tree>
+                                </field>
+
                         </page>
 
                         <!-- PAGINA DE CATALOGOS -->

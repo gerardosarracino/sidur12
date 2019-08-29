@@ -50,7 +50,21 @@ class Estimaciones(models.Model):
     # CONCEPTOS EJECUTADOS
     conceptos_partidas = fields.Many2many('proceso.conceptos_part')
 
-
+    @api.multi
+    @api.onchange('fecha_inicio_estimacion')  # if these fields are changed, call method
+    def check_change_licitacion(self):
+        adirecta_id = self.env['proceso.conceptos_part'].search([('obra', '=', self.obra.id)])
+        self.update({
+            'conceptos_partidas': [[5]]
+        })
+        for conceptos in adirecta_id:
+            self.update({
+                'conceptos_partidas': [[0, 0, {'categoria': conceptos.categoria, 'concepto': conceptos.concepto,
+                                                  'grupo': conceptos.grupo,
+                                                  'medida': conceptos.medida,
+                                                  'precio_unitario': conceptos.precio_unitario,
+                                                  'cantidad': conceptos.cantidad, 'obra': conceptos.obra}]]
+            })
 
     @api.one
     def _get_increment(self):
@@ -66,30 +80,3 @@ class Estimaciones(models.Model):
         self.obra_id = self.obra
 
 
-class ConveniosModificatorios(models.Model):
-    _name = 'control.convenios_modificatorios'
-    _rec_name = 'obra'
-
-    obra = fields.Many2one('partidas.partidas', string='Obra:', readonly=True)
-    obra_id = fields.Char(compute="ConvenioEnlace", store=True)
-
-    fecha = fields.Date("Fecha:")
-    referencia = fields.Char("Referencia:")
-    observaciones = fields.Char("Observaciones:")
-    tipo_convenio = fields.Char("Tipo de Convenio:")
-    importe = fields.Float('Importe:')
-    iva = fields.Float('I.V.A:')
-    total = fields.Float('Total:')
-
-    @api.one
-    def ConvenioEnlace(self):
-        self.obra_id = self.id
-
-
-class Residencia(models.Model):
-    _name = 'control.residencia'
-
-    residente_obra = fields.Char()
-    supervision_externa = fields.Char()
-    director_obras = fields.Char()
-    puesto_director_obras = fields.Text()

@@ -26,6 +26,7 @@
                                             <field name="display_type" invisible="1"/>
                                             <field name="actividad"/>
                                             <field name="porcentaje_est" />
+                                            <field name="xd"/>
                                      </tree>
 
                                 </field>

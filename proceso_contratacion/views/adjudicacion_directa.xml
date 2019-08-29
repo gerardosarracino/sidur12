@@ -41,14 +41,11 @@
                                     <control>
                                          <create string="Agregar Partida"/>
                                     </control>
-
-
                                         <field name="obra" domain="[('programaInversion.id', '=', parent.programas_inversion_adjudicacion)]"/>
                                         <field name="programaInversion" />
                                         <field name="monto_partida" sum="Monto" widget="monetary"/>
                                         <field name="iva_partida" readonly="True" sum="I.V.A" widget="monetary"/>
                                         <field name="total_partida" readonly="True" sum="Total" widget="monetary"/>
-                                        <field name="adjudicacion"/>
                                 </tree>
                             </field>
 

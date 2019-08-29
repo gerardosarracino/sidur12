@@ -10,7 +10,8 @@ class ElaboracionContratos(models.Model):
 
     contrato_partida_licitacion = fields.Many2many('partidas.partidas')
 
-    contrato_partida_adjudicacion = fields.Many2many('partidas.partidas')
+    # contrato_partida_adjudicacion = fields.Many2many('partidas.partidas')
+    contrato_partida_adjudicacion = fields.Many2many('partidas.partidas', ondelete="cascade")
 
     contrato_id = fields.Char(compute="nombre", store=True)
 
@@ -27,34 +28,27 @@ class ElaboracionContratos(models.Model):
     descripciontrabajos = fields.Text(string="Descripción trabajos:", required=True)
     unidadresponsableejecucion = fields.Char(string="Unidad responsable de su ejecución", required=True)
     supervisionexterna = fields.Text(string="Supervisión externa")
-    # relacion con autorizacion de obra pendiente
-    supervisionexterna1 = fields.Char(string="Supervisión externa")
+    supervisionexterna1 = fields.Many2one('proceso.elaboracion_contrato', string="Supervisión externa:")
 
+    # VER SI SON NECESARIOS
     importe_contrato = fields.Float(string="Importe:")
     iva_contrato = fields.Float(string="IVA:")
     portentaje_iva_contrato = fields.Float(string="% IVA:")
     total_contrato = fields.Float(string="Total:")
-
     total = fields.Float(string="Total", readonly=True)
-
-    # falta relacion con el contratista de la obra seleccionada, nose cuando aparece
+    # ///
+    # VINCULO CON ADJUDICACION TRAER DATOS PENDIENTE
     contratista = fields.Char(string="Contratista", readonly=True, default="POR ASIGNAR")
     fechainicio = fields.Date(string="Fecha de Inicio", required=True)
     fechatermino = fields.Date(string="Fecha de Termino", required=True)
+
     select = [('1', 'Diario'), ('2', 'Mensual'), ('3', 'Ninguno')]
     periodicidadretencion = fields.Selection(select, string="Periodicidad Retención", required=True, default="3")
     retencion = fields.Float(string="% Retencion")
 
-    # FALTA HACER LOS CAMPOS DE LA TABLA EN MODO EDITAR, CLAVE PRESUPUESTAL, RECURSOS AUTORIZADOS ETC...
-    # RELACION CON REGISTRO DE OBRAS Y/0 OBRAS AUTORIZADAS
     # Fianzas
-    select_tipo_fianza = [('1', 'Cumplimiento'), ('2', 'Calidad/Vicios Ocultos'), ('3', 'Responsabilidad Civil'),
-                          ('4', 'Ninguno')]
-    tipo_fianza = fields.Selection(select_tipo_fianza, string="Tipo Fianza", default="4")
-    numero_fianza_fianzas = fields.Integer(string="Numero Fianza")
-    monto = fields.Float(string="Monto")
-    fecha_fianza_fianzas = fields.Float(string="Fecha Fianza")
-    afianzadora_fianzas = fields.Char(string="Afianzadora")
+    fianzas = fields.Many2many('proceso.fianza', string="Fianzas:")
+
     # Deducciones
     deducciones = fields.Many2many("generales.deducciones", string="Deducciones")
     # ANTICIPOS
@@ -63,13 +57,13 @@ class ElaboracionContratos(models.Model):
     @api.multi
     @api.onchange('adjudicacion')  # if these fields are changed, call method
     def check_change_licitacion(self):
-        adirecta_id = self.env['partidas.partidas'].search([('adjudicacion', '=', self.adjudicacion.id)])
+        adirecta_id = self.env['proceso.adjudicacion_directa'].browse(self.adjudicacion.id)
         self.update({
             'contrato_partida_adjudicacion': [[5]]
         })
-        for partidas in adirecta_id:
+        for partidas in adirecta_id.programar_obra_adjudicacion:
             self.update({
-                'contrato_partida_adjudicacion': [[0, 0, {'adjudicacion': partidas.adjudicacion, 'obra': partidas.obra,
+                'contrato_partida_adjudicacion': [[0, 0, {'obra': partidas.obra,
                                                           'programaInversion': partidas.programaInversion,
                                                           'monto_partida': partidas.monto_partida,
                                                           'iva_partida': partidas.iva_partida,
@@ -114,6 +108,18 @@ class ElaboracionContratos(models.Model):
             'view_type': 'form',
             'target': 'new',
         }
+
+
+class Fianza(models.Model):
+    _name = 'proceso.fianza'
+
+    select_tipo_fianza = [('1', 'Cumplimiento'), ('2', 'Calidad/Vicios Ocultos'), ('3', 'Responsabilidad Civil'),
+                          ('4', 'Ninguno')]
+    tipo_fianza = fields.Selection(select_tipo_fianza, string="Tipo Fianza", default="4")
+    numero_fianza_fianzas = fields.Integer(string="Numero Fianza")
+    monto = fields.Float(string="Monto")
+    fecha_fianza_fianzas = fields.Float(string="Fecha Fianza")
+    afianzadora_fianzas = fields.Char(string="Afianzadora")
 
 
 class AnticipoContratos(models.Model):
@@ -242,6 +248,8 @@ class conceptos_partidas(models.Model):
     display_type = fields.Selection([
         ('line_section', "Section"),
         ('line_note', "Note")], default=False, help="Technical field for UX purpose.")
+    # prueba
+    obra = fields.Many2one('partidas.partidas', string='Obra:', )
 
     categoria = fields.Many2one('proceso.categoria')
     concepto = fields.Many2one('proceso.concepto')
@@ -249,6 +257,7 @@ class conceptos_partidas(models.Model):
     medida = fields.Many2one('proceso.medida')
     precio_unitario = fields.Float()
     cantidad = fields.Integer()
+
     # CONCEPTOS EJECUTADOS EN EL PERIODO
     contratada = fields.Float(string="Contratada",  required=False, )
     est_ant = fields.Float(string="Est. Ant",  required=False, )

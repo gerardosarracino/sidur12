@@ -5,11 +5,12 @@ from odoo import api, fields, models, exceptions
 
 class AdjudicacionDirecta(models.Model):
     _name = "proceso.adjudicacion_directa"
+    _rec_name = "numerocontrato"
 
     #  HACER LOS FILTROS DE RELACION DE PROGRAMAS DE INVERSION CON OBRAS PROGRAMADAS(partidas)
     programas_inversion_adjudicacion = fields.Many2one('generales.programas_inversion', 'name')
     # /// Partidas
-    programar_obra_adjudicacion = fields.Many2many("partidas.partidas", string="Partida(s):")
+    programar_obra_adjudicacion = fields.Many2many("partidas.adjudicacion", string="Partida(s):", ondelete="cascade")
 
     iva = fields.Float(string="I.V.A", default=0.16, required=True)
 
@@ -29,6 +30,7 @@ class AdjudicacionDirecta(models.Model):
     fechatermino = fields.Date(string="Fecha termino", required=True, )
 
     plazodias = fields.Integer(string="Plazo/Días", required=True)
+
     contratista = fields.Many2many('contratista.contratista', string='Contratista')
 
     # Recursos
@@ -68,9 +70,3 @@ class AdjudicacionDirecta(models.Model):
                                   rec.recurso_otros)
             })
 
-    @api.model
-    def create(self, values):
-        '''ok = self.programar_obra_adjudicacion
-        for i in ok:
-            ok['adjudicacion'] = self.id
-        return super(AdjudicacionDirecta, self).create(values)'''

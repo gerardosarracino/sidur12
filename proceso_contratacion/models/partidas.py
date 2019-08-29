@@ -4,16 +4,47 @@ from odoo.exceptions import UserError
 from odoo.exceptions import ValidationError
 
 
+# CLASE AUXILIAR DE PARTIDAS ADJUDICACION
+class PartidasAdjudicacion(models.Model):
+    _name = 'partidas.adjudicacion'
+
+    obra = fields.Many2one('registro.programarobra', )
+    programaInversion = fields.Many2one('generales.programas_inversion', )
+    monto_partida = fields.Float(string="Monto", )
+    iva_partida = fields.Float(string="Iva", compute="iva")
+    total_partida = fields.Float(string="Total", compute="sumaPartidas")
+
+    # METODO CALCULAR TOTAL PARTIDA
+    @api.depends('monto_partida')
+    def sumaPartidas(self):
+        for rec in self:
+            rec.update({
+                'total_partida': (rec.monto_partida * 0.16) + rec.monto_partida
+            })
+
+    # CALCULAR EL IVA TOTAL
+    @api.depends('monto_partida')
+    def iva(self):
+        for rec in self:
+            rec.update({
+                'iva_partida': (rec.monto_partida * 0.16)
+            })
+
+
 # CLASE DE LAS PARTIDAS Y CONCEPTOS CONTRATADOS
 class Partidas(models.Model):
     _name = 'partidas.partidas'
     _rec_name = "obra"
 
-    adjudicacion = fields.Many2one(comodel_name="proceso.adjudicacion_directa", string="PRUEBA", required=False, )
+    @api.model
+    def _default_contrato(self):
+        contratos = self.env['proceso.elaboracion_contrato'].search([], limit=1)
+        return contratos
 
-    numero_contrato = fields.Many2one('proceso.elaboracion_contrato')
-    contrato_id = fields.Char(compute="contrato", store=True)
-    # enlace
+    numero_contrato = fields.Many2one(comodel_name="proceso.elaboracion_contrato", string="Numero de Contrato", default=lambda
+        self: self.env['proceso.elaboracion_contrato'].search([('contrato')]))
+
+    # enlace estimacion
     estimacion_id = fields.Char(compute="nombre", store=True)
 
     obra = fields.Many2one('registro.programarobra', )
@@ -76,13 +107,7 @@ class Partidas(models.Model):
     # conceptos_partidas = fields.Many2many('proceso.conceptos_part')
 
     # CONVENIOS MODIFICATORIOS
-    fecha_convenios = fields.Date("Fecha:")
-    referencia_convenios = fields.Char("Referencia:")
-    observaciones_convenios = fields.Char("Observaciones:")
-    tipo_convenio = fields.Char("Tipo de Convenio:", default="Escalatorio", readonly="True")
-    importe_convenios = fields.Float('Importe:')
-    iva_convenios = fields.Float('I.V.A:')
-    total_convenios = fields.Float('Total:')
+    convenios_modificatorios = fields.Many2many('proceso.convenios', string="Conv. Modificatorios")
 
     # RESIDENCIA
     residente_obra = fields.Many2one(
@@ -187,9 +212,17 @@ class Partidas(models.Model):
     def nombre(self):
         self.estimacion_id = self.obra
 
-    @api.one
-    def contrato(self):
-        self.contrato_id = self.id
+
+class ConveniosM(models.Model):
+    _name = 'proceso.convenios'
+
+    fecha_convenios = fields.Date("Fecha:")
+    referencia_convenios = fields.Char("Referencia:")
+    observaciones_convenios = fields.Char("Observaciones:")
+    tipo_convenio = fields.Char("Tipo de Convenio:", default="Escalatorio", readonly="True")
+    importe_convenios = fields.Float('Importe:')
+    iva_convenios = fields.Float('I.V.A:')
+    total_convenios = fields.Float('Total:')
 
 
 class ProgramaContrato(models.Model):
@@ -208,6 +241,8 @@ class ruta_critica(models.Model):
     porcentaje_est = fields.Integer(string="P.R.C")
     name = fields.Char(string="FRENTE")
     sequence = fields.Integer()
+
+    xd = fields.Char(string="xd", required=False, )
 
     display_type = fields.Selection([
         ('line_section', "Section"),
