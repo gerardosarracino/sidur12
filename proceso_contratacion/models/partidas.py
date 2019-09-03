@@ -4,6 +4,33 @@ from odoo.exceptions import UserError
 from odoo.exceptions import ValidationError
 
 
+# CLASE AUXILIAR DE PARTIDAS LICITACION
+class PartidasLicitacion(models.Model):
+    _name = 'partidas.licitacion'
+
+    obra = fields.Many2one('registro.programarobra', )
+    programaInversion = fields.Many2one('generales.programas_inversion', )
+    monto_partida = fields.Float(string="Monto", )
+    iva_partida = fields.Float(string="Iva", compute="iva")
+    total_partida = fields.Float(string="Total", compute="sumaPartidas")
+
+    # METODO CALCULAR TOTAL PARTIDA
+    @api.depends('monto_partida')
+    def sumaPartidas(self):
+        for rec in self:
+            rec.update({
+                'total_partida': (rec.monto_partida * 0.16) + rec.monto_partida
+            })
+
+    # CALCULAR EL IVA TOTAL
+    @api.depends('monto_partida')
+    def iva(self):
+        for rec in self:
+            rec.update({
+                'iva_partida': (rec.monto_partida * 0.16)
+            })
+
+
 # CLASE AUXILIAR DE PARTIDAS ADJUDICACION
 class PartidasAdjudicacion(models.Model):
     _name = 'partidas.adjudicacion'
@@ -36,13 +63,7 @@ class Partidas(models.Model):
     _name = 'partidas.partidas'
     _rec_name = "obra"
 
-    @api.model
-    def _default_contrato(self):
-        contratos = self.env['proceso.elaboracion_contrato'].search([], limit=1)
-        return contratos
-
-    numero_contrato = fields.Many2one(comodel_name="proceso.elaboracion_contrato", string="Numero de Contrato", default=lambda
-        self: self.env['proceso.elaboracion_contrato'].search([('contrato')]))
+    numero_contrato = fields.Many2one(comodel_name="proceso.elaboracion_contrato", string="Numero de Contrato")
 
     # enlace estimacion
     estimacion_id = fields.Char(compute="nombre", store=True)
@@ -61,6 +82,7 @@ class Partidas(models.Model):
 
     # CONCEPTOS CONTRATADOS DE PARTIDAS
     conceptos_partidas = fields.Many2many('proceso.conceptos_part')
+
     name = fields.Many2one('proceso.elaboracion_contrato', readonly=True)
     total = fields.Float(string="Monto Total Contratado:", readonly=True, compute="totalContrato")
     total_contrato = fields.Float(string="Monto Total del Catálogo:", readonly=True, compute="SumaImporte")

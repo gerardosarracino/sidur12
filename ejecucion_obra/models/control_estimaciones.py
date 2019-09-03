@@ -51,19 +51,21 @@ class Estimaciones(models.Model):
     conceptos_partidas = fields.Many2many('proceso.conceptos_part')
 
     @api.multi
-    @api.onchange('fecha_inicio_estimacion')  # if these fields are changed, call method
-    def check_change_licitacion(self):
-        adirecta_id = self.env['proceso.conceptos_part'].search([('obra', '=', self.obra.id)])
+    @api.onchange('estimado')  # if these fields are changed, call method
+    def conceptosEjecutados(self):
+        adirecta_id = self.env['partidas.partidas'].browse(self.obra.id)
         self.update({
             'conceptos_partidas': [[5]]
         })
-        for conceptos in adirecta_id:
+        for conceptos in adirecta_id.conceptos_partidas:
             self.update({
-                'conceptos_partidas': [[0, 0, {'categoria': conceptos.categoria, 'concepto': conceptos.concepto,
-                                                  'grupo': conceptos.grupo,
-                                                  'medida': conceptos.medida,
-                                                  'precio_unitario': conceptos.precio_unitario,
-                                                  'cantidad': conceptos.cantidad, 'obra': conceptos.obra}]]
+                'conceptos_partidas': [[0, 0, {'name': conceptos.name, 'sequence': conceptos.sequence,
+                                               'display_type': conceptos.display_type,
+                                               'categoria': conceptos.categoria, 'concepto': conceptos.concepto,
+                                               'grupo': conceptos.grupo,
+                                               'medida': conceptos.medida,
+                                               'precio_unitario': conceptos.precio_unitario,
+                                               'cantidad': conceptos.cantidad}]]
             })
 
     @api.one

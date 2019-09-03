@@ -49,6 +49,7 @@
                        }" icon="fa-pencil-square-o" string='Convenios Modificados' >
                      </button>
                 </div>
+
             <notebook >
                     <page string="Datos Generales" icon="fa-bitbucket">
 
@@ -60,11 +61,11 @@
                                  <field name="adjudicacion" attrs="{'invisible': [('obra', '!=', False)],
                                  'readonly': [('contrato_partida_adjudicacion', '=', True)]}"/>
 
-                                 <field name="contrato_partida_adjudicacion" widget='one2many'
-                                 attrs="{'invisible': [('adjudicacion', '=', False)]}" >
-                                    <tree editable="bottom">
-                                        <field name="obra" />
-                                        <field name="programaInversion" />
+                                 <field name="contrato_partida_adjudicacion"
+                                 attrs="{'invisible': [('adjudicacion', '=', False)]}"  string="">
+                                    <tree create="false" editable="bottom" delete="false">
+                                        <field name="obra"/>
+                                        <field name="programaInversion"/>
                                         <field name="monto_partida" sum="Monto" widget="monetary" />
                                         <field name="iva_partida" readonly="True" sum="I.V.A" widget="monetary"/>
                                         <field name="total_partida" readonly="True" sum="Total" widget="monetary"/>
@@ -72,20 +73,18 @@
                                 </tree>
                             </field>
 
-                                 <field name="contrato_partida_licitacion" widget='one2many'
-                                 attrs="{'invisible': [('obra', '=', False)]}">
-                                    <tree editable="top">
-                                    <control>
-                                         <create string="Agregar Partida"/>
-                                    </control>
-                                        <field name="obra" />
-                                        <field name="programaInversion" />
+                                 <field name="contrato_partida_licitacion"
+                                 attrs="{'invisible': [('obra', '=', False)]}" string="">
+                                    <tree editable="bottom" create="false">
+                                        <field name="obra" readonly="1"/>
+                                        <field name="programaInversion" readonly="1"/>
                                         <field name="monto_partida" sum="Monto" widget="monetary"/>
                                         <field name="iva_partida" readonly="True" sum="I.V.A" widget="monetary"/>
                                         <field name="total_partida" readonly="True" sum="Total" widget="monetary"/>
                                         <field name="numero_contrato"/>
                                 </tree>
-                            </field>
+                                </field>
+
                             </group>
 
                                  <group colspan="1" col="2">
@@ -119,33 +118,27 @@
                 <!-- PAGINA DE ANTICIPOS -->
                     <page string="Anticipo" class="oe_read_only" widget='one2many'>
                         <group string="Anticipos">
-                            <field name="anticipos" string="">
-                                <tree>
-                                    <field name="obra"/>
-                                    <field name="fecha_anticipo"/>
-                                    <field name="porcentaje_anticipo"/>
-                                    <field name="importe"/>
-                                    <field name="iva"/>
-                                    <field name="total_anticipo"/>
-                                    <field name="numero_fianza"/>
-                                    <field name="afianzadora"/>
-                                    <field name="fecha_fianza"/>
-                                </tree>
-                            </field>
+
                         </group>
-
-                            <!--<button class="oe_stat_button" type="object" name="AnticipoContrato" context="{
-                               'search_default_contrato': active_id,
-                               'default_contrato': active_id
-                               }" icon="fa-pencil-square-o" string='Ver o Agregar Anticipos' >
-                     </button> -->
-
-
+                        <field name="anticipos" string="">
+                            <tree>
+                                <field name="obra"/>
+                                <field name="fecha_anticipo"/>
+                                <field name="porcentaje_anticipo"/>
+                                <field name="importe"/>
+                                <field name="iva"/>
+                                <field name="total_anticipo"/>
+                                <field name="numero_fianza"/>
+                                <field name="afianzadora"/>
+                                <field name="fecha_fianza"/>
+                            </tree>
+                        </field>
                     </page>
 
                     <page string="Fianzas" class="oe_read_only" >
                         <group string="Fianzas">
-                            <field name="fianzas" widget="one2many" string="">
+                        </group>
+                        <field name="fianzas" widget="one2many" string="">
                                 <tree editable="bottom">
                                     <field name="tipo_fianza"/>
                                     <field name="numero_fianza_fianzas"/>
@@ -154,13 +147,12 @@
                                     <field name="afianzadora_fianzas"/>
                                 </tree>
                             </field>
-                        </group>
                     </page>
 
                      <page string="Deducciones" class="oe_read_only">
                         <group string="Deducciones">
-                                <field name="deducciones" string=""/>
                         </group>
+                         <field name="deducciones" string=""/>
                     </page>
             </notebook>
           </sheet>
@@ -177,7 +169,7 @@
     </record>
 
     <!-- SEGUIMIENTO DE CONTRATOS -->
-    <record model="ir.ui.view" id="proc_contratacion_elaboracion_contrato_2">
+    <!-- <record model="ir.ui.view" id="proc_contratacion_elaboracion_contrato_2">
       <field name="name">proceso.elaboracion_contrato.tree2</field>
       <field name="model">proceso.elaboracion_contrato</field>
       <field name="arch" type="xml">
@@ -189,7 +181,7 @@
           <field name="contratista" string="Adjudicado"/>
         </tree>
       </field>
-    </record>
+    </record> -->
 
     <!-- FORMULARIOS Y TREE DE LAS PARTIDAS CON SUS CATALOGOS -->
       <record id="conceptos_contratados_partidas_form" model="ir.ui.view">
@@ -228,21 +220,21 @@
 
 
                         <field name="conceptos_partidas" widget="section_and_note_one2many" string="# Concepto de partidas"  >
-                            <tree editable="top">
+                            <tree editable="bottom">
                                 <control>
                                     <create string="Agregar Sección" context="{'default_display_type': 'line_section'}"/>
                                     <create string="Add a note" context="{'default_display_type': 'line_note'}"/>
                                     <create string="Agregar Nivel"/>
                                 </control>
-                                <field name="name" widget="section_and_note_Text" />
+                                <field name="name" widget="section_and_note_Text" string="Sección"/>
                                 <field name="sequence" type="handle" invisible="1"/>
                                 <field name="display_type" invisible="1" />
-                                <field name="categoria" />
-                                <field name="concepto"/>
+                                <field name="categoria" string="Clave"/>
                                 <field name="grupo"/>
+                                <field name="concepto"/>
                                 <field name="medida"/>
-                                <field name="precio_unitario" widget="monetary"/>
                                 <field name="cantidad"/>
+                                <field name="precio_unitario" widget="monetary"/>
                                 <field name="importe" sum="importe" widget="monetary"/>
                             </tree>
                         </field>

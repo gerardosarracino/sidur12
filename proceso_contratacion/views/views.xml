@@ -236,13 +236,14 @@
                       attrs="{'invisible': [('estado_obra_cancelar','>=', '1')]}"></button>
             </div>
 
-            <group>
+
+
               <group string="Seleccionar Obra" colspan="1" col="2">
                 <field name="programa_inversion_licitacion" string="Programa de Inversión" />
 
                 <field name="programar_obra_licitacion" widget='one2many'
-                attrs="{'invisible': [('programa_inversion_licitacion', '=', False)]}">
-                    <tree editable="top">
+                attrs="{'invisible': [('programa_inversion_licitacion', '=', False)]}" string="" >
+                    <tree editable="bottom">
                         <control>
                              <create string="Agregar Partida"/>
                         </control>
@@ -254,10 +255,12 @@
                     </tree>
                 </field>
 
-                <field name="name"/>
+                <field name="name" class="oe_inline"/>
                 <field name="estado_obra_desierta" widget="statinfo" invisible="1"/>
                 <field name="estado_obra_cancelar" widget="statinfo" invisible="1"/>
               </group>
+
+              <group >
               <group string="Datos De La Licitación" colspan="1" col="2">
                 <field name="tipolicitacion"/>
                 <field name="numerolicitacion" />
@@ -266,6 +269,7 @@
                 <field name="caracter"/>
                 <field name="normatividad"/>
               </group>
+
               <group string="Presiden Actos" colspan="1" col="2">
                 <field name="funcionariopresideactos"/>
                 <field name="puesto"/>
@@ -275,36 +279,50 @@
                 <field name="fechaoficio2"/>
                 <field name="notariopublico"/>
               </group>
-              <group string="Datos Generales" colspan="1" col="2">
-                <field name="fechalimiteentregabases"/>
-                <field name="fecharegistrocompranet"/>
-                <field name="costobasesdependencia"/>
-                <field name="costocompranetbanco"/>
-                <field name="fechaestimadainicio"/>
-                <field name="fechaestimadatermino"/>
-                <field name="plazodias"/>
-                <field name="capitalcontable"/>
-                <field name="anticipomaterial"/>
-                <field name="anticipoinicio"/>
-                <field name="puntosminimospropuestatecnica"/>
               </group>
+
+              <group string="Datos Generales" colspan="1" col="2">
+                  <group>
+                    <field name="fechalimiteentregabases"/>
+                    <field name="costobasesdependencia"/>
+                    <field name="fechaestimadainicio"/>
+                    <field name="plazodias"/>
+                    <field name="anticipomaterial"/>
+                    <field name="puntosminimospropuestatecnica"/>
+                  </group>
+                  <group>
+                    <field name="fecharegistrocompranet"/>
+                    <field name="costocompranetbanco"/>
+                    <field name="fechaestimadatermino"/>
+                    <field name="capitalcontable"/>
+                    <field name="anticipoinicio"/>
+                  </group>
+              </group>
+
+
+
+              <group>
               <group string="Visita De Obra" colspan="1" col="2">
                 <field name="visitafechahora"/>
                 <field name="visitalugar"/>
               </group>
+
               <group string="Junta De Aclaraciones" colspan="1" col="2">
                 <field name="juntafechahora"/>
                 <field name="juntalugar"/>
               </group>
+
               <group string="Apertura" colspan="1" col="2">
                 <field name="aperturafechahora"/>
                 <field name="aperturalugar"/>
               </group>
+
               <group string="Fallo" colspan="1" col="2">
                 <field name="fallofechahora"/>
                 <field name="fallolugar"/>
               </group>
             </group>
+
           </sheet>
         </form>
       </field>

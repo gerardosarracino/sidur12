@@ -8,7 +8,7 @@ class ElaboracionContratos(models.Model):
     _name = "proceso.elaboracion_contrato"
     _rec_name = 'contrato'
 
-    contrato_partida_licitacion = fields.Many2many('partidas.partidas')
+    contrato_partida_licitacion = fields.Many2many('partidas.partidas', ondelete="cascade")
 
     # contrato_partida_adjudicacion = fields.Many2many('partidas.partidas')
     contrato_partida_adjudicacion = fields.Many2many('partidas.partidas', ondelete="cascade")
@@ -56,7 +56,7 @@ class ElaboracionContratos(models.Model):
 
     @api.multi
     @api.onchange('adjudicacion')  # if these fields are changed, call method
-    def check_change_licitacion(self):
+    def check_change_adjudicacion(self):
         adirecta_id = self.env['proceso.adjudicacion_directa'].browse(self.adjudicacion.id)
         self.update({
             'contrato_partida_adjudicacion': [[5]]
@@ -69,6 +69,38 @@ class ElaboracionContratos(models.Model):
                                                           'iva_partida': partidas.iva_partida,
                                                           'total_partida': partidas.total_partida}]]
                      })
+
+
+
+
+
+    @api.model
+    def create(self, values):
+        self.write({
+            'contrato_partida_adjudicacion': [(0, 0, {'numero_contrato': self.contrato})]
+        })
+        return super(ElaboracionContratos, self).create(values)
+
+
+
+
+
+
+    @api.multi
+    @api.onchange('obra')  # if these fields are changed, call method
+    def check_change_licitacion(self):
+        adirecta_id = self.env['proceso.licitacion'].browse(self.obra.id)
+        self.update({
+            'contrato_partida_licitacion': [[5]]
+        })
+        for partidas in adirecta_id.programar_obra_licitacion:
+            self.update({
+                'contrato_partida_licitacion': [[0, 0, {'obra': partidas.obra,
+                                                          'programaInversion': partidas.programaInversion,
+                                                          'monto_partida': partidas.monto_partida,
+                                                          'iva_partida': partidas.iva_partida,
+                                                          'total_partida': partidas.total_partida}]]
+            })
 
     @api.one
     def nombre(self):
@@ -244,10 +276,9 @@ class conceptos_partidas(models.Model):
 
     name = fields.Char()
     sequence = fields.Integer()
-    # name = fields.Many2one('proceso.elaboracion_contrato')
     display_type = fields.Selection([
         ('line_section', "Section"),
-        ('line_note', "Note")], default=False, help="Technical field for UX purpose.")
+        ('line_note', "Note")], default=False, help="")
     # prueba
     obra = fields.Many2one('partidas.partidas', string='Obra:', )
 
@@ -259,17 +290,48 @@ class conceptos_partidas(models.Model):
     cantidad = fields.Integer()
 
     # CONCEPTOS EJECUTADOS EN EL PERIODO
-    contratada = fields.Float(string="Contratada",  required=False, )
-    est_ant = fields.Float(string="Est. Ant",  required=False, )
-    pendiente = fields.Float(string="Pendiente",  required=False, )
-    estimacion = fields.Float(string="Estimacion",  required=False, )
-    importe_ejecutado = fields.Float(string="Importe",  required=False, )
+    # contratada = fields.Float(string="Contratada",  required=False, compute="test")
+    est_ant = fields.Integer(string="Est. Ant",  required=False, compute="sumaEst")
+    pendiente = fields.Integer(string="Pendiente",  required=False, compute="Pendiente")
+    estimacion = fields.Integer(string="Estimacion",  required=False, )
+    importe_ejecutado = fields.Float(string="Importe",  required=False, compute="importeEjec")
 
     importe = fields.Float(compute="sumaCantidad")
 
-    # importe2 = fields.Float(compute="xd")
+    @api.depends('cantidad', 'estimacion')
+    def sumaEst(self):
+        for rec in self:
+            rec.update({
+                'est_ant': rec.cantidad - rec.estimacion
+            })
 
-    @api.model
+    # VER COMO PROGRAMAREMOS EL ESTIMADO ANTERIOR DE OTRA ESTIMACION DE LA MISMA PROCEDENCIA
+    @api.depends('cantidad', 'estimacion')
+    def Pendiente(self):
+        for rec in self:
+            rec.update({
+                'pendiente': rec.cantidad - rec.estimacion
+            })
+
+    @api.depends('precio_unitario', 'estimacion')
+    def importeEjec(self):
+        for rec in self:
+            rec.update({
+                'importe_ejecutado': rec.estimacion * rec.precio_unitario
+            })
+
+    @api.one
+    def test(self):
+        return 0
+
+    @api.depends('precio_unitario', 'cantidad')
+    def sumaCantidad(self):
+        for rec in self:
+            rec.update({
+                'importe': rec.cantidad * rec.precio_unitario
+            })
+
+    '''@api.model
     def create(self, values):
         if values.get('display_type', self.default_get(['display_type'])['display_type']):
             values.update(categoria=False, concepto=False, grupo=False, medida=0, precio_unitario=0, cantidad=0, importe=0)
@@ -282,13 +344,8 @@ class conceptos_partidas(models.Model):
             raise UserError(
                 "You cannot change the type of a sale order line. Instead you should delete the current line and create a new line of the proper type.")
         result = super(conceptos_partidas, self).write(values)
-        return result
+        return result'''
 
-    @api.depends('precio_unitario', 'cantidad')
-    def sumaCantidad(self):
-        for rec in self:
-            rec.update({
-                'importe': rec.cantidad * rec.precio_unitario
-            })
+
 
 

@@ -47,7 +47,7 @@
 
                     <group  colspan="1" col="2">
                         <group string="Deducciones">
-                            <field name="deducciones" >
+                            <field name="deducciones" string="">
                                 <tree editable="bottom">
                                     <field name="name" readonly="1"/>
                                     <field name="porcentaje" readonly="1"/>
@@ -78,25 +78,36 @@
                         </page>
 
                         <page string="Conceptos Ejecutados En El Periodo">
-                            <group>
+                            <group string="Conceptos Ejecutados En El Periodo">
                                 <field name="numero_estimacion" attrs="{'readonly': [('tipo_estimacion','!=', '2')]}"/>
 
-                                <field name="fecha_inicio_estimacion"/>
-                                <field name="conceptos_partidas" string="# Concepto de partidas" widget='one2many'>
-                                    <tree editable="bottom" >
-                                        <field name="categoria" />
-                                        <field name="concepto" />
-                                        <field name="medida" />
-                                        <field name="precio_unitario" />
-                                        <field name="contratada" />
+                                    <field name="estimado" readonly="1" string="Importe Estimado:"/>
+                            </group>
+
+                            <field name="conceptos_partidas" string="" widget="section_and_note_one2many">
+                                    <tree editable="bottom" delete="false" create="false">
+                                        <control>
+                                            <create string="Agregar Sección" context="{'default_display_type': 'line_section'}"/>
+                                            <create string="Add a note" context="{'default_display_type': 'line_note'}"/>
+                                            <create string="Agregar Nivel"/>
+                                        </control>
+                                        <field name="name" widget="section_and_note_Text" string="Sección"/>
+                                        <field name="sequence" type="handle" invisible="1"/>
+                                        <field name="display_type" invisible="1" />
+                                        <field name="categoria" string="Clave"/>
+                                        <field name="grupo"/>
+                                        <field name="concepto"/>
+                                        <field name="medida"/>
+                                        <field name="precio_unitario" widget="monetary"/>
+
+                                        <field name="cantidad" />
                                         <field name="est_ant" />
                                         <field name="pendiente" />
                                         <field name="estimacion"/>
                                         <field name="importe_ejecutado" />
-                                        <field name="obra" />
+
                                     </tree>
                                 </field>
-                            </group>
                         </page>
                     </notebook>
                 </sheet>
