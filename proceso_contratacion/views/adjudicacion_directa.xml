@@ -27,92 +27,70 @@
               </div>
 
             <notebook colspan="4">
-
                     <page string="Adjudicación Directa">
-                         <group>
-                          <group string="Agregar nueva adjudicación directa" colspan="2" col="2">
+
+                          <group string="Agregar nueva adjudicación directa" >
                             <!-- PROGRAMAS DE INVERSION -->
                             <field name="programas_inversion_adjudicacion" string="Programa de inversión"/>
-                            <!-- PARTIDAS -->
+                          </group>
 
+                            <group>
+                                <!-- PARTIDAS -->
                             <field name="programar_obra_adjudicacion" widget='one2many'
-                            attrs="{'invisible': [('programas_inversion_adjudicacion', '=', False)]}">
+                            attrs="{'invisible': [('programas_inversion_adjudicacion', '=', False)]}" nolabel="1">
                                 <tree editable="bottom">
                                     <control>
                                          <create string="Agregar Partida"/>
                                     </control>
-                                        <field name="obra" domain="[('programaInversion.id', '=', parent.programas_inversion_adjudicacion)]"/>
+                                        <field name="obra" domain="[('programaInversion', '=', parent.programas_inversion_adjudicacion)]"/>
                                         <field name="programaInversion" />
                                         <field name="monto_partida" sum="Monto" widget="monetary"/>
                                         <field name="iva_partida" readonly="True" sum="I.V.A" widget="monetary"/>
                                         <field name="total_partida" readonly="True" sum="Total" widget="monetary"/>
                                 </tree>
                             </field>
+                            </group>
 
+                         <group>
                             <field name="iva"/>
-                            <!--<field name="partidaimporte"/>
-                            <field name="partidiva"/>
-                            <field name="partidatotal"/>-->
                             <field name="name"/>
                           </group>
-                          <group colspan="1" col="2">
+
+                        <group colspan="1" col="2">
+                          <group >
                             <field name="numerocontrato"/>
                             <field name="fechaadjudicacion"/>
                             <field name="dictamen"/>
                             <field name="normatividad"/>
-
                           </group>
-                          <group colspan="1" col="2">
-
+                          <group>
                             <field name="anticipoinicio"/>
                             <field name="anticipomaterial"/>
                             <field name="fechainicio" />
                             <field name="fechatermino" />
                             <field name="plazodias"/>
                           </group>
-
                         </group>
+
                     </page>
 
                     <page string="Definición de recursos específicos para el contrato" class="oe_read_only">
-                      <group colspan="2" col="2">
-                      <group string="Definición de recursos específicos para el contrato" >
-                          <group colspan="1" col="2">
-                            <field name="contratista"/>
-                          </group>
+                        <group string="Definición de recursos específicos para el contrato">
+                            <field name="contratista" class="oe_inline"/>
+                        </group>
 
-                          <group>
+                      <group  colspan="2" col="4">
                           <field name="recurso_federal"/>
                           <field name="recurso_federal_indirecto"/>
-                          </group>
-
-                          <group>
                           <field name="recurso_estatal"/>
                           <field name="recurso_estatal_indirecto"/>
-                          </group>
-
-                          <group>
                           <field name="recurso_municipal"/>
                           <field name="recurso_municipal_indirecto"/>
-                          </group>
-
-                          <group>
                           <field name="recurso_otros"/>
-                          </group>
-
-                          <group>
                           <field name="total_recurso"/>
-                          </group>
-                      </group>
-
-
-
                       </group>
                     </page>
-
             </notebook>
-
-
           </sheet>
         </form>
       </field>

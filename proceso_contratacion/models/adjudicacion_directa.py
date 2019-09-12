@@ -31,7 +31,7 @@ class AdjudicacionDirecta(models.Model):
 
     plazodias = fields.Integer(string="Plazo/Días", required=True)
 
-    contratista = fields.Many2many('contratista.contratista', string='Contratista')
+    contratista = fields.Many2one('contratista.contratista', string='Contratista')
 
     # Recursos
     # FALTA LA RELACION, NECESITO EL MODULO DE AUTORIZACION DE OBRAS

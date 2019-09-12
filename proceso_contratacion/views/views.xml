@@ -43,17 +43,26 @@
     </record>
 
 
-<!-- BOTON PARTICIPANTES -->
-<record model="ir.actions.act_window" id="action_participantes">
+<!-- BOTON PARTICIPANTES NEW -->
+<record model="ir.actions.act_window" id="action_participantes1">
         <field name="name">Participantes</field>
         <field name="res_model">proceso.participante</field>
         <field name="type">ir.actions.act_window</field>
-        <field name="view_type">form</field>
 
+        <field name="view_ids" eval="[(5, 0, 0),
+        (0, 0, {'view_mode': 'form', 'view_id': ref('proceso_participantes_form')}),
+        (0, 0, {'view_mode': 'tree', 'view_id': ref('proceso_participantes_tree')})]"/>
+        <field name="target">new</field>
+    </record>
+
+<!-- BOTON PARTICIPANTES TREE VIEW -->
+<record model="ir.actions.act_window" id="action_participantes2">
+        <field name="name">Participantes</field>
+        <field name="res_model">proceso.participante</field>
+        <field name="type">ir.actions.act_window</field>
         <field name="view_ids" eval="[(5, 0, 0),
     (0, 0, {'view_mode': 'tree', 'view_id': ref('proceso_participantes_tree')}),
     (0, 0, {'view_mode': 'form', 'view_id': ref('proceso_participantes_form')})]"/>
-        <field name="target">current</field>
     </record>
 
     <!-- LICITACIONES TREE -->
@@ -176,24 +185,38 @@
             </field>
         </record>
 <!-- BOTON DESIERTA -->
-<record model="ir.actions.act_window" id="action_desierta">
+<record model="ir.actions.act_window" id="action_desierta1">
         <field name="name">Desierta</field>
         <field name="res_model">proceso.estado_obra_desierta</field>
-        <field name="view_type">form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+        (0, 0, {'view_mode': 'form', 'view_id': ref('estado_obra_desierta_form')}),
+        (0, 0, {'view_mode': 'tree', 'view_id': ref('estado_obra_desierta_tree')})]"/>
+        <field name="target">new</field>
+    </record>
+<record model="ir.actions.act_window" id="action_desierta2">
+        <field name="name">Desierta</field>
+        <field name="res_model">proceso.estado_obra_desierta</field>
         <field name="view_ids" eval="[(5, 0, 0),
         (0, 0, {'view_mode': 'tree', 'view_id': ref('estado_obra_desierta_tree')}),
         (0, 0, {'view_mode': 'form', 'view_id': ref('estado_obra_desierta_form')})]"/>
-        <field name="target">current</field>
     </record>
+
 <!-- BOTON CANCELAR -->
-<record model="ir.actions.act_window" id="action_cancelar">
+<record model="ir.actions.act_window" id="action_cancelar1">
         <field name="name">Cancelar</field>
         <field name="res_model">proceso.estado_obra_cancelar</field>
-        <field name="view_type">form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+        (0, 0, {'view_mode': 'form', 'view_id': ref('estado_obra_cancelado_form')}),
+        (0, 0, {'view_mode': 'tree', 'view_id': ref('estado_obra_cancelado_tree')})]"/>
+        <field name="target">new</field>
+    </record>
+
+<record model="ir.actions.act_window" id="action_cancelar2">
+        <field name="name">Cancelar</field>
+        <field name="res_model">proceso.estado_obra_cancelar</field>
         <field name="view_ids" eval="[(5, 0, 0),
         (0, 0, {'view_mode': 'tree', 'view_id': ref('estado_obra_cancelado_tree')}),
         (0, 0, {'view_mode': 'form', 'view_id': ref('estado_obra_cancelado_form')})]"/>
-        <field name="target">current</field>
     </record>
 
 <!-- LICITACION FORM -->
@@ -208,41 +231,49 @@
 
               <button type="action" icon="fa-list-ol" string="Ev. Puntos"></button>
 
-              <!--<button name='%(action_participantes)d'  type='action' icon="fa-users" string="Participantes"></button>-->
-
-              <button class="oe_stat_button" type="action" name="%(action_participantes)d" context="{
+              <button type="action" name="%(action_participantes1)d" class="oe_highlight" context="{
                        'search_default_numerolicitacion': active_id,
                        'default_numerolicitacion': active_id
-                       }" icon="fa-users">
-                        <field name="variable_count" string=' Participantes' widget="statinfo" />
-                     </button>
+                       }" icon="fa-users" attrs="{'invisible': [('variable_count', '=', 1)]}">
+                  <field name="variable_count" string=' Participantes' widget="statinfo" />
+              </button>
+              <button type="action" name="%(action_participantes2)d" class="oe_highlight" context="{
+                       'search_default_numerolicitacion': active_id,
+                       'default_numerolicitacion': active_id
+                       }" icon="fa-users" attrs="{'invisible': [('variable_count', '=', 0)]}">
+                  <field name="variable_count" string=' Participantes' widget="statinfo" />
+              </button>
 
               <button type="action" icon="fa-calendar" string="Eventos"></button>
 
-              <button class="oe_stat_button"  type='action' name='%(action_cancelar)d' icon="fa-times-circle"
-                      attrs="{'invisible': [('estado_obra_desierta','>=', '1')]}"
-                      context="{
+              <button string="Cancelar" type="action" name="%(action_cancelar1)d" class="oe_highlight" context="{
                        'search_default_numerolicitacion': active_id,
                        'default_numerolicitacion': active_id
-                       }"
-                      string="Cancelar" ></button>
+                       }" attrs="{'invisible': ['|',('estado_obra_cancelar', '=', 1), ('estado_obra_desierta','>=', '1') ]}" icon="fa-times-circle"/>
+              <button string="Cancelar" type="action" name="%(action_cancelar2)d" class="oe_highlight" context="{
+                       'search_default_numerolicitacion': active_id,
+                       'default_numerolicitacion': active_id
+                       }" attrs="{'invisible': ['|',('estado_obra_cancelar', '=', 0), ('estado_obra_desierta','>=', '1') ]}" icon="fa-times-circle"/>
 
-              <button class="oe_stat_button"  type='action' name='%(action_desierta)d'
-                      context="{
+              <button string="Desierta" type="action" name="%(action_desierta1)d" class="oe_highlight" context="{
                        'search_default_numerolicitacion': active_id,
                        'default_numerolicitacion': active_id
                        }"
-                      icon="fa-bitbucket" string="Desierta"
-                      attrs="{'invisible': [('estado_obra_cancelar','>=', '1')]}"></button>
+                      icon="fa-bitbucket" attrs="{'invisible': ['|',('estado_obra_desierta', '=', 1), ('estado_obra_cancelar','>=', '1') ]}"/>
+              <button string="Desierta" type="action" name="%(action_desierta2)d" class="oe_highlight" context="{
+                       'search_default_numerolicitacion': active_id,
+                       'default_numerolicitacion': active_id
+                       }"
+                      icon="fa-bitbucket" attrs="{'invisible': ['|',('estado_obra_desierta', '=', 0), ('estado_obra_cancelar','>=', '1') ]}"/>
+
             </div>
-
-
 
               <group string="Seleccionar Obra" colspan="1" col="2">
                 <field name="programa_inversion_licitacion" string="Programa de Inversión" />
-
+              </group>
+              <group>
                 <field name="programar_obra_licitacion" widget='one2many'
-                attrs="{'invisible': [('programa_inversion_licitacion', '=', False)]}" string="" >
+                attrs="{'invisible': [('programa_inversion_licitacion', '=', False)]}" string="" nolabel="1">
                     <tree editable="bottom">
                         <control>
                              <create string="Agregar Partida"/>
@@ -254,7 +285,8 @@
                             <field name="total_partida" readonly="True" sum="Total" widget="monetary"/>
                     </tree>
                 </field>
-
+              </group>
+            <group>
                 <field name="name" class="oe_inline"/>
                 <field name="estado_obra_desierta" widget="statinfo" invisible="1"/>
                 <field name="estado_obra_cancelar" widget="statinfo" invisible="1"/>

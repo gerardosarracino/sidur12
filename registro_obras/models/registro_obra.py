@@ -201,7 +201,7 @@ class ProgramarObra(models.Model):
 class EstructuraFinanciera(models.Model):
 	_name = "registro.estructurafinanciera"
 
-	name = fields.Many2one('registro.programarobra',)
+	name = fields.Many2one('registro.programarobra', readonly=True)
 	descripcion = fields.Text(related="name.descripcion")
 	monto = fields.Float(related="name.monto")
 	iaoeFederal = fields.Float(string="Federal")

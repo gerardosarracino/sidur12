@@ -36,7 +36,7 @@ class PartidasAdjudicacion(models.Model):
     _name = 'partidas.adjudicacion'
 
     obra = fields.Many2one('registro.programarobra', )
-    programaInversion = fields.Many2one('generales.programas_inversion', )
+    programaInversion = fields.Many2one('generales.programas_inversion')
     monto_partida = fields.Float(string="Monto", )
     iva_partida = fields.Float(string="Iva", compute="iva")
     total_partida = fields.Float(string="Total", compute="sumaPartidas")
@@ -155,7 +155,65 @@ class Partidas(models.Model):
 
     # ANTICIPOS
     anticipos = fields.Many2many('proceso.anticipo_contratos', string="Anticipos:")
+    new_field = fields.Float(string="")
 
+    # CONTAR REGISTROS DE ESTIMACIONES
+    contar_estimaciones = fields.Integer(compute='contarEstimaciones', string="PRUEBA")
+
+    # PRUEBA DE VISTA
+    ejercicio = fields.Many2one("registro.ejercicio", string="Ejercicio", )
+    municipio = fields.Many2one('generales.municipios', 'municipio_delegacion', readonly="True")
+    localidad = fields.Text(string="Localidad", readonly="True")
+    fecha_anticipo = fields.Date(string="Fecha Anticipo", readonly="True")
+    fecha = fields.Date(string="Fecha", readonly="True")
+    fechainicio = fields.Date(string="Fecha de Inicio", readonly="True")
+    fechatermino = fields.Date(string="Fecha de Termino", readonly="True")
+    supervisionexterna1 = fields.Many2one('proceso.elaboracion_contrato', string="Supervisión externa:", readonly="True")
+
+    @api.multi
+    @api.onchange('new_field')  # if these fields are changed, call method
+    def check_change_anticipo(self):
+        adirecta_id = self.env['proceso.elaboracion_contrato'].browse(self.obra.id)
+        self.update({
+            'anticipos': [[5]]
+        })
+        for partidas in adirecta_id.anticipos:
+            self.update({
+                'anticipos': [[0, 0, {'obra': partidas.obra,
+                                      'fecha_anticipo': partidas.fecha_anticipo,
+                                      'porcentaje_anticipo': partidas.porcentaje_anticipo,
+                                      'total_anticipo_porcentaje': partidas.total_anticipo_porcentaje,
+                                      'anticipo_material': partidas.anticipo_material,
+                                      'importe': partidas.importe,
+                                      'anticipo': partidas.anticipo,
+                                      'iva': partidas.iva,
+                                      'total_anticipo': partidas.total_anticipo,
+                                      'numero_fianza': partidas.numero_fianza,
+                                      'afianzadora': partidas.total_anticipo,
+                                      'fecha_fianza': partidas.numero_fianza,
+                                      }]]
+            })
+
+    '''@api.multi
+    @api.onchange('new_field')  # if these fields are changed, call method
+    def prueba(self):
+        adirecta_id = self.env['registro.obra'].browse(self.obra.id)
+        self.update({
+            'ejercicio': [[5]]
+        })
+        for ejercicio in adirecta_id.ejercicio:
+            self.update({
+                'ejercicio': [[0, 0, {'ejercicio': ejercicio.ejercicio
+                                      }]]
+            })'''
+
+    # METODO DE CONTAR REGISTROS DE FINIQUITOS PARA ABRIR VISTA EN MODO NEW O TREE VIEW
+    @api.one
+    def contarEstimaciones(self):
+        count = self.env['control.estimaciones'].search_count([('obra', '=', self.id)])
+        self.contar_estimaciones = count
+
+    # METODO DE JCHAIRZ
     @api.onchange('ruta_critica')
     def suma_importe(self):
         suma = 0
@@ -263,6 +321,7 @@ class ruta_critica(models.Model):
     porcentaje_est = fields.Integer(string="P.R.C")
     name = fields.Char(string="FRENTE")
     sequence = fields.Integer()
+    avance_fisico = fields.Integer(string="% Avance")
 
     xd = fields.Char(string="xd", required=False, )
 
@@ -284,3 +343,74 @@ class ruta_critica(models.Model):
                 "You cannot change the type of a sale order line. Instead you should delete the current line and create a new line of the proper type.")
         result = super(ruta_critica, self).write(values)
         return result
+
+
+class informe_avance(models.Model):
+    _name = 'proceso.iavance'
+
+    ruta_critica = fields.Many2many('proceso.rc')
+    total_ = fields.Integer(compute='suma_importe')
+    avance = fields.Integer(string="AVANCE %")
+    fisico_ponderado = fields.Float(string="FISICO PONDERADO")
+    obra = fields.Many2one('registro.programarobra')
+    numero_contrato = fields.Integer(compute='numero_con')
+
+    porcentaje_e = fields.Float()
+    porcentaje_estimado = fields.Float(compute='porcest')
+    comentarios_generales = fields.Text(string='Comentarios generales')
+    situacion_contrato = fields.Selection([
+        ('bien', "1- Bien"),
+        ('satisfactorio', "2- Satisfactorio"),
+        ('regular', "3- Regular"),
+        ('deficiente', "4- Deficiente"),
+        ('mal', "5- Mal")], default='bien', string="Situación del contrato")
+
+    com_avance_obra = fields.Text()
+
+    @api.one
+    def nombre(self):
+        self.contrato_id = self.contrato
+
+    @api.onchange('ruta_critica')
+    def suma_importe(self):
+        suma = 0
+        for i in self.ruta_critica:
+            resultado = i.porcentaje_est
+            suma += resultado
+            self.total_ = suma
+
+    @api.one
+    def numero_con(self):
+        c = self.env['partidas.partidas'].search([])
+        a = self.env['proceso.adjudicacion_directa'].browse(1).numero_contrato.contrato
+
+        self.numero_contrato = a
+
+    @api.onchange('obra')
+    def check_change_licitacion(self):
+        adirecta_id = self.env['proceso.rc'].search([('obra', '=', self.obra.id)])
+        self.update({
+            'ruta_critica': [[5]]
+        })
+
+        for rt in adirecta_id:
+            self.update({
+                'ruta_critica': [
+                    [0, 0, {'name': rt.name, 'obra': rt.obra, 'actividad': rt.actividad,
+                            'porcentaje_est': rt.porcentaje_est, }]]
+            })
+
+    @api.onchange('ruta_critica')
+    def porcest(self):
+        r_porcentaje_est = 0
+        r_avance_fisico = 0
+        for i in self.ruta_critica:
+            porcentaje_est = i.porcentaje_est
+            r_porcentaje_est += porcentaje_est
+
+            avance_fisico = i.avance_fisico
+            r_avance_fisico += avance_fisico
+
+            resultado = (r_porcentaje_est * r_avance_fisico) / 100
+
+            self.porcentaje_estimado = resultado

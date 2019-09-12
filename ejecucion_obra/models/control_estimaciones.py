@@ -34,6 +34,7 @@ class Estimaciones(models.Model):
 
     # Calculados
     estimado = fields.Float(string="Importe ejecutado estimación:", required=False, )
+
     amort_anticipo = fields.Float(string="Amortización de Anticipo 30%:", required=False, )
     estimacion_subtotal = fields.Float(string="Neto Estimación sin IVA:", required=False, )
     estimacion_iva = fields.Float(string="I.V.A. 16%", required=False, )
@@ -51,7 +52,7 @@ class Estimaciones(models.Model):
     conceptos_partidas = fields.Many2many('proceso.conceptos_part')
 
     @api.multi
-    @api.onchange('estimado')  # if these fields are changed, call method
+    @api.onchange('estimacion_iva')  # if these fields are changed, call method
     def conceptosEjecutados(self):
         adirecta_id = self.env['partidas.partidas'].browse(self.obra.id)
         self.update({

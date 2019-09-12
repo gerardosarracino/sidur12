@@ -1,6 +1,7 @@
 <odoo>
   <data>
-      <!-- ACCIONES VENTANA -->
+
+    <!-- ACCIONES VENTANA -->
     <record model="ir.actions.act_window" id="autorizacion_obra.oficios_de_autorizacion_action_window">
       <field name="name">Oficio de autorización</field>
       <field name="type">ir.actions.act_window</field>
@@ -22,6 +23,7 @@
       <field name="res_model">autorizacion_obra.cancelarrecurso</field>
       <field name="view_mode">tree,form</field>
     </record>
+
    <!-- OFICIO DE AUTORIZACION -->    
     <record model="ir.ui.view" id="autorizacion_obra.oficios_de_autorizacion_search">
       <field name="name">Oficio de autorización</field>
@@ -85,6 +87,7 @@
             <field name="federal"/>
             <field name="estatal"/>
             <field name="municipal"/>
+            <field name="totalin"/>
             <field name="otros"/>
             <field name="total_ca"/>
             <field name="total1"/>
@@ -114,6 +117,7 @@
           <field name="federal"/>
           <field name="estatal"/>
           <field name="municipal"/>
+          <field name="totalin"/>
           <field name="otros"/>
           <field name="total_ca"/>
           <field name="total1"/>
@@ -132,6 +136,7 @@
           <field name="federal"/>
           <field name="estatal"/>
           <field name="municipal"/>
+          <field name="totalin"/>
           <field name="otros"/>
           <field name="total_ca"/>
           <field name="total1"/>
@@ -166,13 +171,22 @@
         <group colspan="10" col="2">
           <field name="concepto"/>
         </group>
-        <group string="Montos" colspan="6" col="6">
+        <group string="Montos directos" colspan="6" col="6">
           <field name="federal"/>
           <field name="estatal"/>
           <field name="municipal"/>
           <field name="otros"/>
+        </group>
+        <group string="Montos indirectos" colspan="6" col="6">
+          <field name="federalin"/>
+          <field name="estatalin"/>
+          <field name="municipalin"/>
+          <field name="otrosin"/>
+        </group>
+        <group colspan="4" col="6">
+          <field name="total" string="Total anexo"/>
           <field name="total_ca" attrs="{'invisible': [('cancelados', '=', 0)]}"/>
-          <field name="total1"/>
+          <field name="total1" attrs="{'invisible': [('cancelados', '=', 0)]}"/>
         </group>
         <group string="Recursos cancelados" colspan="10" col="1" attrs="{'invisible': [('cancelados', '=', 0)]}">
           <field name="cancelado" nolabel="1">
@@ -183,6 +197,7 @@
           <field name="federalc"/>
           <field name="estatalc"/>
           <field name="municipalc"/>
+          <field name="totalcin" string="Indirectos"/>
           <field name="otrosc"/>
           <field name="totalc" string="Total"/>
           </tree>
@@ -206,6 +221,7 @@
           <field name="federalc"/>
           <field name="estatalc"/>
           <field name="municipalc"/>
+          <field name="totalcin" string="Indirectos"/>
           <field name="otrosc"/>
           <field name="totalc" string="Total"/>
          </search>
@@ -223,6 +239,7 @@
           <field name="federalc"/>
           <field name="estatalc"/>
           <field name="municipalc"/>
+          <field name="totalcin" string="Indirectos"/>
           <field name="otrosc"/>
           <field name="totalc" string="Total"/>
         </tree>
@@ -241,12 +258,20 @@
           <field name="nooficio"/>
           <field name="fecha"/>
         </group>
-        <group string="Recursos" colspan="2" col="6">
+        <group string="Recursos directos" colspan="2" col="6">
           <field name="federalc"/>
           <field name="estatalc"/>
           <field name="municipalc"/>
           <field name="otrosc"/>
-          <field name="totalc" string="Total"/>
+        </group>
+        <group string="Recursos indirectos" colspan="2" col="6">
+          <field name="federalcin"/>
+          <field name="estatalcin"/>
+          <field name="municipalcin"/>
+          <field name="otroscin"/>
+        </group>
+        <group>
+        <field name="totalc" string="Total cancelado"/>
         </group>
         </group>
          </sheet>

@@ -21,6 +21,11 @@ class ElaboracionContratos(models.Model):
     # ADJUDICACION
     adjudicacion = fields.Many2one('proceso.adjudicacion_directa', string="Nombre de Adjudicacion")
 
+    # CONTAR REGISTROS DE FINIQUITO
+    contar_finiquito = fields.Integer(compute='contar', string="PRUEBA")
+    # CONTAR REGISTROS DE FINIQUITO
+    contar_convenio = fields.Integer(compute='contar2', string="PRUEBA")
+
     fecha = fields.Date(string="Fecha", required=True)
     contrato = fields.Char(string="Contrato", required=True)
 
@@ -54,6 +59,7 @@ class ElaboracionContratos(models.Model):
     # ANTICIPOS
     anticipos = fields.Many2many('proceso.anticipo_contratos', string="Anticipos:")
 
+    # METODO DE LAS PARTIDAS ADJUDICACION
     @api.multi
     @api.onchange('adjudicacion')  # if these fields are changed, call method
     def check_change_adjudicacion(self):
@@ -70,10 +76,6 @@ class ElaboracionContratos(models.Model):
                                                           'total_partida': partidas.total_partida}]]
                      })
 
-
-
-
-
     @api.model
     def create(self, values):
         self.write({
@@ -81,11 +83,7 @@ class ElaboracionContratos(models.Model):
         })
         return super(ElaboracionContratos, self).create(values)
 
-
-
-
-
-
+    # METODO DE LAS PARTIDAS LICITACION
     @api.multi
     @api.onchange('obra')  # if these fields are changed, call method
     def check_change_licitacion(self):
@@ -102,32 +100,61 @@ class ElaboracionContratos(models.Model):
                                                           'total_partida': partidas.total_partida}]]
             })
 
+    # METODO DE CONTAR REGISTROS DE FINIQUITOS PARA ABRIR VISTA EN MODO NEW O TREE VIEW
+    @api.one
+    def contar(self):
+        count = self.env['proceso.finiquitar_anticipadamente'].search_count([('contrato', '=', self.id)])
+        self.contar_finiquito = count
+
+    # METODO DE CONTAR REGISTROS DE FINIQUITOS PARA ABRIR VISTA EN MODO NEW O TREE VIEW
+    @api.one
+    def contar2(self):
+        count = self.env['proceso.convenios_modificado'].search_count([('contrato', '=', self.id)])
+        self.contar_convenio = count
+
+    # METODO DE ENLACE
     @api.one
     def nombre(self):
         self.contrato_id = self.contrato
 
-    # CONVENIOS MODIFICATORIOS
+    # CONVENIOS MODIFICATORIOS METODOS DE ABRIR VENTANA EN MODO NEW Y EN TREE VIEW
     @api.multi
-    def conveniosModificados(self):
+    def conveniosModificados1(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Convenios Modificatorios',
+            'res_model': 'proceso.convenios_modificado',
+            'view_mode': 'form,tree',
+            'target': 'new',
+        }
+
+    @api.multi
+    def conveniosModificados2(self):
         return {
             'type': 'ir.actions.act_window',
             'name': 'Convenios Modificatorios',
             'res_model': 'proceso.convenios_modificado',
             'view_mode': 'tree,form',
-            'view_type': 'form',
-            'target': 'self',
         }
 
-    # FINIQUITAR CONTRATO
+    # FINIQUITAR CONTRATO METODOS DE ABRIR VENTANA EN MODO NEW Y EN TREE VIEW
     @api.multi
-    def finiquitarContrato(self):
+    def finiquitarContrato1(self):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Finiquitar Contrato Anticipadamente',
+            'res_model': 'proceso.finiquitar_anticipadamente',
+            'view_mode': 'form,tree',
+            'target': 'new',
+        }
+
+    @api.multi
+    def finiquitarContrato2(self):
         return {
             'type': 'ir.actions.act_window',
             'name': 'Finiquitar Contrato Anticipadamente',
             'res_model': 'proceso.finiquitar_anticipadamente',
             'view_mode': 'tree,form',
-            'view_type': 'form',
-            'target': 'self',
         }
 
     #
@@ -157,6 +184,8 @@ class Fianza(models.Model):
 class AnticipoContratos(models.Model):
     _name = "proceso.anticipo_contratos"
 
+    contrato = fields.Many2one(comodel_name="proceso.elaboracion_contrato", string="", required=False, )
+
     obra = fields.Many2one('partidas.partidas', string="Obra:")
 
     fecha_anticipo = fields.Date(string="Fecha Anticipo")
@@ -170,6 +199,15 @@ class AnticipoContratos(models.Model):
     numero_fianza = fields.Float(string="# Fianza")
     afianzadora = fields.Char(string="Afianzadora")
     fecha_fianza = fields.Date(string="Fecha Fianza")
+
+    @api.one
+    @api.depends('FIELDS_NAMES')
+    def Anticipo(self):
+        for rec in self:
+            rec.update({
+                'monto_plazo_total': (rec.monto_plazo_importe * rec.monto_plazo_iva) + rec.monto_plazo_importe
+            })
+
 
 
 class ConveniosModificados(models.Model):

@@ -1,7 +1,6 @@
 <odoo>
   <data>
 
-
     <!-- ACCIONES VENTANA -->
     <record model="ir.actions.act_window" id="registro_obras.obra_action_window">
       <field name="name">Registro de obras</field>
@@ -536,6 +535,7 @@
         </form>
       </field>
     </record>
+
 
     <!-- MENUS -->
     <menuitem name="Registro de obras" id="registro_obras.menu_root" sequence="0"/>
