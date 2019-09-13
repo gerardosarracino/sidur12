@@ -43,7 +43,9 @@ class ElaboracionContratos(models.Model):
     total = fields.Float(string="Total", readonly=True)
     # ///
     # VINCULO CON ADJUDICACION TRAER DATOS PENDIENTE
-    contratista = fields.Char(string="Contratista", readonly=True, default="POR ASIGNAR")
+
+    contratista = fields.Many2one('contratista.contratista', related="adjudicacion.contratista")
+
     fechainicio = fields.Date(string="Fecha de Inicio", required=True)
     fechatermino = fields.Date(string="Fecha de Termino", required=True)
 
@@ -56,8 +58,8 @@ class ElaboracionContratos(models.Model):
 
     # Deducciones
     deducciones = fields.Many2many("generales.deducciones", string="Deducciones")
-    # ANTICIPOS
-    anticipos = fields.Many2many('proceso.anticipo_contratos', string="Anticipos:")
+
+
 
     # METODO DE LAS PARTIDAS ADJUDICACION
     @api.multi
@@ -73,7 +75,9 @@ class ElaboracionContratos(models.Model):
                                                           'programaInversion': partidas.programaInversion,
                                                           'monto_partida': partidas.monto_partida,
                                                           'iva_partida': partidas.iva_partida,
-                                                          'total_partida': partidas.total_partida}]]
+                                                          'total_partida': partidas.total_partida,
+                                                          'nombre_partida': self.contrato
+                                                          }]]
                      })
 
     @api.model
@@ -181,7 +185,7 @@ class Fianza(models.Model):
     afianzadora_fianzas = fields.Char(string="Afianzadora")
 
 
-class AnticipoContratos(models.Model):
+'''class AnticipoContratos(models.Model):
     _name = "proceso.anticipo_contratos"
 
     contrato = fields.Many2one(comodel_name="proceso.elaboracion_contrato", string="", required=False, )
@@ -206,7 +210,7 @@ class AnticipoContratos(models.Model):
         for rec in self:
             rec.update({
                 'monto_plazo_total': (rec.monto_plazo_importe * rec.monto_plazo_iva) + rec.monto_plazo_importe
-            })
+            })'''
 
 
 

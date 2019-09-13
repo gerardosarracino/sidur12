@@ -13,6 +13,32 @@
       </field>
     </record>
 
+      <record id="recursos_form" model="ir.ui.view">
+          <field name="name">recursos form</field>
+          <field name="model">proceso.adjudicacion_directa</field>
+          <field name="arch" type="xml">
+              <form string="">
+                  <sheet>
+                      <group>
+                          <group string="Definición de recursos específicos para el contrato">
+                            <field name="contratista" class="oe_inline"/>
+                        </group>
+
+                      <group  colspan="2" col="4">
+                          <field name="recurso_federal"/>
+                          <field name="recurso_federal_indirecto"/>
+                          <field name="recurso_estatal"/>
+                          <field name="recurso_estatal_indirecto"/>
+                          <field name="recurso_municipal"/>
+                          <field name="recurso_municipal_indirecto"/>
+                          <field name="recurso_otros"/>
+                          <field name="total_recurso"/>
+                      </group>
+                      </group>
+                  </sheet>
+              </form>
+          </field>
+      </record>
 
     <record model="ir.ui.view" id="proc_contratacion_adjudicacion_directa_form">
       <field name="name">proceso.adjudicacion_directa.form</field>
@@ -23,11 +49,8 @@
 
               <!-- BOTON HACIA CONTRATOS -->
            <div class="oe_button_box oe_read_only" name="button_box">
-
+                <button name="recursos" type="object" string="Recursos Específicos" class="oe_highlight" icon="fa-pencil-square-o"/>
               </div>
-
-            <notebook colspan="4">
-                    <page string="Adjudicación Directa">
 
                           <group string="Agregar nueva adjudicación directa" >
                             <!-- PROGRAMAS DE INVERSION -->
@@ -72,9 +95,8 @@
                           </group>
                         </group>
 
-                    </page>
 
-                    <page string="Definición de recursos específicos para el contrato" class="oe_read_only">
+                    <!-- <page string="Definición de recursos específicos para el contrato" class="oe_read_only">
                         <group string="Definición de recursos específicos para el contrato">
                             <field name="contratista" class="oe_inline"/>
                         </group>
@@ -90,7 +112,7 @@
                           <field name="total_recurso"/>
                       </group>
                     </page>
-            </notebook>
+            </notebook> -->
           </sheet>
         </form>
       </field>

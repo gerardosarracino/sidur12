@@ -56,21 +56,25 @@ class Licitacion(models.Model):
 
     variable_count = fields.Integer(compute='contar')
 
+    # METODO CONTADOR DE PARTICIPANTES
     @api.one
     def contar(self):
         count = self.env['proceso.participante'].search_count([('numerolicitacion', '=', self.id)])
         self.variable_count = count
 
+    # METODO DE OBRA DESIERTA
     @api.one
     def estadoObraDesierta(self):
         resultado = self.env['proceso.estado_obra_desierta'].search_count([('numerolicitacion', '=', self.id)])
         self.estado_obra_desierta = resultado
 
+    # METODO DE OBRA CANCELADA
     @api.one
     def estadoObraCancelar(self):
         resultado = self.env['proceso.estado_obra_cancelar'].search_count([('numerolicitacion', '=', self.id)])
         self.estado_obra_cancelar = resultado
 
+    # ENLACE CON LA LICITACION
     @api.one
     def nombre(self):
         self.licitacion_id = self.numerolicitacion
@@ -94,12 +98,10 @@ class EstadoObraDesierta(models.Model):
     _rec_name = 'estado_obra_desierta'
 
     obra_id_desierta = fields.Char(compute="estadoObra", store=True)
-
     licitacion_id = fields.Char(compute="nombre", store=True)
     estado_obra_desierta = fields.Char(string="estado obra", default="Desierta", readonly=True)
     numerolicitacion = fields.Many2one('proceso.licitacion', string='Numero Licitación:',
                                        readonly=True)
-
     fecha_desierta = fields.Date(string="Fecha de Desierta:")
     observaciones_desierta = fields.Text(string="Observaciones:")
 
@@ -116,7 +118,6 @@ class EstadoObraCancelar(models.Model):
     _name = 'proceso.estado_obra_cancelar'
 
     obra_id_cancelar = fields.Char(compute="estadoObra", store=True)
-
     licitacion_id = fields.Char(compute="nombre", store=True)
     estado_obra_cancelar = fields.Char(string="estado obra", default="Cancelada", readonly=True)
     numerolicitacion = fields.Many2one('proceso.licitacion', string='Numero Licitación:',

@@ -111,7 +111,6 @@
 
                         <group string="Nombre de la Obra:">
                             <field name="obra" readonly="True" string="" nolabel="1"/>
-                            <field name="new_field" string="" nolabel="1"/>
                         </group>
                             <hr/>
                             <br/>
@@ -136,7 +135,7 @@
                         <group colspan="2" col="6">
                             <field name="municipio" string="" nolabel="1"/>
                             <field name="localidad" string="" nolabel="1"/>
-                            <field name="fecha_anticipo" string="" nolabel="1"/>
+                            <field name="fecha_anticipos" readonly="1" string="" nolabel="1"/>
                         </group>
                             <hr/>
                             <br/>

@@ -231,6 +231,7 @@
 
               <button type="action" icon="fa-list-ol" string="Ev. Puntos"></button>
 
+                <!-- BOTONES DE PARTICIPANTES -->
               <button type="action" name="%(action_participantes1)d" class="oe_highlight" context="{
                        'search_default_numerolicitacion': active_id,
                        'default_numerolicitacion': active_id
@@ -246,6 +247,7 @@
 
               <button type="action" icon="fa-calendar" string="Eventos"></button>
 
+                <!-- BOTONES DE CANCELAR -->
               <button string="Cancelar" type="action" name="%(action_cancelar1)d" class="oe_highlight" context="{
                        'search_default_numerolicitacion': active_id,
                        'default_numerolicitacion': active_id
@@ -254,7 +256,7 @@
                        'search_default_numerolicitacion': active_id,
                        'default_numerolicitacion': active_id
                        }" attrs="{'invisible': ['|',('estado_obra_cancelar', '=', 0), ('estado_obra_desierta','>=', '1') ]}" icon="fa-times-circle"/>
-
+                <!-- BOTONES DE DESIERTA -->
               <button string="Desierta" type="action" name="%(action_desierta1)d" class="oe_highlight" context="{
                        'search_default_numerolicitacion': active_id,
                        'default_numerolicitacion': active_id
@@ -268,10 +270,12 @@
 
             </div>
 
+              <!-- FORMULARIO LICITACION -->
               <group string="Seleccionar Obra" colspan="1" col="2">
                 <field name="programa_inversion_licitacion" string="Programa de Inversión" />
               </group>
               <group>
+                  <!-- INSERTAR PARTIDAS LICITACION -->
                 <field name="programar_obra_licitacion" widget='one2many'
                 attrs="{'invisible': [('programa_inversion_licitacion', '=', False)]}" string="" nolabel="1">
                     <tree editable="bottom">
@@ -286,7 +290,7 @@
                     </tree>
                 </field>
               </group>
-            <group>
+              <group>
                 <field name="name" class="oe_inline"/>
                 <field name="estado_obra_desierta" widget="statinfo" invisible="1"/>
                 <field name="estado_obra_cancelar" widget="statinfo" invisible="1"/>
@@ -331,8 +335,6 @@
                   </group>
               </group>
 
-
-
               <group>
               <group string="Visita De Obra" colspan="1" col="2">
                 <field name="visitafechahora"/>
@@ -359,8 +361,6 @@
         </form>
       </field>
     </record>
-
-
 
     <!-- TREE VIEW REPORTE-->
     <record model="ir.ui.view" id="proc_contratacion_licitacion_tree2">
@@ -427,7 +427,7 @@
         <field name="view_ids" eval="[(5, 0, 0),
         (0, 0, {'view_mode': 'tree', 'view_id': ref('proc_contratacion_licitacion_tree')}),
         (0, 0, {'view_mode': 'form', 'view_id': ref('proc_contratacion_licitacion_form')})]"/>
-    </record>
+    </record>S
 
     <!-- MENUS -->
     <menuitem name="Proceso de contratación" id="proc_contratacion_menu_root" sequence="0"/>

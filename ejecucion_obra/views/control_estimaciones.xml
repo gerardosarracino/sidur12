@@ -1,7 +1,5 @@
 <odoo>
   <data>
-
-
     <!-- ESTIMACIONES FORM -->
   <record id="control_estimaciones_estimaciones_form" model="ir.ui.view">
         <field name="name">control de estimaciones form</field>
@@ -191,7 +189,7 @@
       </field>
     </record>
 
-      <!-- VISTA CON BOTONES -->
+      <!-- VISTA CON BOTONES HACIA ESTIMACION -->
     <record id="vista_form_estimaciones" model="ir.ui.view">
         <field name="name">vista form estimaciones</field>
         <field name="model">partidas.partidas</field>
@@ -272,22 +270,18 @@
 
                         <page string="Anticipos">
                             <group string="Anticipos">
+                                <field name="fecha_anticipos"/>
+                                <field name="porcentaje_anticipo"/>
+                                <field name="total_anticipo_porcentaje"/>
+                                <field name="anticipo_material"/>
+                                <field name="importe"/>
+                                <field name="anticipo_a"/>
+                                <field name="iva_anticipo"/>
+                                <field name="total_anticipo"/>
+                                <field name="numero_fianza"/>
+                                <field name="afianzadora"/>
+                                <field name="fecha_fianza"/>
                             </group>
-                            <field name="new_field" />
-                                <field name="anticipos" string="">
-                                    <tree>
-                                        <field name="obra"/>
-                                        <field name="fecha_anticipo"/>
-                                        <field name="porcentaje_anticipo"/>
-                                        <field name="importe"/>
-                                        <field name="iva"/>
-                                        <field name="total_anticipo"/>
-                                        <field name="numero_fianza"/>
-                                        <field name="afianzadora"/>
-                                        <field name="fecha_fianza"/>
-                                    </tree>
-                                </field>
-
                         </page>
 
                         <!-- PAGINA DE CONV. MODIFICATORIOS -->

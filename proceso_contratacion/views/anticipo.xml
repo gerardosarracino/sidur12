@@ -2,7 +2,7 @@
 <odoo>
     <data>
 
-        <record id="proceso_anticipo_contratos_form" model="ir.ui.view">
+       <!-- <record id="proceso_anticipo_contratos_form" model="ir.ui.view">
             <field name="name">proceso anticipo contratos form</field>
             <field name="model">proceso.anticipo_contratos</field>
             <field name="arch" type="xml">
@@ -34,7 +34,7 @@
                     </sheet>
                 </form>
             </field>
-        </record>
+        </record> -->
 
     </data>
 </odoo>

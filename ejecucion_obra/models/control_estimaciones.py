@@ -51,6 +51,7 @@ class Estimaciones(models.Model):
     # CONCEPTOS EJECUTADOS
     conceptos_partidas = fields.Many2many('proceso.conceptos_part')
 
+    # METODO PARA INSERTAR CONCEPTOS CONTRATADOS
     @api.multi
     @api.onchange('estimacion_iva')  # if these fields are changed, call method
     def conceptosEjecutados(self):
@@ -69,6 +70,7 @@ class Estimaciones(models.Model):
                                                'cantidad': conceptos.cantidad}]]
             })
 
+    # METODO PARA CONTAR NUMERO DE ESTIMACIONES
     @api.one
     def _get_increment(self):
         numero = self.env['control.estimaciones'].search_count([('numero_estimacion', '=', self.id)])
