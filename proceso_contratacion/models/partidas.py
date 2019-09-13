@@ -62,7 +62,7 @@ class PartidasAdjudicacion(models.Model):
 # CLASE DE LAS PARTIDAS Y CONCEPTOS CONTRATADOS
 class Partidas(models.Model):
     _name = 'partidas.partidas'
-    _rec_name = "obra"
+    _rec_name = "numero_contrato"
 
     numero_contrato = fields.Many2one(comodel_name="proceso.elaboracion_contrato", string="Numero de Contrato", compute="nombrePartida" )
     # enlace estimacion
@@ -154,14 +154,14 @@ class Partidas(models.Model):
 
     # ANTICIPOS
     fecha_anticipos = fields.Date(string="Fecha Anticipo")
-    porcentaje_anticipo = fields.Float(string="Anticipo Inicio")
-    total_anticipo_porcentaje = fields.Float(string="Total Anticipo")
+    porcentaje_anticipo = fields.Float(string="Anticipo Inicio", default="0.30")
+    total_anticipo_porcentaje = fields.Float(string="Total Anticipo", compute="anticipo_por")
     anticipo_material = fields.Float(string="Anticipo Material")
     importe = fields.Float(string="Importe Contratado")
-    anticipo_a = fields.Integer(string="Anticipo")
-    iva_anticipo = fields.Float(string="I.V.A")
-    total_anticipo = fields.Integer(string="Total Anticipo")
-    numero_fianza = fields.Float(string="# Fianza")
+    anticipo_a = fields.Integer(string="Anticipo", compute="anticipo_inicio")
+    iva_anticipo = fields.Float(string="I.V.A", compute="anticipo_iva")
+    total_anticipo = fields.Integer(string="Total Anticipo", compute="anticipo_total")
+    numero_fianza = fields.Integer(string="# Fianza")
     afianzadora = fields.Char(string="Afianzadora")
     fecha_fianza = fields.Date(string="Fecha Fianza")
 
@@ -184,9 +184,42 @@ class Partidas(models.Model):
     nueva_partida = fields.Char(string="nombre partida", required=False, )
 
     @api.one
+    @api.depends('porcentaje_anticipo')
+    def anticipo_por(self):
+        for rec in self:
+            rec.update({
+                'total_anticipo_porcentaje': rec.porcentaje_anticipo
+            })
+
+    @api.one
+    @api.depends('total_partida', 'porcentaje_anticipo')
+    def anticipo_inicio(self):
+        for rec in self:
+            rec.update({
+                'anticipo_a': rec.total_partida * rec.total_anticipo_porcentaje
+            })
+
+    # VER CUESTION DEL IVA
+    @api.one
+    @api.depends('anticipo_a')
+    def anticipo_iva(self):
+        for rec in self:
+            rec.update({
+                'iva_anticipo': rec.anticipo_a * 0.16
+            })
+
+    @api.one
+    @api.depends('anticipo_a', 'iva_anticipo')
+    def anticipo_total(self):
+        for rec in self:
+            rec.update({
+                'total_anticipo': rec.anticipo_a + rec.iva_anticipo
+            })
+
+    @api.one
     def nombrePartida(self):
         self.numero_contrato = self.env['proceso.elaboracion_contrato'].search([('contrato', '=', self.nombre_partida)]).id
-        self.nueva_partida = self.nombre_partida + str(self.id)
+        self.nueva_partida = self.nombre_partida
 
     # METODO PARA ABRIR ANTICIPOS CON BOTON
     @api.multi
@@ -201,6 +234,8 @@ class Partidas(models.Model):
             'view_id': view.id,
             'res_id': self.id,
         }
+
+
 
     # METODO DE CONTAR REGISTROS DE FINIQUITOS PARA ABRIR VISTA EN MODO NEW O TREE VIEW
     @api.one

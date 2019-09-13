@@ -37,32 +37,46 @@
           <field name="priority">17</field>
           <field name="context">17</field>
           <field name="arch" type="xml">
-            <form>
+            <form create="false" delete="false" edit="false">
                 <sheet>
-                    <group colspan="2" col="4" class="oe_read_only">
-                        <field name="id"/>
+                    <group colspan="2" col="4" class="oe_read_only" string="Partida">
+                        <field name="id" invisible="1"/>
                         <field name="obra"/>
                         <field name="programaInversion"/>
                         <field name="monto_partida" sum="Monto" widget="monetary" />
                         <field name="iva_partida" readonly="True" sum="I.V.A" widget="monetary"/>
                         <field name="total_partida" readonly="True" sum="Total" widget="monetary"/>
                         <field name="numero_contrato" invisible="1"/>
-                        <field name="nombre_partida"/>
-                        <field name="nueva_partida"/>
+                        <field name="nombre_partida" invisible="1"/>
+                        <field name="nueva_partida" invisible="1"/>
                     </group>
-                    <group colspan="2" col="4" >
-                        <field name="numero_contrato"/>
-                        <field name="fecha_anticipos"/>
-                        <field name="porcentaje_anticipo"/>
-                        <field name="total_anticipo_porcentaje"/>
-                        <field name="anticipo_material"/>
-                        <field name="importe"/>
+
+                    <group string="Anticipo" >
+                        <field name="numero_contrato" invisible="1"/>
+                        <field name="fecha_anticipos" class="oe_inline" attrs="{'readonly':[('total_anticipo', '&gt;' , 1)]}"/>
+                    </group>
+
+                    <group colspan="1" col="2">
+                        <group>
+                            <field name="porcentaje_anticipo" class="oe_inline" attrs="{'readonly':[('total_anticipo', '&gt;' , 1)]}"/>
+                            <field name="total_anticipo_porcentaje"/>
+                        </group>
+                        <group>
+                            <field name="anticipo_material" class="oe_inline" attrs="{'readonly':[('total_anticipo', '&gt;' , 1)]}"/>
+                            <field name="total_partida" readonly="1" string="Importe Contratado"/>
+                        </group>
+                    </group>
+
+                    <group>
                         <field name="anticipo_a"/>
                         <field name="iva_anticipo"/>
                         <field name="total_anticipo"/>
-                        <field name="numero_fianza"/>
-                        <field name="afianzadora"/>
-                        <field name="fecha_fianza"/>
+                        <field name="numero_fianza" class="oe_inline" attrs="{'readonly':[('total_anticipo', '&gt;' , 1)]}"/>
+                    </group>
+
+                    <group colspan="1" col="4">
+                        <field name="afianzadora" attrs="{'readonly':[('total_anticipo', '&gt;' , 1)]}"/>
+                        <field name="fecha_fianza" attrs="{'readonly':[('total_anticipo', '&gt;' , 1)]}"/>
                     </group>
                 </sheet>
             </form>
@@ -152,6 +166,7 @@
                                         <field name="numero_contrato" invisible="1"/>
                                         <field name="nombre_partida" invisible="1"/>
                                         <field name="nueva_partida" invisible="1"/>
+
                                         <button name="anticipo" type="object" string="Anticipo" />
                                 </tree>
                                 </field>
@@ -222,6 +237,13 @@
                         </group>
                          <field name="deducciones" string=""/>
                     </page>
+
+                    <page string="Lista De Recursos" >
+                        <group string="Lista De Recursos">
+                            <field name="anexos"/>
+                        </group>
+                        </page>
+
             </notebook>
           </sheet>
         </form>
@@ -264,7 +286,7 @@
                          <group><field name="numero_contrato" readonly="1"/> </group>
                          <group> <field name="obra" readonly="True"/> </group>
                          <group> <field name="programaInversion" readonly="True"/> </group>
-                         <group> <field name="contratista" /> </group>
+                         <group> <field name="contratista" invisible="1" /> </group>
                       </group>
                       <group colspan="1" col="3">
                          <group> <field name="monto_partida" readonly="True" widget="monetary"/> </group>

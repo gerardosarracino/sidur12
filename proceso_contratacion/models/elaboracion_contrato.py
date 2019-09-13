@@ -31,7 +31,7 @@ class ElaboracionContratos(models.Model):
 
     name = fields.Text(string="Descripción/Meta", required=True)
     descripciontrabajos = fields.Text(string="Descripción trabajos:", required=True)
-    unidadresponsableejecucion = fields.Char(string="Unidad responsable de su ejecución", required=True)
+    unidadresponsableejecucion = fields.Many2one('proceso.unidad_responsable', string="Unidad responsable de su ejecución", required=True)
     supervisionexterna = fields.Text(string="Supervisión externa")
     supervisionexterna1 = fields.Many2one('proceso.elaboracion_contrato', string="Supervisión externa:")
 
@@ -59,7 +59,9 @@ class ElaboracionContratos(models.Model):
     # Deducciones
     deducciones = fields.Many2many("generales.deducciones", string="Deducciones")
 
-
+    # RECURSOS PRUEBA
+    anexos = fields.One2many('autorizacion_obra.anexo_tecnico', 'name')
+    # total_atcancel = fields.Float(string='Importe anexos', related="obra.")
 
     # METODO DE LAS PARTIDAS ADJUDICACION
     @api.multi
@@ -171,6 +173,12 @@ class ElaboracionContratos(models.Model):
             'view_type': 'form',
             'target': 'new',
         }
+
+
+class UnidadResponsableEjecucion(models.Model):
+    _name = 'proceso.unidad_responsable'
+
+    name = fields.Char('Descripción:')
 
 
 class Fianza(models.Model):
@@ -387,6 +395,8 @@ class conceptos_partidas(models.Model):
                 "You cannot change the type of a sale order line. Instead you should delete the current line and create a new line of the proper type.")
         result = super(conceptos_partidas, self).write(values)
         return result'''
+
+
 
 
 
