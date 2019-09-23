@@ -12,7 +12,11 @@ class AdjudicacionDirecta(models.Model):
     programas_inversion_adjudicacion = fields.Many2one('generales.programas_inversion', 'name')
     # /// Partidas
     programar_obra_adjudicacion = fields.Many2many("partidas.adjudicacion", string="Partida(s):", ondelete="cascade")
+
     iva = fields.Float(string="I.V.A", default=0.16, required=True)
+
+    importe_adjudicacion = fields.Float(string="Importe",)
+
     numerocontrato = fields.Char(string="Numero Contrato", required=True)
     fechaadjudicacion = fields.Date(string="Fecha de Adjudicación", required=True)
     dictamen = fields.Char(string="Dictamen", required=True)
@@ -37,6 +41,14 @@ class AdjudicacionDirecta(models.Model):
     recurso_municipal_indirecto = fields.Float(string="Municipal Indirecto")
     recurso_otros = fields.Float(string="Otros")
     total_recurso = fields.Float(string="Total", compute='sumaRecursos')
+
+    @api.onchange('programar_obra_adjudicacion')
+    def importe(self):
+        suma = 0
+        for i in self.programar_obra_adjudicacion:
+            resultado = i.total_partida
+            suma += resultado
+            self.importe_adjudicacion = suma
 
     # METODO PARA INGRESAR A RECURSOS CON EL BOTON
     @api.multi

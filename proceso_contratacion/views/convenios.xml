@@ -101,8 +101,6 @@
            <field name="monto_total" string="Monto"/>
            <field name="plazo_fecha_inicio" />
            <field name="plazo_fecha_termino" />
-
-
         </tree>
       </field>
     </record>

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
-from odoo.exceptions import UserError
+from odoo import exceptions
+from odoo import api, fields, models, _
 
 
 class ElaboracionContratos(models.Model):
@@ -9,44 +9,34 @@ class ElaboracionContratos(models.Model):
     _rec_name = 'contrato'
 
     contrato_partida_licitacion = fields.Many2many('partidas.partidas', ondelete="cascade")
-
-    # contrato_partida_adjudicacion = fields.Many2many('partidas.partidas')
     contrato_partida_adjudicacion = fields.Many2many('partidas.partidas', ondelete="cascade")
 
     contrato_id = fields.Char(compute="nombre", store=True)
 
     # LICITACION
     obra = fields.Many2one('proceso.licitacion', string="Seleccionar obra")
-
     # ADJUDICACION
     adjudicacion = fields.Many2one('proceso.adjudicacion_directa', string="Nombre de Adjudicacion")
 
     # CONTAR REGISTROS DE FINIQUITO
     contar_finiquito = fields.Integer(compute='contar', string="PRUEBA")
-    # CONTAR REGISTROS DE FINIQUITO
+    # CONTAR REGISTROS DE CONVENIO
     contar_convenio = fields.Integer(compute='contar2', string="PRUEBA")
 
-    fecha = fields.Date(string="Fecha", required=True)
+    fecha = fields.Date(string="Fecha", required=True, default=fields.Date.today())
     contrato = fields.Char(string="Contrato", required=True)
-
     name = fields.Text(string="Descripción/Meta", required=True)
     descripciontrabajos = fields.Text(string="Descripción trabajos:", required=True)
     unidadresponsableejecucion = fields.Many2one('proceso.unidad_responsable', string="Unidad responsable de su ejecución", required=True)
     supervisionexterna = fields.Text(string="Supervisión externa")
     supervisionexterna1 = fields.Many2one('proceso.elaboracion_contrato', string="Supervisión externa:")
 
-    # VER SI SON NECESARIOS
+    # IMPORTE DEL CONTRATO LICITACION Y ADJUDICACION
     importe_contrato = fields.Float(string="Importe:")
-    iva_contrato = fields.Float(string="IVA:")
-    portentaje_iva_contrato = fields.Float(string="% IVA:")
-    total_contrato = fields.Float(string="Total:")
-    total = fields.Float(string="Total", readonly=True)
-    # ///
-    # VINCULO CON ADJUDICACION TRAER DATOS PENDIENTE
 
     contratista = fields.Many2one('contratista.contratista', related="adjudicacion.contratista")
-
     fechainicio = fields.Date(string="Fecha de Inicio", required=True)
+
     fechatermino = fields.Date(string="Fecha de Termino", required=True)
 
     select = [('1', 'Diario'), ('2', 'Mensual'), ('3', 'Ninguno')]
@@ -60,8 +50,82 @@ class ElaboracionContratos(models.Model):
     deducciones = fields.Many2many("generales.deducciones", string="Deducciones")
 
     # RECURSOS PRUEBA
-    anexos = fields.One2many('autorizacion_obra.anexo_tecnico', 'name')
-    # total_atcancel = fields.Float(string='Importe anexos', related="obra.")
+    anexos = fields.One2many('autorizacion_obra.anexo_tecnico', 'name',)
+
+    enlace_oficio = fields.Many2one('autorizacion_obra.oficios_de_autorizacion', string="Enlace a Oficio",)
+    # related="anexos.name"
+    recurso_autorizado = fields.Float(string='Recursos Autorizados:', related="anexos.name.total_at")
+    importe_cancelado = fields.Float(string='Recursos Cancelados:', related="anexos.total_ca")
+    total_recurso_aut = fields.Float(string='Total de Recursos Autorizados:', compute="recurso_total")
+    contratado_original = fields.Float(string="Contratado Original:	", related="contrato_partida_adjudicacion.total_partida")
+    convenios_escalatorias = fields.Float(string="Convenios y Escalatorias:", readonly="True")
+    total_contratado = fields.Float(string="Total Contratado:", compute="contratado_total")
+    saldo = fields.Float(string="Saldo:", compute="saldo_total")
+
+    # FECHA
+    @api.onchange('fechatermino')
+    @api.depends('fechatermino', 'fechainicio')
+    def onchange_date(self):
+        if str(self.fechatermino) < str(self.fechainicio):
+            raise exceptions.Warning('No se puede seleccionar una Fecha anterior a la actual, '
+                                     'por favor seleccione una fecha actual o posterior')
+        else:
+            return False
+
+    @api.onchange('contrato_partida_adjudicacion')
+    def importe_total(self):
+        suma = 0
+        for i in self.contrato_partida_adjudicacion and self.contrato_partida_licitacion:
+            resultado = i.total
+            suma += resultado
+            self.importe_contrato = suma
+
+    '''@api.multi
+    @api.onchange('adjudicacion')  # if these fields are changed, call method
+    def llenar_anexo(self):
+        adirecta_id = self.env['autorizacion_obra.anexo_tecnico'].browse(self.adjudicacion.id)
+        self.update({
+            'anexos': [[5]]
+        })
+        for anexos_b in adirecta_id:
+            self.update({
+                'anexos': [[0, 0, {'claveobra': anexos_b.claveobra,
+                                      'clave_presupuestal': anexos_b.clave_presupuestal,
+                                      'federal': anexos_b.federal,
+                                      'estatal': anexos_b.estatal,
+                                      'municipal': anexos_b.municipal,
+                                      'totalin': anexos_b.totalin,
+                                      'otros': anexos_b.otros,
+                                      'total_ca': anexos_b.total_ca,
+                                      'total1': anexos_b.total1,
+                                      }]]
+            })'''
+
+    '''@api.one
+    def contar_convenios(self):
+        count = self.env['proceso.convenios_modificado'].search_count([('contrato', '=', self.contrato)])
+        self.contador_convenios = count'''
+
+    @api.depends('total_recurso_aut', 'total_contratado')
+    def saldo_total(self):
+        for rec in self:
+            rec.update({
+                'saldo': rec.total_recurso_aut - rec.total_contratado
+            })
+
+    @api.depends('contratado_original', 'convenios_escalatorias')
+    def contratado_total(self):
+        for rec in self:
+            rec.update({
+                'total_contratado': rec.contratado_original + rec.convenios_escalatorias
+            })
+
+    @api.depends('recurso_autorizado', 'importe_cancelado')
+    def recurso_total(self):
+        for rec in self:
+            rec.update({
+                'total_recurso_aut': rec.recurso_autorizado - rec.importe_cancelado
+            })
 
     # METODO DE LAS PARTIDAS ADJUDICACION
     @api.multi
@@ -186,40 +250,11 @@ class Fianza(models.Model):
 
     select_tipo_fianza = [('1', 'Cumplimiento'), ('2', 'Calidad/Vicios Ocultos'), ('3', 'Responsabilidad Civil'),
                           ('4', 'Ninguno')]
-    tipo_fianza = fields.Selection(select_tipo_fianza, string="Tipo Fianza", default="4")
-    numero_fianza_fianzas = fields.Integer(string="Numero Fianza")
-    monto = fields.Float(string="Monto")
-    fecha_fianza_fianzas = fields.Float(string="Fecha Fianza")
-    afianzadora_fianzas = fields.Char(string="Afianzadora")
-
-
-'''class AnticipoContratos(models.Model):
-    _name = "proceso.anticipo_contratos"
-
-    contrato = fields.Many2one(comodel_name="proceso.elaboracion_contrato", string="", required=False, )
-
-    obra = fields.Many2one('partidas.partidas', string="Obra:")
-
-    fecha_anticipo = fields.Date(string="Fecha Anticipo")
-    porcentaje_anticipo = fields.Float(string="Anticipo Inicio")
-    total_anticipo_porcentaje = fields.Float(string="Total Anticipo")
-    anticipo_material = fields.Float(string="Anticipo Material")
-    importe = fields.Float(string="Importe Contratado")
-    anticipo = fields.Integer(string="Anticipo")
-    iva = fields.Float(string="I.V.A")
-    total_anticipo = fields.Integer(string="Total Anticipo")
-    numero_fianza = fields.Float(string="# Fianza")
-    afianzadora = fields.Char(string="Afianzadora")
-    fecha_fianza = fields.Date(string="Fecha Fianza")
-
-    @api.one
-    @api.depends('FIELDS_NAMES')
-    def Anticipo(self):
-        for rec in self:
-            rec.update({
-                'monto_plazo_total': (rec.monto_plazo_importe * rec.monto_plazo_iva) + rec.monto_plazo_importe
-            })'''
-
+    tipo_fianza = fields.Selection(select_tipo_fianza, string="Tipo Fianza", default="4", required=True)
+    numero_fianza_fianzas = fields.Integer(string="Numero Fianza", required=True)
+    monto = fields.Float(string="Monto", required=True)
+    fecha_fianza_fianzas = fields.Float(string="Fecha Fianza", required=True)
+    afianzadora_fianzas = fields.Char(string="Afianzadora", required=True)
 
 
 class ConveniosModificados(models.Model):
@@ -380,21 +415,6 @@ class conceptos_partidas(models.Model):
             rec.update({
                 'importe': rec.cantidad * rec.precio_unitario
             })
-
-    '''@api.model
-    def create(self, values):
-        if values.get('display_type', self.default_get(['display_type'])['display_type']):
-            values.update(categoria=False, concepto=False, grupo=False, medida=0, precio_unitario=0, cantidad=0, importe=0)
-        line = super(conceptos_partidas, self).create(values)
-        return line
-
-    @api.multi
-    def write(self, values):
-        if 'display_type' in values and self.filtered(lambda line: line.display_type != values.get('display_type')):
-            raise UserError(
-                "You cannot change the type of a sale order line. Instead you should delete the current line and create a new line of the proper type.")
-        result = super(conceptos_partidas, self).write(values)
-        return result'''
 
 
 

@@ -10,6 +10,9 @@ class Estimaciones(models.Model):
     obra = fields.Many2one('partidas.partidas', string='Obra:', readonly=True)
     obra_id = fields.Char(compute="ConvenioEnlace", store=True)
 
+    # AUXILIAR DE CONEXION HACIA CONTRATO
+    numero_contrato = fields.Many2one(string="nc", related="obra.numero_contrato")
+
     # ESTIMACIONES
     radio_estimacion = [(
         '1', "Estimacion"), ('2', "Escalatoria")]
@@ -29,13 +32,13 @@ class Estimaciones(models.Model):
 
     notas = fields.Text(string="Notas:", required=False, )
 
-    # DEDUCCIONES
-    deducciones = fields.Many2many('generales.deducciones', string="Deducciones:" )
+    # DEDUCCIONES related="obra.numero_contrato.deducciones"
+    deducciones = fields.Many2many('control.deducciones', string="Deducciones:", )
 
     # Calculados
     estimado = fields.Float(string="Importe ejecutado estimación:", required=False, )
 
-    amort_anticipo = fields.Float(string="Amortización de Anticipo 30%:", required=False, )
+    amort_anticipo = fields.Float(string="Amortización de Anticipo 30%:", compute="amortizacion_anticipo", required=False, )
     estimacion_subtotal = fields.Float(string="Neto Estimación sin IVA:", required=False, )
     estimacion_iva = fields.Float(string="I.V.A. 16%", required=False, )
     estimacion_facturado = fields.Float(string="Neto Estimación con IVA:", required=False, )
@@ -50,6 +53,45 @@ class Estimaciones(models.Model):
 
     # CONCEPTOS EJECUTADOS
     conceptos_partidas = fields.Many2many('proceso.conceptos_part')
+    total_conceptos = fields.Float(string="Total:",  required=False)
+
+    # METODO PARA JALAR DATOS DE LAS DEDUCCIONES DEL CONTRATO
+    @api.multi
+    @api.onchange('conceptos_partidas')  # if these fields are changed, call method
+    def deduccion(self):
+        adirecta_id = self.env['proceso.elaboracion_contrato'].browse(self.numero_contrato.id)
+        self.update({
+            'deducciones': [[5]]
+        })
+        for deducciones in adirecta_id.deducciones:
+            self.update({
+                'deducciones': [[0, 0, {'name': deducciones.name, 'porcentaje': deducciones.porcentaje}]]
+            })
+
+    # METODO PARA JALAR IMPORTE DE LOS CONCEPTOS DE PARTIDA
+    @api.onchange('conceptos_partidas')
+    def suma_conceptos(self):
+        suma = 0
+        for i in self.conceptos_partidas:
+            resultado = i.importe_ejecutado
+            suma = suma + resultado
+            self.estimado = suma
+
+    # METODO PARA AGREGAR IMPORTE A DEDUCCIONES
+    @api.onchange('estimado')
+    def deduc(self):
+        for rec in self.deducciones:
+            rec.update({
+                'valor': self.estimado
+            })
+
+    # METODO PARA CALCULAR AMORTIZACION 30%
+    @api.depends('estimado')
+    def amortizacion_anticipo(self):
+        for rec in self:
+            rec.update({
+                'amort_anticipo': self.estimado * 0.30
+            })
 
     # METODO PARA INSERTAR CONCEPTOS CONTRATADOS
     @api.multi
@@ -85,3 +127,9 @@ class Estimaciones(models.Model):
         self.obra_id = self.obra
 
 
+class Deducciones(models.Model):
+    _name = 'control.deducciones'
+
+    name = fields.Char()
+    porcentaje = fields.Float()
+    valor = fields.Float()

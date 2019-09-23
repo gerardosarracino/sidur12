@@ -110,53 +110,37 @@
                     </div>
 
                         <group string="Nombre de la Obra:">
-                            <field name="obra" readonly="True" string="" nolabel="1"/>
+                            <field name="obra" nolabel="1" readonly="1"/>
                         </group>
                             <hr/>
-                            <br/>
-                        <group colspan="2" col="3" context="{'default_ejercicio': obra.id}">
+                        <group colspan="2" col="5" context="{'default_ejercicio': obra.id}">
                             <separator string="Programa"/>
                             <separator string="Ejercicio" />
                             <separator string="Monto"/>
+                            <separator string="Municipio"/>
+                            <separator string="Localidad"/>
                         </group>
                         <group colspan="2" col="6">
                             <field name="programaInversion" readonly="True" string="" nolabel="1"/>
                             <field name="ejercicio" string="" nolabel="1"/>
                             <field name="total_partida" widget="monetary" string="" nolabel="1"/>
-                        </group>
-                            <hr/>
-                            <br/>
-
-                        <group colspan="2" col="3">
-                            <separator string="Municipio"/>
-                            <separator string="Localidad"/>
-                            <separator string="Fecha del Anticipo"/>
-                        </group>
-                        <group colspan="2" col="6">
                             <field name="municipio" string="" nolabel="1"/>
                             <field name="localidad" string="" nolabel="1"/>
-                            <field name="fecha_anticipos" readonly="1" string="" nolabel="1"/>
                         </group>
-                            <hr/>
-                            <br/>
-                        <group colspan="2" col="3">
-                            <separator string="Fecha del contrato"/>
-                            <separator string="Fecha de Inicio Contractual"/>
-                            <separator string="Fecha de Termino Contractual"/>
+                          <hr/>
+                        <group colspan="2" col="5">
+                           <separator string="Fecha del Anticipo"/>
+                           <separator string="Fecha del contrato"/>
+                           <separator string="Fecha de Inicio Contractual"/>
+                           <separator string="Fecha de Termino Contractual"/>
+                           <separator string="Supervision Externa"/>
                         </group>
                         <group colspan="2" col="6">
-                            <field name="fecha" string="" nolabel="1"/>
-                            <field name="fechainicio" string="" nolabel="1"/>
-                            <field name="fechatermino" string="" nolabel="1"/>
-
-                        </group>
-                            <hr/>
-                            <br/>
-                        <group colspan="2" col="3">
-                            <separator string="Supervision Externa"/>
-                        </group>
-                        <group colspan="2" col="2">
-                            <field name="supervisionexterna1" string="" nolabel="1"/>
+                          <field name="fecha_anticipos" readonly="1" string="" nolabel="1"/>
+                          <field name="fecha" string="" nolabel="1"/>
+                          <field name="fechainicio" string="" nolabel="1"/>
+                          <field name="fechatermino" string="" nolabel="1"/>
+                          <field name="supervisionexterna1" string="" nolabel="1"/>
                         </group>
 
 

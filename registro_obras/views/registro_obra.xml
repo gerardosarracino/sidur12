@@ -437,12 +437,29 @@
           <field name="estate2" widget="statusbar"/>
          </header>
         <sheet>
-        <group>
+
+        <group colspan="2" col="2">
           <group>
           <field name="name" string="Obra"/>
           <field name="descripcion"/>
           <field name="estruc_finan" invisible="1"/>
+
+          <!-- INICIA VERIFICAR SI LA OBRA ES CONTRATADA, ADJUDICADA O LICITADA -->
+          <field name="adjudicacion_cont" invisible="1"/>
+          <field name="licitacion_cont" invisible="1"/>
+          <field name="contrato_cont" invisible="1"/>
+
           </group>
+
+          <group>
+              <p class="float-right" style="color: #589F14" attrs="{'invisible':[('adjudicacion_cont', '=' , 0)]}">*Esta obra Está Adjudicada</p>
+              <p class="float-right" style="color: #589F14" attrs="{'invisible':[('licitacion_cont', '=' , 0)]}">*Esta obra Está Licitada</p>
+              <p class="float-right" style="color: #589F14" attrs="{'invisible':[('contrato_cont', '=' , 0)]}">*Esta obra Está Contratada</p>
+          </group>
+           <!-- TERMINA VERIFICAR SI LA OBRA ES CONTRATADA, ADJUDICADA O LICITADA -->
+
+        </group>
+
           <group string="Programar obra" colspan="2" col="2">
           <group>
           <field name="programaInversion" string="Programa de Inversión"/>
@@ -462,7 +479,7 @@
           <field name="imagen4"/>
           </group>
           </group>
-        </group>
+
         </sheet>
         </form>
       </field>

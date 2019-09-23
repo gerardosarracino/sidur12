@@ -1,11 +1,13 @@
 from odoo import models, fields, api, exceptions
 from datetime import datetime
 
+
 class ejercicio(models.Model):
 	_name = "registro.ejercicio"
 
 	name = fields.Integer(string="Ejercicio", required=True)
 	ejercicio = fields.One2many("registro.obra", "ejercicio")
+
 
 class unidadAdminSol(models.Model):
 	_name = "registro.unidadadminsol"
@@ -13,11 +15,13 @@ class unidadAdminSol(models.Model):
 	name = fields.Char(string="Descripción", required=True)
 	unidad = fields.One2many("registro.obra", "unidadadminsol")
 
+
 class tipoProyecto(models.Model):
 	_name = "registro.tipoproyecto"
 
 	name = fields.Char(string="Tipo de proyecto", required=True)
 	tipoproyecto = fields.One2many("registro.obra", "tipoproyecto")
+
 
 class tipoObraEtapa(models.Model):
 	_name = "registro.tipoobraetapa"
@@ -25,11 +29,13 @@ class tipoObraEtapa(models.Model):
 	name = fields.Char(string="Tipo de proyecto", required=True)
 	tipoobraetapa = fields.One2many("registro.obra", "tipoobraetapa")
 
+
 class tipoLocalidad(models.Model):
 	_name = "registro.tipolocalidad"
 
 	name = fields.Char(string="Tipo localidad", required=True)
 	tipolocalidad = fields.One2many("registro.obra", "tipolocalidad")
+
 
 class unidadMedida(models.Model):
 	_name = "registro.unidadm"
@@ -37,6 +43,7 @@ class unidadMedida(models.Model):
 	name = fields.Char(string="Unidad medida", required=True)
 	unidadm = fields.One2many("registro.obra", "metaProyectoUnidad")
 	unidadm1 = fields.One2many("registro.obra", "metaEjercicioUnidad")
+
 
 class registro_obra(models.Model):
 	_name = "registro.obra"
@@ -70,7 +77,7 @@ class registro_obra(models.Model):
 	proyecto_ejecutivo = fields.Integer(compute='contar')
 	seguimientoc = fields.Integer(compute='contar1')
 	programada = fields.Integer(compute='contar2')
-#	estate = fields.Selection([('planeada', 'Planeada'),('programada', 'Programada'),], default='planeada')
+	# estate = fields.Selection([('planeada', 'Planeada'),('programada', 'Programada'),], default='planeada')
 	estado_obra = fields.Char(compute="contar_programada")
 
 	@api.one
@@ -137,6 +144,7 @@ class registro_obra(models.Model):
 #		'target': 'new',
 #		}
 
+
 class ProyectoEjecutivo(models.TransientModel):
 	_name = 'registro.proyectoejecutivo'
 
@@ -145,6 +153,7 @@ class ProyectoEjecutivo(models.TransientModel):
 	documento = fields.Binary(string="Documento", required=True)
 	nombre = fields.Char(string="Nombre", required=True)
 	observaciones = fields.Text(string="Observaciones", required=True)
+
 
 class SeguimientoObra(models.TransientModel):
 	_name = 'registro.seguimientoobra'
@@ -173,12 +182,36 @@ class ProgramarObra(models.Model):
 	imagen4 = fields.Binary(string="Imagen cuatro")
 	estate2 = fields.Selection([('activo', 'Activo'),('cancelado', 'Cancelado'),], default='activo')
 	tipo = fields.Char(related="name.tipoObra.name")
+
 	descripcion = fields.Text(related="name.descripcion")
+
 	estado = fields.Char(related="name.estado.name")
 	municipio = fields.Char(related="name.municipio.municipio_delegacion")
 	ubicacion = fields.Text(related="name.ubicacion")
 	monto = fields.Float(related="name.monto")
 	estruc_finan = fields.Integer(compute='contar3')
+
+	# BUSCAR SI LA OBRA ESTA ADJUDICADA
+	adjudicacion_cont = fields.Integer(compute="adjudicacion_contar")
+	licitacion_cont = fields.Integer(compute="licitacion_contar")
+	contrato_cont = fields.Integer(compute="contrato_contar")
+	# INICA METODOS PARA CONTAR ADJUDICADA, LICITADA O CONTRATADA
+	@api.one
+	def adjudicacion_contar(self):
+		count = self.env['partidas.adjudicacion'].search_count([('obra', '=', self.descripcion)])
+		self.adjudicacion_cont = count
+
+	@api.one
+	def licitacion_contar(self):
+		count = self.env['partidas.licitacion'].search_count([('obra', '=', self.descripcion)])
+		self.licitacion_cont = count
+
+	@api.one
+	def contrato_contar(self):
+		count = self.env['partidas.partidas'].search_count([('obra', '=', self.descripcion)])
+		self.contrato_cont = count
+
+	# TERMINA METODOS PARA CONTAR ADJUDICADA, LICITADA O CONTRATADA
 
 	@api.multi
 	def borrador_progressbar_respuesta(self):
@@ -197,6 +230,7 @@ class ProgramarObra(models.Model):
 	def contar3(self):
 		count = self.env['registro.estructurafinanciera'].search_count([('name', '=', self.id)])
 		self.estruc_finan = count
+
 
 class EstructuraFinanciera(models.Model):
 	_name = "registro.estructurafinanciera"

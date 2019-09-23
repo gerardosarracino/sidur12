@@ -7,8 +7,10 @@
       <field name="arch" type="xml">
         <tree>
           <field name="numerocontrato"/>
-          <field name="name"/>
+          <field name="name" string="Descripción"/>
           <field name="normatividad"/>
+          <field name="importe_adjudicacion"/>
+          <field name="contratista"/>
         </tree>
       </field>
     </record>
@@ -65,7 +67,7 @@
                                     <control>
                                          <create string="Agregar Partida"/>
                                     </control>
-                                        <field name="obra" domain="[('programaInversion', '=', parent.programas_inversion_adjudicacion)]"/>
+                                        <field name="obra" domain="[('programaInversion', '=', parent.programas_inversion_adjudicacion)]" />
                                         <field name="programaInversion" />
                                         <field name="monto_partida" sum="Monto" widget="monetary"/>
                                         <field name="iva_partida" readonly="True" sum="I.V.A" widget="monetary"/>
@@ -75,25 +77,26 @@
                             </group>
 
                          <group>
-                            <field name="iva"/>
                             <field name="name"/>
+                             <field name="importe_adjudicacion" readonly="1" force_save="1" invisible="1"/>
                           </group>
 
-                        <group colspan="1" col="2">
-                          <group >
+                        <group colspan="1" col="4">
                             <field name="numerocontrato"/>
                             <field name="fechaadjudicacion"/>
+                        </group>
+                        <group colspan="1" col="4">
                             <field name="dictamen"/>
                             <field name="normatividad"/>
-                          </group>
-                          <group>
+                        </group>
+                          <group colspan="1" col="4">
                             <field name="anticipoinicio"/>
                             <field name="anticipomaterial"/>
+
                             <field name="fechainicio" />
                             <field name="fechatermino" />
                             <field name="plazodias"/>
                           </group>
-                        </group>
 
 
                     <!-- <page string="Definición de recursos específicos para el contrato" class="oe_read_only">

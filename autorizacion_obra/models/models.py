@@ -1,6 +1,7 @@
 from odoo import models, fields, api
 from datetime import datetime
 
+
 class AutorizacionDeObra(models.Model):
     _name = 'autorizacion_obra.oficios_de_autorizacion'
 
@@ -37,9 +38,11 @@ class AutorizacionDeObra(models.Model):
         count = self.env['autorizacion_obra.anexo_tecnico'].search_count([('name', '=', self.id)])
         self.anexo_tec = count
 
+
 class AnexoTecnico(models.Model):
     _name = 'autorizacion_obra.anexo_tecnico'
     _rec_name = 'id'
+
     name = fields.Many2one('autorizacion_obra.oficios_de_autorizacion', readonly=True, ondelete="cascade")
     claveobra = fields.Char(string='Clave de obra', required=True)
     clave_presupuestal = fields.Char(string='Clave presupuestal', required=True)
@@ -58,6 +61,17 @@ class AnexoTecnico(models.Model):
     total1 = fields.Float(string="Total", compute="_total1")
     totalin = fields.Float(string="Indirectos", compute="_totalin")
     cancelado = fields.One2many('autorizacion_obra.cancelarrecurso', 'name')
+
+    total_at = fields.Float(compute='suma_total_anexos')
+
+    @api.one
+    def suma_total_anexos(self):
+        ids = self.env['autorizacion_obra.anexo_tecnico'].search([('name', '=', self.id)])
+        suma = 0
+        for i in ids:
+            resultado = self.env['autorizacion_obra.anexo_tecnico'].browse(i.id).total
+            suma += float(resultado)
+        self.total_at = suma
 
     @api.depends('federal','estatal','municipal','otros','federalin','estatalin','municipalin','otrosin')
     def _total(self):
@@ -88,8 +102,10 @@ class AnexoTecnico(models.Model):
         count = self.env['autorizacion_obra.cancelarrecurso'].search_count([('name', '=', self.id)])
         self.cancelados = count
 
+
 class CancelacionRecursos(models.Model):
     _name = 'autorizacion_obra.cancelarrecurso'
+
     name = fields.Many2one('autorizacion_obra.anexo_tecnico', 'id', readonly=True, ondelete="cascade")
     nooficio = fields.Char(string="No. Oficio", required=True)
     fecha = fields.Date(string="Fecha", required=True)

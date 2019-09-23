@@ -1,40 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-
-       <!-- <record id="proceso_anticipo_contratos_form" model="ir.ui.view">
-            <field name="name">proceso anticipo contratos form</field>
-            <field name="model">proceso.anticipo_contratos</field>
+        <record id="anticipo_tree" model="ir.ui.view">
+            <field name="name">Anticipos Tree</field>
+            <field name="model">partidas.partidas</field>
             <field name="arch" type="xml">
-                <form string="">
+                <tree string="" decoration-warning="anticipada=='Sin Anticipo'">
+                    <field name="anticipada"/>
+                    <field name="numero_contrato"/>
+                    <field name="fecha_anticipos"/>
+                    <field name="total_anticipo"/>
+                    <field name="numero_fianza"/>
+                    <field name="afianzadora"/>
+                    <field name="fecha_fianza"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="anticipo_form" model="ir.ui.view">
+            <field name="name">Anticipos Form</field>
+            <field name="model">partidas.partidas</field>
+            <field name="arch" type="xml">
+                <form string="Anticipo" create="false" delete="false" edit="false">
                     <sheet>
+                            <group string="Anticipo" >
+
+                        <field name="numero_contrato"/>
+                        <field name="contratista"/>
+
+                        <field name="anticipada" nolabel="1"/>
+                        <field name="numero_contrato" invisible="1"/>
+                        <field name="fecha_anticipos" class="oe_inline" attrs="{'readonly':[('total_anticipo', '&gt;' , 1)]}"/>
+                    </group>
+
+                    <group colspan="1" col="2">
                         <group>
-                            <group>
-                                <field name="contrato"/>
-                                <field name="obra"/>
-                                <field name="fecha_anticipo"/>
-                            </group>
-                            <group colspan="1" col="2">
-                                <field name="porcentaje_anticipo"/>
-                                <field name="total_anticipo_porcentaje"/>
-                                <field name="anticipo_material"/>
-                                <field name="importe"/>
-                            </group>
-                            <group>
-                                <field name="anticipo"/>
-                                <field name="iva"/>
-                                <field name="total_anticipo"/>
-                                <field name="numero_fianza"/>
-                            </group>
-                            <group colspan="1" col="2">
-                                <field name="afianzadora"/>
-                                <field name="fecha_fianza"/>
-                            </group>
+                            <field name="porcentaje_anticipo" class="oe_inline" attrs="{'readonly':[('total_anticipo', '&gt;' , 1)]}"/>
+                            <field name="total_anticipo_porcentaje"/>
                         </group>
+                        <group>
+                            <field name="anticipo_material" class="oe_inline" attrs="{'readonly':[('total_anticipo', '&gt;' , 1)]}"/>
+                            <field name="total_partida" readonly="1" string="Importe Contratado"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <field name="anticipo_a"/>
+                        <field name="iva_anticipo"/>
+                        <field name="total_anticipo"/>
+                        <field name="numero_fianza" class="oe_inline" attrs="{'readonly':[('total_anticipo', '&gt;' , 1)]}"/>
+                    </group>
+
+                    <group colspan="1" col="4">
+                        <field name="afianzadora" attrs="{'readonly':[('total_anticipo', '&gt;' , 1)]}"/>
+                        <field name="fecha_fianza" attrs="{'readonly':[('total_anticipo', '&gt;' , 1)]}"/>
+                    </group>
                     </sheet>
                 </form>
             </field>
-        </record> -->
+        </record>
 
+        <record id="accion_anticipo_s" model="ir.actions.act_window">
+            <field name="name">Anticipo</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">partidas.partidas</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+    (0, 0, {'view_mode': 'tree', 'view_id': ref('anticipo_tree')}),
+    (0, 0, {'view_mode': 'form', 'view_id': ref('anticipo_form')})]"/>
+        </record>
+
+        <!-- This Menu Item must have a parent and an action -->
+        <menuitem id="action_anticipo" name="Anticipos" parent="proc_contratacion_menu_root" action="accion_anticipo_s"
+                  sequence="5"/>
     </data>
 </odoo>
