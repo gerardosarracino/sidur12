@@ -11,6 +11,9 @@ class ElaboracionContratos(models.Model):
     contrato_partida_licitacion = fields.Many2many('partidas.partidas', ondelete="cascade")
     contrato_partida_adjudicacion = fields.Many2many('partidas.partidas', ondelete="cascade")
 
+    # RELATED CON LA OBRA DE LA PARTIDA PARA RELACIONARLA CON EL ANEXO TECNICO
+    obra_partida = fields.Many2one(string="obra partida", related="contrato_partida_adjudicacion.obra")
+
     contrato_id = fields.Char(compute="nombre", store=True)
 
     # LICITACION
@@ -24,15 +27,18 @@ class ElaboracionContratos(models.Model):
     contar_convenio = fields.Integer(compute='contar2', string="PRUEBA")
 
     fecha = fields.Date(string="Fecha", required=True, default=fields.Date.today())
+
     contrato = fields.Char(string="Contrato", required=True)
+
     name = fields.Text(string="Descripción/Meta", required=True)
+
     descripciontrabajos = fields.Text(string="Descripción trabajos:", required=True)
     unidadresponsableejecucion = fields.Many2one('proceso.unidad_responsable', string="Unidad responsable de su ejecución", required=True)
     supervisionexterna = fields.Text(string="Supervisión externa")
     supervisionexterna1 = fields.Many2one('proceso.elaboracion_contrato', string="Supervisión externa:")
 
     # IMPORTE DEL CONTRATO LICITACION Y ADJUDICACION
-    importe_contrato = fields.Float(string="Importe:")
+    importe_contrato = fields.Float(string="Importe:", store=True)
 
     contratista = fields.Many2one('contratista.contratista', related="adjudicacion.contratista")
     fechainicio = fields.Date(string="Fecha de Inicio", required=True)
@@ -49,57 +55,70 @@ class ElaboracionContratos(models.Model):
     # Deducciones
     deducciones = fields.Many2many("generales.deducciones", string="Deducciones")
 
-    # RECURSOS PRUEBA
-    anexos = fields.One2many('autorizacion_obra.anexo_tecnico', 'name',)
-
+    # RECURSOS ANEXOS
+    anexos = fields.Many2many('proceso.anexos', string="Anexos:")
     enlace_oficio = fields.Many2one('autorizacion_obra.oficios_de_autorizacion', string="Enlace a Oficio",)
     # related="anexos.name"
     recurso_autorizado = fields.Float(string='Recursos Autorizados:', related="anexos.name.total_at")
     importe_cancelado = fields.Float(string='Recursos Cancelados:', related="anexos.total_ca")
     total_recurso_aut = fields.Float(string='Total de Recursos Autorizados:', compute="recurso_total")
-    contratado_original = fields.Float(string="Contratado Original:	", related="contrato_partida_adjudicacion.total_partida")
+    # contratado_original = fields.Float(string="Contratado Original:	", related="contrato_partida_adjudicacion.total_partida")
     convenios_escalatorias = fields.Float(string="Convenios y Escalatorias:", readonly="True")
     total_contratado = fields.Float(string="Total Contratado:", compute="contratado_total")
     saldo = fields.Float(string="Saldo:", compute="saldo_total")
 
-    # FECHA
-    @api.onchange('fechatermino')
-    @api.depends('fechatermino', 'fechainicio')
-    def onchange_date(self):
-        if str(self.fechatermino) < str(self.fechainicio):
-            raise exceptions.Warning('No se puede seleccionar una Fecha anterior a la actual, '
-                                     'por favor seleccione una fecha actual o posterior')
-        else:
-            return False
-
+    # METODO PARA CALCULAR EL IMPORTE DEL CONTRATO
     @api.onchange('contrato_partida_adjudicacion')
     def importe_total(self):
         suma = 0
         for i in self.contrato_partida_adjudicacion and self.contrato_partida_licitacion:
-            resultado = i.total
+            resultado = i.total_partida
             suma += resultado
             self.importe_contrato = suma
 
-    '''@api.multi
-    @api.onchange('adjudicacion')  # if these fields are changed, call method
+    # VALIDACIONES DE FECHAS
+    @api.onchange('fechatermino')
+    @api.depends('fechatermino', 'fechainicio')
+    def onchange_fechatermino(self):
+        if str(self.fechatermino) < str(self.fechainicio):
+            raise exceptions.Warning('No se puede seleccionar una Fecha anterior a la fecha de inicio, '
+                                     'por favor seleccione una fecha posterior')
+        else:
+            return False
+
+    @api.onchange('fechainicio')
+    @api.depends('fechatermino', 'fechainicio')
+    def onchange_fechainicio(self):
+        if str(self.fechatermino) < str(self.fechainicio):
+            raise exceptions.Warning('No se puede seleccionar una Fecha posterior a la de termino, '
+                                     'por favor seleccione una fecha anterior')
+        else:
+            return False
+
+    # METODO PARA INYECTAR ANEXOS
+    @api.multi
+    @api.onchange('contrato_partida_adjudicacion')  # if these fields are changed, call method
     def llenar_anexo(self):
-        adirecta_id = self.env['autorizacion_obra.anexo_tecnico'].browse(self.adjudicacion.id)
+        adirecta_id = self.env['autorizacion_obra.anexo_tecnico'].search([('concepto', '=', self.obra_partida.id)])
         self.update({
             'anexos': [[5]]
         })
         for anexos_b in adirecta_id:
             self.update({
-                'anexos': [[0, 0, {'claveobra': anexos_b.claveobra,
-                                      'clave_presupuestal': anexos_b.clave_presupuestal,
-                                      'federal': anexos_b.federal,
-                                      'estatal': anexos_b.estatal,
-                                      'municipal': anexos_b.municipal,
-                                      'totalin': anexos_b.totalin,
-                                      'otros': anexos_b.otros,
-                                      'total_ca': anexos_b.total_ca,
-                                      'total1': anexos_b.total1,
+                'anexos': [[0, 0, {'name': anexos_b.name, 'claveobra': anexos_b.claveobra,
+                                   'clave_presupuestal': anexos_b.clave_presupuestal,
+                                   'federal': anexos_b.federal,
+                                   'concepto': anexos_b.concepto,
+                                   'estatal': anexos_b.estatal,
+                                   'municipal': anexos_b.municipal, 'otros': anexos_b.otros,
+                                   'ferderalin': anexos_b.federalin, 'estatalin': anexos_b.estatalin,
+                                   'municipalin': anexos_b.municipalin, 'otrosin': anexos_b.otrosin,
+                                   'total': anexos_b.total, 'cancelados': anexos_b.cancelados,
+                                   'total_ca': anexos_b.total_ca,
+                                   'total1': anexos_b.total1, 'totalin': anexos_b.totalin,
+                                   'total_at': anexos_b.total_at,
                                       }]]
-            })'''
+            })
 
     '''@api.one
     def contar_convenios(self):
@@ -113,11 +132,11 @@ class ElaboracionContratos(models.Model):
                 'saldo': rec.total_recurso_aut - rec.total_contratado
             })
 
-    @api.depends('contratado_original', 'convenios_escalatorias')
+    @api.depends('importe_contrato', 'convenios_escalatorias')
     def contratado_total(self):
         for rec in self:
             rec.update({
-                'total_contratado': rec.contratado_original + rec.convenios_escalatorias
+                'total_contratado': rec.importe_contrato + rec.convenios_escalatorias
             })
 
     @api.depends('recurso_autorizado', 'importe_cancelado')
@@ -237,6 +256,30 @@ class ElaboracionContratos(models.Model):
             'view_type': 'form',
             'target': 'new',
         }
+
+
+class AnexosAuxiliar(models.Model):
+    _name = 'proceso.anexos'
+
+    name = fields.Many2one('autorizacion_obra.oficios_de_autorizacion')
+    concepto = fields.Many2one('registro.programarobra')
+    claveobra = fields.Char(string='Clave de obra')
+    clave_presupuestal = fields.Char(string='Clave presupuestal')
+    federal = fields.Float(string='Federal')
+    estatal = fields.Float(string='Estatal')
+    municipal = fields.Float(string='Municipal')
+    otros = fields.Float(string='Otros')
+    federalin = fields.Float(string='Federal')
+    estatalin = fields.Float(string='Estatal')
+    municipalin = fields.Float(string='Municipal')
+    otrosin = fields.Float(string='Otros')
+    total = fields.Float()
+    cancelados = fields.Integer()
+    total_ca = fields.Float(string='Cancelado')
+    total1 = fields.Float(string="Total")
+    totalin = fields.Float(string="Indirectos")
+
+    total_at = fields.Float()
 
 
 class UnidadResponsableEjecucion(models.Model):

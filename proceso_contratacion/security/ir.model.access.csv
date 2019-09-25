@@ -21,6 +21,7 @@ access_proceso_fianza,proceso.fianza,model_proceso_fianza,,1,1,1,1
 access_partidas_licitacion,partidas.licitacion,model_partidas_licitacion,,1,1,1,1
 access_proceso_unidad_responsable,proceso.unidad_responsable,model_proceso_unidad_responsable,,1,1,1,1
 access_proceso_rc_a,proceso.rc_a,model_proceso_rc_a,,1,1,1,1
+access_proceso_anexos,proceso.anexos,model_proceso_anexos,,1,1,1,1
 
 
 

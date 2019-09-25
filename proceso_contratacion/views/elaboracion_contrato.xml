@@ -108,14 +108,14 @@
         <form>
           <sheet>
               <div class="oe_button_box oe_read_only" name="button_box">
-                    <button string="Convenios Modificados" type="object" name="conveniosModificados1" class="oe_highlight" context="{
+                    <!-- <button string="Convenios Modificados" type="object" name="conveniosModificados1" class="oe_highlight" context="{
                        'search_default_contrato': active_id,
                        'default_contrato': active_id
                        }" attrs="{'invisible': [('contar_convenio', '=', 1)]}" icon="fa-pencil-square-o"/>
                     <button string="Convenios Modificados" type="object" name="conveniosModificados2" class="oe_highlight" context="{
                        'search_default_contrato': active_id,
                        'default_contrato': active_id
-                       }" attrs="{'invisible': [('contar_convenio', '=', 0)]}" icon="fa-pencil-square-o"/>
+                       }" attrs="{'invisible': [('contar_convenio', '=', 0)]}" icon="fa-pencil-square-o"/> -->
 
                    <button string="Finiquitar Contrato Anticipadamente" type="object" name="finiquitarContrato1" class="oe_highlight" context="{
                        'search_default_contrato': active_id,
@@ -133,14 +133,19 @@
                              <group string="Contrato Datos Generales"  >
 
                                 <field name="obra" string="Seleccionar Licitacion"  attrs="{'invisible':
-                                [('adjudicacion', '!=', False)]}"/>
+                                [('adjudicacion', '!=', False)]}" />
 
-                                 <field name="adjudicacion" attrs="{'invisible': [('obra', '!=', False)]}"/>
+
+
+                                 <field name="adjudicacion" attrs="{'invisible': [('obra', '!=', False)]}"
+                                 domain="[('contratado','=',False)]"/>
                                 </group>
 
                                   <group colspan="1" col="4">
                                     <field name="fecha" class="oe_inline"/>
+
                                     <field name="contrato" />
+                                    <field name="obra_partida" invisible="1"/>
                                     <field name="importe_contrato" readonly="1" force_save="1"/>
                                   </group>
 
@@ -240,20 +245,29 @@
                              </tree>
                          </field>
                     </page>
-
+                    <!-- LISTA DE RECURSOS -->
                     <page string="Lista De Recursos" >
                         <separator string="Lista De Recursos" />
-                        <field name="anexos" readonly="1" string="">
-                            <tree>
-                                <field name="claveobra"/>
-                                <field name="clave_presupuestal"/>
-                                <field name="federal"/>
-                                <field name="estatal"/>
-                                <field name="municipal"/>
-                                <field name="totalin"/>
-                                <field name="otros"/>
-                                <field name="total_ca"/>
-                                <field name="total1"/>
+                        <field name="anexos" readonly="1" string="" force_save="1">
+                            <tree force_save="1">
+                                <field name="name" force_save="1" invisible="1"/>
+                                <field name="claveobra" force_save="1"/>
+                                <field name="clave_presupuestal" force_save="1"/>
+                                <field name="federal" force_save="1"/>
+                                <field name="concepto" force_save="1" invisible="1"/>
+                                <field name="estatal" force_save="1"/>
+                                <field name="municipal" force_save="1"/>
+                                <field name="otros" force_save="1" />
+                                <field name="federalin" force_save="1" invisible="1"/>
+                                <field name="estatalin" force_save="1" invisible="1"/>
+                                <field name="municipalin" force_save="1" invisible="1"/>
+                                <field name="otrosin" force_save="1" invisible="1"/>
+                                <field name="total" force_save="1" invisible="1"/>
+                                <field name="cancelados" force_save="1" invisible="1"/>
+                                <field name="total_ca" force_save="1"/>
+                                <field name="totalin" force_save="1"/>
+                                <field name="total1" force_save="1"/>
+                                <field name="total_at" force_save="1" invisible="1"/>
                             </tree>
                         </field>
                         <hr/>
@@ -265,7 +279,7 @@
                         </group>
                         <hr/>
                         <group>
-                            <field name="contratado_original"/>
+                            <field name="importe_contrato" readonly="1"/>
                             <field name="convenios_escalatorias"/>
                             <field name="total_contratado"/>
                         </group>
@@ -345,8 +359,8 @@
                             <group><field name="name" string="" class="o_light_label"/></group>
                         </group>
                         <group colspan="2" col="3">
-                            <group><field name="total" /></group>
-                            <group> <field name="total_contrato"/></group>
+                            <group><field name="total_partida" /></group>
+                            <group> <field name="total_catalogo"/></group>
                             <group><field name="diferencia"  class="o_light_label"/></group>
                         </group>
                         <field name="conceptos_partidas" widget="section_and_note_one2many" string="# Concepto de partidas">
@@ -379,8 +393,8 @@
       <field name="arch" type="xml">
         <tree create="false">
             <field name="fecha" string="Fecha"/>
-            <field name="numero_contrato" string="# Conctrato"/>
-            <field name="name" string="Objeto"/>
+            <field name="numero_contrato" string="# Contrato"/>
+            <field name="objeto" string="Objeto"/>
             <field name="contratista" string="Contratista" />
             <field name="monto_partida" string="Importe Contrato"/>
             <field name="a_fis" />

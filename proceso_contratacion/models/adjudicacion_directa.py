@@ -7,6 +7,7 @@ class AdjudicacionDirecta(models.Model):
     _name = "proceso.adjudicacion_directa"
     _rec_name = "numerocontrato"
 
+    contratado = fields.Boolean(string="", compute="VerificarContrato", store=True)
     #  HACER LOS FILTROS DE RELACION DE PROGRAMAS DE INVERSION CON OBRAS PROGRAMADAS(partidas)
     name = fields.Text(string="Descripción/Meta", required=True)
     programas_inversion_adjudicacion = fields.Many2one('generales.programas_inversion', 'name')
@@ -18,6 +19,7 @@ class AdjudicacionDirecta(models.Model):
     importe_adjudicacion = fields.Float(string="Importe",)
 
     numerocontrato = fields.Char(string="Numero Contrato", required=True)
+
     fechaadjudicacion = fields.Date(string="Fecha de Adjudicación", required=True)
     dictamen = fields.Char(string="Dictamen", required=True)
     select = [('1', 'Federal'), ('2', 'Estatal')]
@@ -41,6 +43,14 @@ class AdjudicacionDirecta(models.Model):
     recurso_municipal_indirecto = fields.Float(string="Municipal Indirecto")
     recurso_otros = fields.Float(string="Otros")
     total_recurso = fields.Float(string="Total", compute='sumaRecursos')
+
+    @api.one
+    def VerificarContrato(self):
+        contrato = self.env['proceso.elaboracion_contrato'].search_count([('adjudicacion', '=', self.id)])
+        if contrato > 0:
+            self.contratado = True
+        else:
+            self.contratado = False
 
     @api.onchange('programar_obra_adjudicacion')
     def importe(self):

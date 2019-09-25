@@ -44,6 +44,7 @@ class AnexoTecnico(models.Model):
     _rec_name = 'id'
 
     name = fields.Many2one('autorizacion_obra.oficios_de_autorizacion', readonly=True, ondelete="cascade")
+
     claveobra = fields.Char(string='Clave de obra', required=True)
     clave_presupuestal = fields.Char(string='Clave presupuestal', required=True)
     concepto = fields.Many2one('registro.programarobra', required=True)

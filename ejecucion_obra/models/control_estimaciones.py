@@ -38,10 +38,10 @@ class Estimaciones(models.Model):
     # Calculados
     estimado = fields.Float(string="Importe ejecutado estimación:", required=False, )
 
-    amort_anticipo = fields.Float(string="Amortización de Anticipo 30%:", compute="amortizacion_anticipo", required=False, )
-    estimacion_subtotal = fields.Float(string="Neto Estimación sin IVA:", required=False, )
-    estimacion_iva = fields.Float(string="I.V.A. 16%", required=False, )
-    estimacion_facturado = fields.Float(string="Neto Estimación con IVA:", required=False, )
+    amort_anticipo = fields.Float(string="Amortización de Anticipo 30%:", compute="amortizacion_anticipo")
+    estimacion_subtotal = fields.Float(string="Neto Estimación sin IVA:", compute="Estimacion_sinIva" )
+    estimacion_iva = fields.Float(string="I.V.A. 16%", compute="Estimacion_Iva")
+    estimacion_facturado = fields.Float(string="Neto Estimación con IVA:", compute="Estimacion_conIva")
     estimado_deducciones = fields.Float(string="Menos Suma Deducciones:", required=False, )
     ret_dev = fields.Float(string="Retención/Devolución:", required=False, )
     sancion = fields.Float(string="Sanción por Incump. de plazo:", required=False, )
@@ -77,13 +77,38 @@ class Estimaciones(models.Model):
             suma = suma + resultado
             self.estimado = suma
 
-    # METODO PARA AGREGAR IMPORTE A DEDUCCIONES
-    @api.onchange('estimado')
-    def deduc(self):
-        for rec in self.deducciones:
+    # METODO PARA CALCULAR ESTIMACION NETA SIN IVA
+    @api.depends('estimado')
+    def Estimacion_sinIva(self):
+        for rec in self:
             rec.update({
-                'valor': self.estimado
+                'estimacion_subtotal': (self.estimado - self.amort_anticipo) - (self.estimado * 0.16)
             })
+
+    # METODO PARA CALCULAR ESTIMACION IVA
+    @api.depends('estimado')
+    def Estimacion_Iva(self):
+        for rec in self:
+            rec.update({
+                'estimacion_iva': (self.estimado - self.amort_anticipo) * 0.16
+            })
+
+    # METODO PARA CALCULAR ESTIMACION + IVA
+    @api.depends('estimacion_iva')
+    def Estimacion_conIva(self):
+        for rec in self:
+            rec.update({
+                'estimacion_facturado': self.estimacion_subtotal + self.estimacion_iva
+            })
+
+    # METODO PARA SUMAR DEDUCCIONES
+    @api.onchange('estimacion_facturado')
+    def SumaDeducciones(self):
+        suma = 0
+        for i in self.deducciones:
+            resultado = i.valor
+            suma = suma + resultado
+            self.estimado_deducciones = suma
 
     # METODO PARA CALCULAR AMORTIZACION 30%
     @api.depends('estimado')
@@ -91,6 +116,15 @@ class Estimaciones(models.Model):
         for rec in self:
             rec.update({
                 'amort_anticipo': self.estimado * 0.30
+            })
+
+
+    # METODO PARA AGREGAR IMPORTE A DEDUCCIONES
+    @api.onchange('estimado')
+    def deduc(self):
+        for rec in self.deducciones:
+            rec.update({
+                'valor': (self.estimado * rec.porcentaje)
             })
 
     # METODO PARA INSERTAR CONCEPTOS CONTRATADOS

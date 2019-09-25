@@ -51,11 +51,11 @@
 
                                     <group string="Cálculo De Estimación"  colspan="2" col="6">
                                         <field name="estimado" readonly="1" force_save="1"/>
-                                        <field name="amort_anticipo" />
-                                        <field name="estimacion_subtotal" readonly="1"/>
-                                        <field name="estimacion_iva" readonly="1"/>
-                                        <field name="estimacion_facturado" readonly="1"/>
-                                        <field name="estimado_deducciones" readonly="1"/>
+                                        <field name="amort_anticipo" force_save="1"/>
+                                        <field name="estimacion_subtotal" readonly="1" force_save="1"/>
+                                        <field name="estimacion_iva" readonly="1" force_save="1"/>
+                                        <field name="estimacion_facturado" readonly="1" force_save="1"/>
+                                        <field name="estimado_deducciones" readonly="1" force_save="1"/>
                                         <field name="ret_dev" readonly="1"/>
                                         <field name="sancion" readonly="1"/>
                                         <field name="a_pagar" readonly="1"  />
@@ -75,7 +75,7 @@
                             </group>
 
                             <field name="conceptos_partidas" string="" widget="section_and_note_one2many">
-                                    <tree editable="bottom" delete="false" create="false">
+                                    <tree editable="bottom" delete="false" create="false" force_save="1">
                                         <control>
                                             <create string="Agregar Sección" context="{'default_display_type': 'line_section'}"/>
                                             <create string="Add a note" context="{'default_display_type': 'line_note'}"/>
@@ -93,7 +93,7 @@
                                         <field name="cantidad" readonly="1" force_save="1" />
                                         <field name="est_ant" />
                                         <field name="pendiente" />
-                                        <field name="estimacion"/>
+                                        <field name="estimacion" force_save="1"/>
                                         <field name="importe_ejecutado" sum="Importe Ejecutado"/>
 
                                     </tree>
@@ -112,6 +112,7 @@
          <field name="model">control.estimaciones</field>
          <field name="arch" type="xml">
             <search>
+                <field name="obra"/>
                 <field name="tipo_estimacion"/>
                 <field name="fecha_inicio_estimacion"/>
                 <field name="fecha_termino_estimacion"/>
@@ -197,10 +198,12 @@
                        'search_default_obra': active_id,
                        'default_obra': active_id
                        }" attrs="{'invisible': [('contar_estimaciones', '=', 1)]}" icon="fa-usd"/>
-                  <button string="Estimaciones" type="action" name="%(action_estimaciones2)d" class="oe_highlight" context="{
+
+                      <button string="Estimaciones" type="action" name="%(action_estimaciones2)d" class="oe_highlight" context="{
                        'search_default_obra': active_id,
                        'default_obra': active_id
                        }" attrs="{'invisible': [('contar_estimaciones', '=', 0)]}" icon="fa-usd"/>
+
                       <!-- <button type="action" icon="fa-list" string="Estado de Cuenta"></button> -->
 
                 </div>

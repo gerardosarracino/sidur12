@@ -5,15 +5,16 @@ from odoo.exceptions import ValidationError
 from odoo import tools, _
 from odoo.modules.module import get_module_resource
 
+
 # CLASE AUXILIAR DE PARTIDAS LICITACION
 class PartidasLicitacion(models.Model):
     _name = 'partidas.licitacion'
 
-    obra = fields.Many2one('registro.programarobra', )
-    programaInversion = fields.Many2one('generales.programas_inversion', )
-    monto_partida = fields.Float(string="Monto", )
-    iva_partida = fields.Float(string="Iva", compute="iva")
-    total_partida = fields.Float(string="Total", compute="sumaPartidas")
+    obra = fields.Many2one('registro.programarobra', required=True)
+    programaInversion = fields.Many2one('generales.programas_inversion', required=True)
+    monto_partida = fields.Float(string="Monto", required=True)
+    iva_partida = fields.Float(string="Iva", compute="iva", required=True)
+    total_partida = fields.Float(string="Total", compute="sumaPartidas", required=True)
 
     # METODO CALCULAR TOTAL PARTIDA
     @api.depends('monto_partida')
@@ -36,11 +37,11 @@ class PartidasLicitacion(models.Model):
 class PartidasAdjudicacion(models.Model):
     _name = 'partidas.adjudicacion'
 
-    obra = fields.Many2one('registro.programarobra', )
-    programaInversion = fields.Many2one('generales.programas_inversion')
-    monto_partida = fields.Float(string="Monto", )
-    iva_partida = fields.Float(string="Iva", compute="iva")
-    total_partida = fields.Float(string="Total", compute="sumaPartidas")
+    obra = fields.Many2one('registro.programarobra', required=True)
+    programaInversion = fields.Many2one('generales.programas_inversion', related="")
+    monto_partida = fields.Float(string="Monto", required=True)
+    iva_partida = fields.Float(string="Iva", compute="iva", required=True)
+    total_partida = fields.Float(string="Total", compute="sumaPartidas", required=True)
 
     # METODO CALCULAR TOTAL PARTIDA
     @api.depends('monto_partida')
@@ -63,11 +64,15 @@ class PartidasAdjudicacion(models.Model):
 class Partidas(models.Model):
     _name = 'partidas.partidas'
     _rec_name = "numero_contrato"
+    # CONTRATO AL QUE PERTENECE LA PARTIDA
+    numero_contrato = fields.Many2one(comodel_name="proceso.elaboracion_contrato", string="Numero de Contrato",
+                                      compute="nombrePartida")
 
-    numero_contrato = fields.Many2one(comodel_name="proceso.elaboracion_contrato", string="Numero de Contrato", compute="nombrePartida" )
-    # enlace estimacion
+    # ESTIMACION ENLACE
     estimacion_id = fields.Char(compute="nombre", store=True)
-    obra = fields.Many2one('registro.programarobra', )
+
+    # OBRA A LA QUE PERTENECE LA PARTIDA
+    obra = fields.Many2one('registro.programarobra')
     # EL OBJETO ES LA DESCRIPCION DE LA OBRA EN EL CONTRATO
     objeto = fields.Text(string="Objeto", related="numero_contrato.name")
 
@@ -77,20 +82,21 @@ class Partidas(models.Model):
     iva_partida = fields.Float(string="Iva", compute="iva")
     total_partida = fields.Float(string="Total", compute="SumaContrato")
 
+    # SUMA DE LAS PARTIDAS
+    total_contrato = fields.Float(related="numero_contrato.importe_contrato")
+
     # NOTA CAMBIAR DESPUES LOS VALORES DE IVA A PERSONALIZADOS NO FIJOS
-    # METODOS DE SUMA DEL MANY2MANY 'programar_obra'
 
     # CONCEPTOS CONTRATADOS DE PARTIDAS
     conceptos_partidas = fields.Many2many('proceso.conceptos_part', required=True)
 
     name = fields.Many2one('proceso.elaboracion_contrato', readonly=True)
     total = fields.Float(string="Monto Total Contratado:", readonly=True, compute="totalContrato", required=True)
-    total_contrato = fields.Float(string="Monto Total del Catálogo:", compute="SumaImporte", required=True)
+    total_catalogo = fields.Float(string="Monto Total del Catálogo:", compute="SumaImporte", required=True)
     diferencia = fields.Float(string="Diferencia:", compute="Diferencia", required=True)
 
-    # ESTIMACIONES ---------
-    radio_estimacion = [(
-        '1', "Estimacion"), ('2', "Escalatoria")]
+    # ESTIMACIONES
+    radio_estimacion = [('1', "Estimacion"), ('2', "Escalatoria")]
     tipo_estimacion = fields.Selection(radio_estimacion, string="")
     # estimacions_id = fields.Char(compute="estimacionId", store=True)
     numero_estimacion = fields.Integer(string="Número de Estimación:", required=False, )
@@ -155,17 +161,18 @@ class Partidas(models.Model):
     contar_estimaciones = fields.Integer(compute='contarEstimaciones', string="PRUEBA")
 
     # ANTICIPOS
-    fecha_anticipos = fields.Date(string="Fecha Anticipo", required=True)
-    porcentaje_anticipo = fields.Float(string="Anticipo Inicio", default="0.30", required=True)
+    fecha_anticipos = fields.Date(string="Fecha Anticipo", )
+
+    porcentaje_anticipo = fields.Float(string="Anticipo Inicio", default="0.30", )
     total_anticipo_porcentaje = fields.Float(string="Total Anticipo", compute="anticipo_por")
-    anticipo_material = fields.Float(string="Anticipo Material", required=True)
+    anticipo_material = fields.Float(string="Anticipo Material", )
     importe = fields.Float(string="Importe Contratado")
     anticipo_a = fields.Integer(string="Anticipo", compute="anticipo_inicio")
     iva_anticipo = fields.Float(string="I.V.A", compute="anticipo_iva")
     total_anticipo = fields.Integer(string="Total Anticipo", compute="anticipo_total")
-    numero_fianza = fields.Integer(string="# Fianza", required=True)
-    afianzadora = fields.Char(string="Afianzadora", required=True)
-    fecha_fianza = fields.Date(string="Fecha Fianza", required=True)
+    numero_fianza = fields.Integer(string="# Fianza", )
+    afianzadora = fields.Char(string="Afianzadora", )
+    fecha_fianza = fields.Date(string="Fecha Fianza", )
 
     anticipada = fields.Char(string="", compute="anticipada_Sel")
 
@@ -195,7 +202,7 @@ class Partidas(models.Model):
     # INICIO FINIQUITO #
     fecha1 = fields.Date(string="Fecha de aviso de terminación de los trabajos")
     fecha2 = fields.Datetime(string="Fecha y hora verificación de la terminación de los trabajos")
-    numero = fields.Char(string="Número bitácora del contrato", required=True)
+    numero = fields.Char(string="Número bitácora del contrato")
     nota1 = fields.Text(string="Nota de bitácora aviso terminación")
     fecha3 = fields.Date(string="Fecha nota bitácora")
     fecha4 = fields.Date(string="Fecha de aviso de terminación de trabajos")
@@ -292,30 +299,33 @@ class Partidas(models.Model):
         if self.total_ > 100:
             raise ValidationError("Ups! el porcentaje no puede ser mayor a 100 %")
 
-        # Jesus Fernandez metodo para abrir ruta critica
-        @api.multi
-        def ruta_critica_over(self):
-            view = self.env.ref('ejecucion_obra.proceso_rutac_form')
-            return {
-                'type': 'ir.actions.act_window',
-                'name': 'Ruta critica',
-                'res_model': 'partidas.partidas',
-                'view_mode': 'form',
-                'target': 'new',
-                'view_id': view.id,
-                'res_id': self.id,
-            }
+    # Jesus Fernandez metodo para abrir ruta critica
+    @api.multi
+    def ruta_critica_over(self):
+        view = self.env.ref('ejecucion_obra.proceso_rutac_form')
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Ruta critica',
+            'res_model': 'partidas.partidas',
+            'view_mode': 'form',
+            'target': 'new',
+            'view_id': view.id,
+            'res_id': self.id,
+        }
 
     @api.one
     def totalContrato(self):
         self.total = self.total_partida
 
     # METODO CALCULAR DIFERENCIA ENTRE PARTIDA Y CONCEPTOS
-    @api.one
+    @api.depends('total_partida', 'total_catalogo')
     def Diferencia(self):
-        self.diferencia = self.total - self.total_contrato
+        for rec in self:
+            rec.update({
+                'diferencia': self.total_partida - self.total_catalogo
+            })
 
-    # METODO CALCULAR TOTAL PARTIDA
+    # METODO CALCULAR TOTAL PARTIDA UNICA
     @api.depends('monto_partida')
     def SumaContrato(self):
         for rec in self:
@@ -338,7 +348,7 @@ class Partidas(models.Model):
         for i in self.conceptos_partidas:
             resultado = i.importe
             suma = suma + resultado
-            self.total_contrato = suma
+            self.total_catalogo = suma
 
     # METODO PARA SUMAR LOS IMPORTES DE LOS PROGRAMAS ---
     @api.onchange('programa_contrato')
