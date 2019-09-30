@@ -255,40 +255,50 @@
                                 <field name="name" placeholder="Número de obra" required="True"/>
                             </h1>
                         </div>
-            <group>
-            <group string="Datos generales de la obra" colspan="1" col="2">
-              <field name="estado_obra" invisible="1"/>
-              <field name="ejercicio"/>
+
+
+            <field name="estado_obra" invisible="1"/>
+
+            <group string="Datos generales de la obra" colspan="1" col="4">
+              <field name="ejercicio" class="oe_inline"/>
               <field name="grupoObra"/>
-              <field name="origen" string="Origen"/>
-              <field name="monto"/>
+              <field name="origen" string="Origen" class="oe_inline"/>
+              <field name="monto" class="oe_inline"/>
+            </group>
+            <group>
               <field name="descripcion"/>
               <field name="problematica"/>
+            </group>
+            <group colspan="1" col="4">
               <field name="unidadadminsol"/>
               <field name="tipoObra" string="Tipo de obra"/>
               <field name="tipoproyecto"/>
               <field name="tipoobraetapa" string="Tipo de obra etapa"/>
             </group>
-            <group string="Ubicación de la obra" colspan="1" col="2">
+            <group string="Ubicación de la obra" colspan="1" col="6">
               <field name="estado" string="Estado"/>
               <field name="municipio" string="Municipio"/>
               <field name="ubicacion" string="Ubicación"/>
               <field name="localidad" string="Localidad"/>
               <field name="cabeceraMunicipal"/>
               <field name="tipolocalidad"/>
-              <field name="latitud"/>
-              <field name="longitud"/>
             </group>
-            <group string="Impacto de la obra" colspan="2" col="2">
+            <group>
+              <field name="latitud" class="oe_inline"/>
+              <field name="longitud" class="oe_inline"/>
+            </group>
+            <group string="Impacto de la obra" colspan="2" col="4">
               <field name="beneficiados"/>
               <field name="metaFisicaProyecto"/>
               <field name="metaProyectoUnidad"/>
               <field name="metaEjercicio"/>
               <field name="metaEjercicioUnidad"/>
+            </group>
+            <group>
               <field name="justificacionTecnica"/>
               <field name="justificacionSocial"/>
             </group>
-            </group>
+
           </sheet>
         </form>
       </field>
@@ -460,25 +470,32 @@
 
         </group>
 
-          <group string="Programar obra" colspan="2" col="2">
-          <group>
+          <group string="Programar obra"  colspan="2" col="4">
           <field name="programaInversion" string="Programa de Inversión"/>
           <field name="categoriaProgramatica" string="Categoría programática"/>
+          </group>
+          <group colspan="2" col="4">
           <field name="fechaProbInicio"/>
           <field name="fechaProbTermino"/>
+          </group>
+          <group colspan="2" col="4">
           <field name="descripTotalObra"/>
           <field name="conceptoEjecutar"/>
           </group>
-          <group>
+          <group colspan="2" col="4">
           <field name="modalidadEjecucion"/>
           <field name="avanceFisicoActual"/>
-          <field name="avanceProgCierreEjerci"/>
+          </group>
+          <group >
+          <field name="avanceProgCierreEjerci" class="oe_inline"/>
+          </group>
+          <group colspan="2" col="4">
           <field name="imagen1"/>
           <field name="imagen2"/>
           <field name="imagen3"/>
           <field name="imagen4"/>
           </group>
-          </group>
+
 
         </sheet>
         </form>

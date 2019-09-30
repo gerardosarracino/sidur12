@@ -7,7 +7,9 @@ class AdjudicacionDirecta(models.Model):
     _name = "proceso.adjudicacion_directa"
     _rec_name = "numerocontrato"
 
-    contratado = fields.Boolean(string="", compute="VerificarContrato", store=True)
+    # CAMPO BOOLEAN PARA VERIFICAR SI YA SE CONTRATO ESTA ADJUDICACION
+    contratado = fields.Boolean(string="", compute="VerificarContrato")
+
     #  HACER LOS FILTROS DE RELACION DE PROGRAMAS DE INVERSION CON OBRAS PROGRAMADAS(partidas)
     name = fields.Text(string="Descripción/Meta", required=True)
     programas_inversion_adjudicacion = fields.Many2one('generales.programas_inversion', 'name')
@@ -29,7 +31,7 @@ class AdjudicacionDirecta(models.Model):
     fechainicio = fields.Date(string="Fecha de Inicio", required=True, default=fields.Date.today())
     fechatermino = fields.Date(string="Fecha termino", required=True, )
     plazodias = fields.Integer(string="Plazo/Días", required=True)
-    contratista = fields.Many2one('contratista.contratista', string='Contratista')
+    contratista = fields.Many2one('contratista.contratista', string='Contratista', required=True)
 
     # Recursos
     # FALTA LA RELACION, NECESITO EL MODULO DE AUTORIZACION DE OBRAS
@@ -46,7 +48,7 @@ class AdjudicacionDirecta(models.Model):
 
     @api.one
     def VerificarContrato(self):
-        contrato = self.env['proceso.elaboracion_contrato'].search_count([('adjudicacion', '=', self.id)])
+        contrato = self.env['proceso.elaboracion_contrato'].search_count([('adjudicacion', '=', self.numerocontrato)])
         if contrato > 0:
             self.contratado = True
         else:

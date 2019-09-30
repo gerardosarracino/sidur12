@@ -19,7 +19,7 @@ class ElaboracionContratos(models.Model):
     # LICITACION
     obra = fields.Many2one('proceso.licitacion', string="Seleccionar obra")
     # ADJUDICACION
-    adjudicacion = fields.Many2one('proceso.adjudicacion_directa', string="Nombre de Adjudicacion")
+    adjudicacion = fields.Many2one('proceso.adjudicacion_directa', string="Nombre de Adjudicacion", ondelete='cascade')
 
     # CONTAR REGISTROS DE FINIQUITO
     contar_finiquito = fields.Integer(compute='contar', string="PRUEBA")
@@ -36,9 +36,6 @@ class ElaboracionContratos(models.Model):
     unidadresponsableejecucion = fields.Many2one('proceso.unidad_responsable', string="Unidad responsable de su ejecución", required=True)
     supervisionexterna = fields.Text(string="Supervisión externa")
     supervisionexterna1 = fields.Many2one('proceso.elaboracion_contrato', string="Supervisión externa:")
-
-    # IMPORTE DEL CONTRATO LICITACION Y ADJUDICACION
-    importe_contrato = fields.Float(string="Importe:", store=True)
 
     contratista = fields.Many2one('contratista.contratista', related="adjudicacion.contratista")
     fechainicio = fields.Date(string="Fecha de Inicio", required=True)
@@ -67,14 +64,18 @@ class ElaboracionContratos(models.Model):
     total_contratado = fields.Float(string="Total Contratado:", compute="contratado_total")
     saldo = fields.Float(string="Saldo:", compute="saldo_total")
 
+    # IMPORTE DEL CONTRATO LICITACION Y ADJUDICACION
+    impcontra = fields.Float(string="Importe:")
+
     # METODO PARA CALCULAR EL IMPORTE DEL CONTRATO
+    @api.multi
     @api.onchange('contrato_partida_adjudicacion')
-    def importe_total(self):
+    def importeT(self):
         suma = 0
-        for i in self.contrato_partida_adjudicacion and self.contrato_partida_licitacion:
+        for i in self.contrato_partida_adjudicacion:
             resultado = i.total_partida
             suma += resultado
-            self.importe_contrato = suma
+            self.impcontra = suma
 
     # VALIDACIONES DE FECHAS
     @api.onchange('fechatermino')
@@ -95,11 +96,19 @@ class ElaboracionContratos(models.Model):
         else:
             return False
 
+    # VALIDACIONES DE RECURSOS
+    @api.onchange('impcontra')
+    def onchange_recursos(self):
+        if self.saldo < 0:
+            raise exceptions.Warning('No se cuenta con los recursos suficientes')
+        else:
+            return False
+
     # METODO PARA INYECTAR ANEXOS
     @api.multi
     @api.onchange('contrato_partida_adjudicacion')  # if these fields are changed, call method
     def llenar_anexo(self):
-        adirecta_id = self.env['autorizacion_obra.anexo_tecnico'].search([('concepto', '=', self.obra_partida.id)])
+        adirecta_id = self.env['autorizacion_obra.anexo_tecnico'].search([('p_inv', '=', self.obra_partida.id)])
         self.update({
             'anexos': [[5]]
         })
@@ -132,11 +141,11 @@ class ElaboracionContratos(models.Model):
                 'saldo': rec.total_recurso_aut - rec.total_contratado
             })
 
-    @api.depends('importe_contrato', 'convenios_escalatorias')
+    @api.depends('impcontra', 'convenios_escalatorias')
     def contratado_total(self):
         for rec in self:
             rec.update({
-                'total_contratado': rec.importe_contrato + rec.convenios_escalatorias
+                'total_contratado': rec.impcontra + rec.convenios_escalatorias
             })
 
     @api.depends('recurso_autorizado', 'importe_cancelado')
@@ -154,14 +163,17 @@ class ElaboracionContratos(models.Model):
         self.update({
             'contrato_partida_adjudicacion': [[5]]
         })
+        cont = 0
         for partidas in adirecta_id.programar_obra_adjudicacion:
+            cont = cont + 1
             self.update({
                 'contrato_partida_adjudicacion': [[0, 0, {'obra': partidas.obra,
                                                           'programaInversion': partidas.programaInversion,
                                                           'monto_partida': partidas.monto_partida,
                                                           'iva_partida': partidas.iva_partida,
                                                           'total_partida': partidas.total_partida,
-                                                          'nombre_partida': self.contrato
+                                                          'nombre_partida': self.contrato,
+                                                          'p_id': cont
                                                           }]]
                      })
 
@@ -307,10 +319,10 @@ class ConveniosModificados(models.Model):
     contrato = fields.Many2one('proceso.elaboracion_contrato', string='Numero Contrato:', readonly=True)
 
     fecha_convenios = fields.Date(string="Fecha:")
-    name_convenios = fields.Text(string="Obra:")
+    name_convenios = fields.Many2one(string="obra partida", related="contrato.contrato_partida_adjudicacion.obra")
     referencia = fields.Char(string="Referencia:")
     observaciones = fields.Text(string="Observaciones:")
-    fecha_dictamen = fields.Text(string="Fecha Dictamen:")
+    fecha_dictamen = fields.Date(string="Fecha Dictamen:")
 
     # RADIO BUTTON
     radio = [(
@@ -421,7 +433,9 @@ class conceptos_partidas(models.Model):
     # contratada = fields.Float(string="Contratada",  required=False, compute="test")
     est_ant = fields.Integer(string="Est. Ant",  required=False, compute="sumaEst")
     pendiente = fields.Integer(string="Pendiente",  required=False, compute="Pendiente")
+
     estimacion = fields.Integer(string="Estimacion",  required=False, )
+
     importe_ejecutado = fields.Float(string="Importe",  required=False, compute="importeEjec")
 
     importe = fields.Float(compute="sumaCantidad")

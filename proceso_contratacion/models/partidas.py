@@ -83,7 +83,7 @@ class Partidas(models.Model):
     total_partida = fields.Float(string="Total", compute="SumaContrato")
 
     # SUMA DE LAS PARTIDAS
-    total_contrato = fields.Float(related="numero_contrato.importe_contrato")
+    total_contrato = fields.Float(related="numero_contrato.impcontra")
 
     # NOTA CAMBIAR DESPUES LOS VALORES DE IVA A PERSONALIZADOS NO FIJOS
 
@@ -158,11 +158,10 @@ class Partidas(models.Model):
     # new_field = fields.Float(string="")
 
     # CONTAR REGISTROS DE ESTIMACIONES
-    contar_estimaciones = fields.Integer(compute='contarEstimaciones', string="PRUEBA")
+    contar_estimaciones = fields.Integer(compute='ContarEstimaciones', string="PRUEBA")
 
     # ANTICIPOS
     fecha_anticipos = fields.Date(string="Fecha Anticipo", )
-
     porcentaje_anticipo = fields.Float(string="Anticipo Inicio", default="0.30", )
     total_anticipo_porcentaje = fields.Float(string="Total Anticipo", compute="anticipo_por")
     anticipo_material = fields.Float(string="Anticipo Material", )
@@ -173,15 +172,12 @@ class Partidas(models.Model):
     numero_fianza = fields.Integer(string="# Fianza", )
     afianzadora = fields.Char(string="Afianzadora", )
     fecha_fianza = fields.Date(string="Fecha Fianza", )
+    anticipada = fields.Boolean(string="Anticipada", compute="anticipada_Sel")
 
-    anticipada = fields.Char(string="", compute="anticipada_Sel")
-
-    # PRUEBA DE VISTA
+    # VISTA DE INFORMACION DE LA PARTIDA
     ejercicio = fields.Many2one("registro.ejercicio", string="Ejercicio", related="obra.name.ejercicio")
     municipio = fields.Many2one('generales.municipios', 'Municipio', related="obra.name.municipio")
     localidad = fields.Text(string="Localidad", readonly="True", related="obra.name.localidad")
-    # fecha_anticipo = fields.Date(string="Fecha Anticipo", related="obra.name.ejercicio")
-
     fecha = fields.Date(string="Fecha", related="numero_contrato.fecha")
     fechainicio = fields.Date(string="Fecha de Inicio", related="numero_contrato.fechainicio")
     fechatermino = fields.Date(string="Fecha de Termino", related="numero_contrato.fechatermino")
@@ -215,17 +211,47 @@ class Partidas(models.Model):
     fecha11 = fields.Datetime(string="Fecha y hora acta de extinción de derechos")
     description = fields.Text(string="Descripción de los trabajos")
     creditosContra = fields.Char(string="Créditos en contra del contratista al finalizar la obra")
-
     # FIN FINIQUITO #
 
-    # METODO PARA VERIFICAR SI HAY ANTICIPO
+    # ID PARTIDA
+    p_id = fields.Integer('ID DE LA PARTIDA')
+    nombre_part = fields.Integer(compute="nombre_partidas")
+
+    # RESTRICCION DEL PROGRAMA, SI NO HAY PROGRAMA NO PERMITE REGISTRAR UNA ESTIMACION
+    verif_programa = fields.Boolean(string="", compute="programa_verif" )
+
+    @api.one
+    def programa_verif(self):
+        verif = self.env['partidas.partidas'].search([('numero_contrato', '=', self.numero_contrato)])
+        for i in verif:
+            if i.fecha_inicio_programa:
+                print("SI HAY PROGRAMA")
+                self.verif_programa = True
+            else:
+                print("NO HAY PROGRAMA")
+                self.verif_programa = False
+
+    @api.one
+    def nombre_partidas(self):
+        return 1
+
+    # METODO PARA VERIFICAR SI YA SE ANTICIPO UNA PARTIDA
     @api.one
     def anticipada_Sel(self):
-        if self.fecha_anticipos and self.fecha_fianza and self.afianzadora and self.numero_fianza and self.anticipo_material is not False:
-            self.anticipada = "Con Anticipo"
+        if self.fecha_anticipos and self.numero_fianza and self.afianzadora and self.fecha_fianza:
+            self.anticipada = True
         else:
-            self.anticipada = "Sin Anticipo"
+            self.anticipada = False
 
+    # METODO PARA VERIFICAR SI HAY ANTICIPO
+    @api.multi
+    def VerifAnti(self, vals):
+        if self.fecha_anticipos and self.fecha_fianza and self.afianzadora and self.numero_fianza and self.anticipo_material is not False:
+            self.anticipada = True
+        else:
+            self.anticipada = False
+
+    # METODO PARA CALCULAR EL PORCENTAJE DEL ANTICIPO
     @api.one
     @api.depends('porcentaje_anticipo')
     def anticipo_por(self):
@@ -234,6 +260,7 @@ class Partidas(models.Model):
                 'total_anticipo_porcentaje': rec.porcentaje_anticipo
             })
 
+    # METODO PARA CALCULAR EL ANTICIPO DE INICIO
     @api.one
     @api.depends('total_partida', 'porcentaje_anticipo')
     def anticipo_inicio(self):
@@ -242,7 +269,7 @@ class Partidas(models.Model):
                 'anticipo_a': rec.total_partida * rec.total_anticipo_porcentaje
             })
 
-    # VER CUESTION DEL IVA
+    # MEOTODO PARA CALCULAR IVA DE ANTICIPO ---VER CUESTION DEL IVA
     @api.one
     @api.depends('anticipo_a')
     def anticipo_iva(self):
@@ -251,6 +278,7 @@ class Partidas(models.Model):
                 'iva_anticipo': rec.anticipo_a * 0.16
             })
 
+    # METODO PARA CALCULAR EL TOTAL DEL ANTICIPO
     @api.one
     @api.depends('anticipo_a', 'iva_anticipo')
     def anticipo_total(self):
@@ -259,6 +287,7 @@ class Partidas(models.Model):
                 'total_anticipo': rec.anticipo_a + rec.iva_anticipo
             })
 
+    # METODO PARA INSERTAR EL NUMERO DEL CONTRATO DENTRO DE LA PARTIDA PARA HACER CONEXION
     @api.one
     def nombrePartida(self):
         self.numero_contrato = self.env['proceso.elaboracion_contrato'].search([('contrato', '=', self.nombre_partida)]).id
@@ -280,7 +309,7 @@ class Partidas(models.Model):
 
     # METODO DE CONTAR REGISTROS DE FINIQUITOS PARA ABRIR VISTA EN MODO NEW O TREE VIEW
     @api.one
-    def contarEstimaciones(self):
+    def ContarEstimaciones(self):
         count = self.env['control.estimaciones'].search_count([('obra', '=', self.id)])
         self.contar_estimaciones = count
 
@@ -313,6 +342,7 @@ class Partidas(models.Model):
             'res_id': self.id,
         }
 
+    # METODO PARA ASIGNAR EL TOTAL DEL CONTRATO
     @api.one
     def totalContrato(self):
         self.total = self.total_partida

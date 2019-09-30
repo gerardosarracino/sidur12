@@ -7,11 +7,20 @@
         <field name="arch" type="xml">
             <form string="">
                 <sheet>
+                    <div>
+                        <h1>
+                            <field name="estimacion_ids" readonly="1" force_save="1"/>
+                        </h1>
+                    </div>
                     <notebook>
                         <page string="Datos Generales De La Estimación">
                             <group string="Datos Generales De La Estimación" colspan="1" col="2">
                                 <group>
+                                    <!-- por mientras para activar metodos -->
+                                    <field name="p_id" invisible="1"/>
+
                                     <field name="obra"/>
+
                                     <br/>
                                     <field name="tipo_estimacion" widget="radio"/>
                                 </group>
@@ -41,10 +50,10 @@
 
                                 <group colspan="10" col="1" string="Deducciones">
                                     <field name="deducciones" nolabel="1" force_save="1">
-                                        <tree create="false">
+                                        <tree create="false" force_save="1">
                                             <field name="name" />
-                                            <field name="porcentaje"  />
-                                            <field name="valor"  />
+                                            <field name="porcentaje" force_save="1" />
+                                            <field name="valor" force_save="1" />
                                         </tree>
                                     </field>
                                 </group>
@@ -93,7 +102,9 @@
                                         <field name="cantidad" readonly="1" force_save="1" />
                                         <field name="est_ant" />
                                         <field name="pendiente" />
+
                                         <field name="estimacion" force_save="1"/>
+
                                         <field name="importe_ejecutado" sum="Importe Ejecutado"/>
 
                                     </tree>
@@ -113,6 +124,7 @@
          <field name="arch" type="xml">
             <search>
                 <field name="obra"/>
+                <field name="estimacion_ids"/>
                 <field name="tipo_estimacion"/>
                 <field name="fecha_inicio_estimacion"/>
                 <field name="fecha_termino_estimacion"/>
@@ -134,7 +146,9 @@
         <field name="model">control.estimaciones</field>
         <field name="arch" type="xml">
             <tree string="">
-                <field name="tipo_estimacion"/>
+                <field name="obra" invisible="1"/>
+                <field name="estimacion_ids" string="#"/>
+                <field name="tipo_estimacion" string="Tipo"/>
                 <field name="fecha_inicio_estimacion"/>
                 <field name="fecha_termino_estimacion"/>
                 <field name="estimado"/>
@@ -142,9 +156,9 @@
                 <field name="estimacion_subtotal"/>
                 <field name="estimacion_facturado"/>
                 <field name="estimado_deducciones"/>
-                <field name="ret_dev"/>
-                <field name="sancion"/>
-                <field name="a_pagar"/>
+                <field name="ret_dev" string="Ret/Dev."/>
+                <field name="sancion" string="Sanción"/>
+                <field name="a_pagar" string="A pagar"/>
             </tree>
         </field>
     </record>
@@ -166,7 +180,7 @@
         <field name="view_ids" eval="[(5, 0, 0),
     (0, 0, {'view_mode': 'tree', 'view_id': ref('control_estimaciones_estimaciones_tree')}),
     (0, 0, {'view_mode': 'form', 'view_id': ref('control_estimaciones_estimaciones_form')})]"/>
-    </record>
+    </record>s
 
       <!-- VISTA TREE DE PARTIDAS -->
       <record model="ir.ui.view" id="estimaciones_tree">
@@ -197,9 +211,8 @@
                   <button string="Estimaciones" type="action" name="%(action_estimaciones1)d" class="oe_highlight" context="{
                        'search_default_obra': active_id,
                        'default_obra': active_id
-                       }" attrs="{'invisible': [('contar_estimaciones', '=', 1)]}" icon="fa-usd"/>
-
-                      <button string="Estimaciones" type="action" name="%(action_estimaciones2)d" class="oe_highlight" context="{
+                       }" attrs="{'invisible': [('contar_estimaciones', '&gt;', 0)]}" icon="fa-usd"/>
+                  <button string="Estimaciones" type="action" name="%(action_estimaciones2)d" class="oe_highlight" context="{
                        'search_default_obra': active_id,
                        'default_obra': active_id
                        }" attrs="{'invisible': [('contar_estimaciones', '=', 0)]}" icon="fa-usd"/>
@@ -207,16 +220,21 @@
                       <!-- <button type="action" icon="fa-list" string="Estado de Cuenta"></button> -->
 
                 </div>
-                         <field name="contar_estimaciones" invisible="1"/>
+
+                    <field name="contar_estimaciones" force_save="1" invisible="1"/>
+                    <field name="p_id" invisible="1"/>
+                    <field name="verif_programa" readonly="1"/>
 
                    <group string="Nombre de la Obra:">
                             <field name="obra" nolabel="1" readonly="1"/>
+
+
                         </group>
                             <hr/>
                         <group colspan="2" col="5" context="{'default_ejercicio': obra.id}">
                             <separator string="Programa"/>
                             <separator string="Ejercicio" />
-                            <separator string="Monto"/>
+                            <separator string="Monto/Iva"/>
                             <separator string="Municipio"/>
                             <separator string="Localidad"/>
                         </group>
@@ -254,20 +272,34 @@
                         </page>
 
                         <!-- ANTICIPOS -->
-                        <page string="Anticipos" >
-                            <group string="Anticipos" colspan="1" col="4">
-                                <field name="fecha_anticipos" readonly="1"/>
-                                <field name="porcentaje_anticipo" readonly="1"/>
-                                <field name="total_anticipo_porcentaje" readonly="1"/>
-                                <field name="anticipo_material" readonly="1"/>
-                                <field name="importe" readonly="1"/>
-                                <field name="anticipo_a" readonly="1"/>
-                                <field name="iva_anticipo" readonly="1"/>
-                                <field name="total_anticipo" readonly="1"/>
-                                <field name="numero_fianza" readonly="1"/>
-                                <field name="afianzadora" readonly="1"/>
-                                <field name="fecha_fianza" readonly="1"/>
-                            </group>
+                        <page string="Anticipos">
+                            <group string="Anticipo">
+                            <field name="numero_contrato" readonly="1"/>
+                            <field name="contratista" readonly="1"/>
+                            <field name="anticipada" invisible="1" readonly="1"/>
+                        </group>
+                        <group >
+                            <field name="fecha_anticipos" readonly="1" />
+                        </group>
+
+                        <group colspan="1" col="4">
+                            <field name="porcentaje_anticipo" class="oe_inline" readonly="1"/>
+                            <field name="total_anticipo_porcentaje" readonly="1"/>
+                            <field name="anticipo_material" class="oe_inline" readonly="1"/>
+                            <field name="total_partida" readonly="1" string="Importe Contratado"/>
+                        </group>
+
+                        <group>
+                            <field name="anticipo_a" readonly="1"/>
+                            <field name="iva_anticipo" readonly="1"/>
+                            <field name="total_anticipo" readonly="1"/>
+                        </group>
+
+                        <group colspan="1" col="4">
+                            <field name="numero_fianza" class="oe_inline" readonly="1"/>
+                            <field name="afianzadora" readonly="1"/>
+                            <field name="fecha_fianza" readonly="1"/>
+                        </group>
                         </page>
 
                         <!-- PAGINA DE CONV. MODIFICATORIOS -->
@@ -303,7 +335,8 @@
                             <field name="diferencia"  class="o_light_label"/>
                         </group>
 
-                        <field name="conceptos_partidas" string="# Concepto de partidas" widget="section_and_note_one2many">
+                        <field name="conceptos_partidas" string="# Concepto de partidas" widget="section_and_note_one2many"
+                        readonly="1">
                             <tree>
                                 <control>
                                     <create string="Agregar Sección" context="{'default_display_type': 'line_section'}"/>
@@ -317,11 +350,18 @@
                                 <field name="concepto"/>
                                 <field name="grupo"/>
                                 <field name="medida"/>
-                                <field name="precio_unitario" widget="monetary"/>
+                                <field name="precio_unitario" />
                                 <field name="cantidad"/>
-                                <field name="importe" sum="importe" widget="monetary"/>
+                                <field name="importe" sum="importe" />
                             </tree>
                         </field>
+                                <group class="oe_subtotal_footer">
+                                        <h6 style="position:relative;
+                                                      display: inline-block;
+                                                         left: -75px;
+                                                          top: -50px;
+                                                  white-space: nowrap;"> TOTAL:  </h6>
+                                </group>
                     </group>
                         </page>
 

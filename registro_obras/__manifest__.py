@@ -20,13 +20,14 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'informacion_basica'],
+    'depends': ['base', 'informacion_basica', 'web_google_maps'],
 
     # always loaded
     'data': [
         'security/ir.model.access.csv',
         'views/registro_obra.xml',
         'views/templates.xml',
+        'views/maps.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

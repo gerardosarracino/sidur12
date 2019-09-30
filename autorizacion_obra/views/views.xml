@@ -165,6 +165,9 @@
         <field name="name" invisible="1"/>
         <field name="cancelados" invisible="1"/>
         <group colspan="2" col="4">
+          <!-- p_inv = al programa de inversion al que pertenece -->
+          <field name="p_inv" readonly="1" invisible="1"/>
+
           <field name="claveobra"/>
           <field name="clave_presupuestal"/>
         </group>

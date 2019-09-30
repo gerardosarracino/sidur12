@@ -8,10 +8,9 @@
         <tree>
           <field name="fecha"/>
           <field name="contrato" string="# Contrato"/>
-          <field name="obra" attrs="{'invisible': [('adjudicacion','!=', False)]}" string="Objeto Licitaciones"/>
-          <field name="adjudicacion" attrs="{'invisible': [('obra','!=', False)]}" string="/ Adjudicaciones Directas"/>
+          <field name="name" string="Objeto"/>
           <field name="contratista"/>
-          <field name="importe_contrato"/>
+          <field name="impcontra"/>
         </tree>
       </field>
     </record>
@@ -27,7 +26,7 @@
                   <field name="obra"  string="Objeto Licitaciones"/>
                   <field name="adjudicacion"  string="/ Adjudicaciones Directas"/>
                   <field name="contratista"/>
-                  <field name="importe_contrato"/>
+                  <field name="impcontra"/>
             </search>
          </field>
         </record>
@@ -54,35 +53,32 @@
                     </group>
 
                     <group string="Anticipo" >
-                        <field name="numero_contrato"/>
+                        <field name="numero_contrato" />
                         <field name="contratista"/>
-                        <field name="fecha_anticipos" class="oe_inline" /> <!-- attrs="{'readonly':[('fecha_anticipos', '!=' , False)]}" -->
+                        <field name="anticipada" invisible="1"/>
+                    </group>
+                    <group>
+                        <field name="fecha_anticipos" required="True" class="oe_inline" attrs="{'readonly':[('anticipada', '=' , True)]}"/>
                     </group>
 
-                    <group colspan="1" col="2">
-                        <group>
-                            <field name="porcentaje_anticipo" class="oe_inline" />
-                            <!-- attrs="{'readonly':[('total_anticipo', '&gt;' , 1)]}" -->
-                            <field name="total_anticipo_porcentaje"/>
-                        </group>
-                        <group>
-                            <field name="anticipo_material" class="oe_inline" />
-                            <!-- attrs="{'readonly':[('total_anticipo', '&gt;' , 1)]}" -->
-                            <field name="total_partida" readonly="1" string="Importe Contratado"/>
-                        </group>
+                    <group colspan="1" col="4">
+                        <field name="porcentaje_anticipo" required="True" class="oe_inline" attrs="{'readonly':[('anticipada', '=' , True)]}"/>
+                        <field name="total_anticipo_porcentaje"/>
+                        <field name="anticipo_material" class="oe_inline" attrs="{'readonly':[('anticipada', '=' , True)]}" required="True"/>
+                        <field name="total_partida" readonly="1" string="Importe Contratado"/>
                     </group>
 
                     <group>
                         <field name="anticipo_a"/>
                         <field name="iva_anticipo"/>
                         <field name="total_anticipo"/>
-                        <field name="numero_fianza" class="oe_inline" />
-                        <!-- attrs="{'readonly':[('total_anticipo', '&gt;' , 1)]}" -->
                     </group>
 
                     <group colspan="1" col="4">
-                        <field name="afianzadora" /> <!-- attrs="{'readonly':[('total_anticipo', '&gt;' , 1)]}" -->
-                        <field name="fecha_fianza"  /> <!-- attrs="{'readonly':[('total_anticipo', '&gt;' , 1)]}" -->
+                        <field name="numero_fianza" class="oe_inline" attrs="{'readonly':[('anticipada', '=' , True)]}" required="True"
+                        widget="integer"/>
+                        <field name="afianzadora" attrs="{'readonly':[('anticipada', '=' , True)]}" required="True"/>
+                        <field name="fecha_fianza" attrs="{'readonly':[('anticipada', '=' , True)]}" required="True"/>
                     </group>
                 </sheet>
             </form>
@@ -108,20 +104,12 @@
         <form>
           <sheet>
               <div class="oe_button_box oe_read_only" name="button_box">
-                    <!-- <button string="Convenios Modificados" type="object" name="conveniosModificados1" class="oe_highlight" context="{
-                       'search_default_contrato': active_id,
-                       'default_contrato': active_id
-                       }" attrs="{'invisible': [('contar_convenio', '=', 1)]}" icon="fa-pencil-square-o"/>
-                    <button string="Convenios Modificados" type="object" name="conveniosModificados2" class="oe_highlight" context="{
-                       'search_default_contrato': active_id,
-                       'default_contrato': active_id
-                       }" attrs="{'invisible': [('contar_convenio', '=', 0)]}" icon="fa-pencil-square-o"/> -->
 
-                   <button string="Finiquitar Contrato Anticipadamente" type="object" name="finiquitarContrato1" class="oe_highlight" context="{
+                   <button string="Fin. Contrato Anticipadamente" type="object" name="finiquitarContrato1" class="oe_highlight" context="{
                        'search_default_contrato': active_id,
                        'default_contrato': active_id
                        }" attrs="{'invisible': [('contar_finiquito', '=', 1)]}" icon="fa-clock-o"/>
-                    <button string="Finiquitar Contrato Anticipadamente" type="object" name="finiquitarContrato2" class="oe_highlight" context="{
+                    <button string="Fin. Contrato Anticipadamente" type="object" name="finiquitarContrato2" class="oe_highlight" context="{
                        'search_default_contrato': active_id,
                        'default_contrato': active_id
                        }" attrs="{'invisible': [('contar_finiquito', '=', 0)]}" icon="fa-clock-o"/>
@@ -138,7 +126,7 @@
 
 
                                  <field name="adjudicacion" attrs="{'invisible': [('obra', '!=', False)]}"
-                                 domain="[('contratado','=',False)]"/>
+                                       domain="[('contratado','=',True)]" /> <!-- domain="[('contratado','=','True')]" -->
                                 </group>
 
                                   <group colspan="1" col="4">
@@ -146,14 +134,15 @@
 
                                     <field name="contrato" />
                                     <field name="obra_partida" invisible="1"/>
-                                    <field name="importe_contrato" readonly="1" force_save="1"/>
+                                      <!-- importe contrato auxiliar -->
+                                    <field name="impcontra" invisible="1" force_save="1"/>
                                   </group>
 
                             <group colspan="2" col="1">
                                  <field name="contrato_partida_adjudicacion" context="{'form_view_ref': 'proceso_contratacion.partidas_form'}"
                                  attrs="{'invisible': [('adjudicacion', '=', False)]}"
                                         string="" nolabel="1">
-                                    <tree create="false" editable="bottom" delete="false">
+                                    <tree create="false" editable="bottom" delete="false" decoration-warning="fecha_anticipos==True">
                                         <field name="obra" readonly="1" force_save="1"/>
                                         <field name="programaInversion" readonly="1" force_save="1"/>
                                         <field name="monto_partida" sum="Monto" widget="monetary" />
@@ -164,14 +153,17 @@
                                         <field name="nueva_partida" invisible="1"/>
                                         <field name="fecha_anticipos" invisible="1"/>
 
-                                        <button name="anticipo" type="object" string="Anticipo" class="oe_highlight"/>
+                                        <button name="anticipo" type="object" string="Anticipo" class="btn btn-primary"
+                                        />
 
+                                        <!-- id de la partida -->
+                                        <field name="p_id" invisible="1"/>
                                 </tree>
                             </field>
 
                                  <field name="contrato_partida_licitacion" context="{'form_view_ref': 'proceso_contratacion.partidas_form'}"
                                  attrs="{'invisible': [('obra', '=', False)]}" string="" nolabel="1">
-                                    <tree editable="bottom" create="false" delete="false">
+                                    <tree editable="bottom" create="false" delete="false" >
                                         <field name="obra" readonly="1"/>
                                         <field name="programaInversion" readonly="1"/>
                                         <field name="monto_partida" sum="Monto" widget="monetary"/>
@@ -179,6 +171,7 @@
                                         <field name="total_partida" readonly="True" sum="Total" widget="monetary"/>
                                         <field name="numero_contrato" invisible="1"/>
                                         <field name="nombre_partida" invisible="1"/>
+                                        <field name="nueva_partida" invisible="1"/>
                                         <field name="nueva_partida" invisible="1"/>
 
                                         <button name="anticipo" type="object" string="Anticipo" />
@@ -279,7 +272,7 @@
                         </group>
                         <hr/>
                         <group>
-                            <field name="importe_contrato" readonly="1"/>
+                            <field name="impcontra" readonly="1" force_save="1"/>
                             <field name="convenios_escalatorias"/>
                             <field name="total_contratado"/>
                         </group>
@@ -326,7 +319,7 @@
                         <group colspan="2" col="5" context="{'default_ejercicio': obra.id}">
                             <separator string="Programa"/>
                             <separator string="Ejercicio" />
-                            <separator string="Monto"/>
+                            <separator string="Monto/Iva"/>
                             <separator string="Municipio"/>
                             <separator string="Localidad"/>
                         </group>
@@ -381,6 +374,13 @@
                                 <field name="importe" sum="importe" widget="monetary"/>
                             </tree>
                         </field>
+                          <group class="oe_subtotal_footer">
+                                        <h6 style="position:relative;
+                                                      display: inline-block;
+                                                         left: -75px;
+                                                          top: -50px;
+                                                  white-space: nowrap;"> TOTAL:  </h6>
+                                </group>
                     </group>
                   </sheet>
               </form>

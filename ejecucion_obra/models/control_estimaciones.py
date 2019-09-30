@@ -6,9 +6,11 @@ class Estimaciones(models.Model):
     _rec_name = 'obra'
 
     # enlace
-    estimacion_id = fields.Char(compute="nombre", store=True)
+    estimacion_id = fields.Char(compute="EstimacionIncremento", store=True)
     obra = fields.Many2one('partidas.partidas', string='Obra:', readonly=True)
     obra_id = fields.Char(compute="ConvenioEnlace", store=True)
+
+    p_id = fields.Integer("ID PARTIDA", related="obra.p_id")
 
     # AUXILIAR DE CONEXION HACIA CONTRATO
     numero_contrato = fields.Many2one(string="nc", related="obra.numero_contrato")
@@ -19,7 +21,7 @@ class Estimaciones(models.Model):
     tipo_estimacion = fields.Selection(radio_estimacion, string="")
 
     # estimacions_id = fields.Char(compute="estimacionId", store=True)
-    numero_estimacion = fields.Integer(string="Número de Estimación:", compute="_get_increment")
+    numero_estimacion = fields.Integer(string="Número de Estimación:", compute="EstimacionIncremento")
 
     fecha_inicio_estimacion = fields.Date(string="Del:", required=False, )
     fecha_termino_estimacion = fields.Date(string="Al:", required=False, )
@@ -32,16 +34,16 @@ class Estimaciones(models.Model):
 
     notas = fields.Text(string="Notas:", required=False, )
 
-    # DEDUCCIONES related="obra.numero_contrato.deducciones"
+    # DEDUCCIONES
     deducciones = fields.Many2many('control.deducciones', string="Deducciones:", )
 
     # Calculados
-    estimado = fields.Float(string="Importe ejecutado estimación:", required=False, )
+    estimado = fields.Float(string="Importe ejecutado estimación:", required=False )
 
-    amort_anticipo = fields.Float(string="Amortización de Anticipo 30%:", compute="amortizacion_anticipo")
-    estimacion_subtotal = fields.Float(string="Neto Estimación sin IVA:", compute="Estimacion_sinIva" )
-    estimacion_iva = fields.Float(string="I.V.A. 16%", compute="Estimacion_Iva")
-    estimacion_facturado = fields.Float(string="Neto Estimación con IVA:", compute="Estimacion_conIva")
+    amort_anticipo = fields.Float(string="Amortización de Anticipo 30%:", compute="amortizacion_anticipo") #
+    estimacion_subtotal = fields.Float(string="Neto Estimación sin IVA:", compute="Estimacion_sinIva")#
+    estimacion_iva = fields.Float(string="I.V.A. 16%", compute="Estimacion_Iva") #
+    estimacion_facturado = fields.Float(string="Neto Estimación con IVA:", compute="Estimacion_conIva") #
     estimado_deducciones = fields.Float(string="Menos Suma Deducciones:", required=False, )
     ret_dev = fields.Float(string="Retención/Devolución:", required=False, )
     sancion = fields.Float(string="Sanción por Incump. de plazo:", required=False, )
@@ -55,9 +57,27 @@ class Estimaciones(models.Model):
     conceptos_partidas = fields.Many2many('proceso.conceptos_part')
     total_conceptos = fields.Float(string="Total:",  required=False)
 
+    # ID DE LA ESTIMACION
+    estimacion_ids = fields.Char(string="ID", compute="IdEstimacion")
+
+    
+
+    # METODO EN PROCESO
+    @api.one
+    def IdEstimacion(self):
+        numero = 100000 + self.id
+        self.estimacion_ids = str(numero)
+
+    # METODO PARA CONTAR NUMERO DE ESTIMACIONES
+    @api.one
+    def EstimacionIncremento(self):
+        count = self.env['control.estimaciones'].search_count([('numero_contrato', '=', self.obra)])
+        count = count + 1
+        self.numero_estimacion = count
+
     # METODO PARA JALAR DATOS DE LAS DEDUCCIONES DEL CONTRATO
     @api.multi
-    @api.onchange('conceptos_partidas')  # if these fields are changed, call method
+    @api.onchange('p_id')  # if these fields are changed, call method
     def deduccion(self):
         adirecta_id = self.env['proceso.elaboracion_contrato'].browse(self.numero_contrato.id)
         self.update({
@@ -78,6 +98,7 @@ class Estimaciones(models.Model):
             self.estimado = suma
 
     # METODO PARA CALCULAR ESTIMACION NETA SIN IVA
+    @api.one
     @api.depends('estimado')
     def Estimacion_sinIva(self):
         for rec in self:
@@ -85,7 +106,8 @@ class Estimaciones(models.Model):
                 'estimacion_subtotal': (self.estimado - self.amort_anticipo) - (self.estimado * 0.16)
             })
 
-    # METODO PARA CALCULAR ESTIMACION IVA
+    # METODO PARA CALCULAR ESTIMACION IVA.
+    @api.one
     @api.depends('estimado')
     def Estimacion_Iva(self):
         for rec in self:
@@ -94,6 +116,7 @@ class Estimaciones(models.Model):
             })
 
     # METODO PARA CALCULAR ESTIMACION + IVA
+    @api.one
     @api.depends('estimacion_iva')
     def Estimacion_conIva(self):
         for rec in self:
@@ -102,6 +125,7 @@ class Estimaciones(models.Model):
             })
 
     # METODO PARA SUMAR DEDUCCIONES
+    @api.multi
     @api.onchange('estimacion_facturado')
     def SumaDeducciones(self):
         suma = 0
@@ -111,6 +135,7 @@ class Estimaciones(models.Model):
             self.estimado_deducciones = suma
 
     # METODO PARA CALCULAR AMORTIZACION 30%
+    @api.one
     @api.depends('estimado')
     def amortizacion_anticipo(self):
         for rec in self:
@@ -118,18 +143,18 @@ class Estimaciones(models.Model):
                 'amort_anticipo': self.estimado * 0.30
             })
 
-
     # METODO PARA AGREGAR IMPORTE A DEDUCCIONES
+    @api.multi
     @api.onchange('estimado')
     def deduc(self):
         for rec in self.deducciones:
             rec.update({
-                'valor': (self.estimado * rec.porcentaje)
+                'valor': self.estimado * rec.porcentaje
             })
 
-    # METODO PARA INSERTAR CONCEPTOS CONTRATADOS
+    # METODO PARA INSERTAR CONCEPTOS CONTRATADOS     ---------------VERIFICAR COMO CORRER EL METODO AL ENTRAR
     @api.multi
-    @api.onchange('estimacion_iva')  # if these fields are changed, call method
+    @api.onchange('p_id')  # if these fields are changed, call method
     def conceptosEjecutados(self):
         adirecta_id = self.env['partidas.partidas'].browse(self.obra.id)
         self.update({
@@ -146,14 +171,8 @@ class Estimaciones(models.Model):
                                                'cantidad': conceptos.cantidad}]]
             })
 
-    # METODO PARA CONTAR NUMERO DE ESTIMACIONES
     @api.one
-    def _get_increment(self):
-        numero = self.env['control.estimaciones'].search_count([('numero_estimacion', '=', self.id)])
-        self.numero_estimacion = numero
-
-    @api.one
-    def nombre(self):
+    def Estimacion(self):
         self.estimacion_id = self.id
 
     @api.one

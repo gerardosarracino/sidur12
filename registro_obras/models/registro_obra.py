@@ -160,11 +160,12 @@ class SeguimientoObra(models.TransientModel):
 
 	name = fields.Many2one('registro.obra', readonly=True)
 	seguimiento = fields.Html(string="Seguimiento", required=True)
-	
+
+
 class ProgramarObra(models.Model):
 	_name = 'registro.programarobra'
 	_rec_name = 'descripcion'
-	
+
 	name = fields.Many2one('registro.obra', readonly=True)
 	programaInversion = fields.Many2one('generales.programas_inversion', required=True)
 	categoriaProgramatica = fields.Many2one('generales.modalidades', required=True)
