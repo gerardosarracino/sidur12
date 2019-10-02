@@ -58,17 +58,43 @@
                                     </field>
                                 </group>
 
-                                    <group string="Cálculo De Estimación"  colspan="2" col="6">
-                                        <field name="estimado" readonly="1" force_save="1"/>
-                                        <field name="amort_anticipo" force_save="1"/>
-                                        <field name="estimacion_subtotal" readonly="1" force_save="1"/>
-                                        <field name="estimacion_iva" readonly="1" force_save="1"/>
-                                        <field name="estimacion_facturado" readonly="1" force_save="1"/>
-                                        <field name="estimado_deducciones" readonly="1" force_save="1"/>
-                                        <field name="ret_dev" readonly="1"/>
-                                        <field name="sancion" readonly="1"/>
-                                        <field name="a_pagar" readonly="1"  />
-                                     </group>
+
+
+                                    <group string="Cálculo De Estimación"  colspan="2" col="3">
+                                        <group>
+                                            <h6 colspan="4" align="left">Importe ejecutado estimación: $<field name="estimado" readonly="1" force_save="1" nolabel="1"/></h6>
+                                        </group>
+                                        <group>
+                                            <h6 colspan="4" align="left">Amortización de Anticipo <field name="amort_anticipo_partida"/>: $<field name="amort_anticipo" force_save="1" nolabel="1"/></h6>
+                                         </group>
+                                        <group>
+                                            <h6 colspan="4" align="left">Neto Estimación sin IVA: $<field name="estimacion_subtotal" readonly="1" force_save="1" nolabel="1"/></h6>
+                                        </group>
+                                    </group>
+
+                                    <group  colspan="2" col="3">
+                                        <group>
+                                            <h6 colspan="4" align="left">I.V.A. 16%: $<field name="estimacion_iva" readonly="1" force_save="1"/></h6>
+                                        </group>
+                                        <group>
+                                            <h6 colspan="4" align="left">Neto Estimación con IVA: $<field name="estimacion_facturado" readonly="1" force_save="1"/></h6>
+                                         </group>
+                                        <group>
+                                            <h6 colspan="4" align="left">Menos Suma Deducciones: $<field name="estimado_deducciones" readonly="1" force_save="1"/></h6>
+                                        </group>
+                                    </group>
+
+                                    <group  colspan="2" col="3">
+                                        <group>
+                                            <h6 colspan="4" align="left">Retención/Devolución: $<field name="ret_dev" readonly="1" nolabel="1"/></h6>
+                                        </group>
+                                        <group>
+                                            <h6 colspan="4" align="left">	Sanción por Incump. de plazo: $<field name="sancion" readonly="1" nolabel="1"/></h6>
+                                         </group>
+                                        <group>
+                                            <h6 colspan="4" align="left">	Importe liquido: $<field name="a_pagar" readonly="1" nolabel="1"/></h6>
+                                        </group>
+                                    </group>
 
                                     <group string="Penas Convencionales" colspan="2" col="4">
                                             <field name="menos_clau_retraso" class="oe_inline"/>
@@ -206,7 +232,7 @@
             <form string="" >
                 <sheet>
 
-                  <div class="oe_button_box oe_read_only" name="button_box">
+                  <div class="oe_button_box oe_read_only" name="button_box" attrs="{'invisible': [('verif_programa', '=', False)]}">
 
                   <button string="Estimaciones" type="action" name="%(action_estimaciones1)d" class="oe_highlight" context="{
                        'search_default_obra': active_id,
@@ -222,14 +248,16 @@
                 </div>
 
                     <field name="contar_estimaciones" force_save="1" invisible="1"/>
+                    <!-- dejar partida id la uso para activar un metodo por mientras-->
                     <field name="p_id" invisible="1"/>
-                    <field name="verif_programa" readonly="1"/>
 
-                   <group string="Nombre de la Obra:">
-                            <field name="obra" nolabel="1" readonly="1"/>
+                    <field name="verif_programa" readonly="1" invisible="1"/>
 
+                   <group string="Nombre de la Obra:" colspan="2" col="4">
+                        <field name="obra" nolabel="1" readonly="1"/>
+                         <p attrs="{'invisible': [('verif_programa', '=', True)]}" align="right" style="color: #DE0C0C">No hay Programa Para La Estimación*</p>
 
-                        </group>
+                   </group>
                             <hr/>
                         <group colspan="2" col="5" context="{'default_ejercicio': obra.id}">
                             <separator string="Programa"/>

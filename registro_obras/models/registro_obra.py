@@ -47,6 +47,7 @@ class unidadMedida(models.Model):
 
 class registro_obra(models.Model):
 	_name = "registro.obra"
+	_inherit = 'res.partner'
 
 	name = fields.Char(string="Número de obra", required=True)
 	ejercicio = fields.Many2one("registro.ejercicio", string="Ejercicio", required=True)

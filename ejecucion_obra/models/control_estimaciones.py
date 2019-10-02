@@ -6,8 +6,10 @@ class Estimaciones(models.Model):
     _rec_name = 'obra'
 
     # enlace
-    estimacion_id = fields.Char(compute="EstimacionIncremento", store=True)
+    estimacion_id = fields.Char()
+
     obra = fields.Many2one('partidas.partidas', string='Obra:', readonly=True)
+
     obra_id = fields.Char(compute="ConvenioEnlace", store=True)
 
     p_id = fields.Integer("ID PARTIDA", related="obra.p_id")
@@ -21,7 +23,7 @@ class Estimaciones(models.Model):
     tipo_estimacion = fields.Selection(radio_estimacion, string="")
 
     # estimacions_id = fields.Char(compute="estimacionId", store=True)
-    numero_estimacion = fields.Integer(string="Número de Estimación:", compute="EstimacionIncremento")
+    numero_estimacion = fields.Integer(string="Número de Estimación:")
 
     fecha_inicio_estimacion = fields.Date(string="Del:", required=False, )
     fecha_termino_estimacion = fields.Date(string="Al:", required=False, )
@@ -40,10 +42,12 @@ class Estimaciones(models.Model):
     # Calculados
     estimado = fields.Float(string="Importe ejecutado estimación:", required=False )
 
-    amort_anticipo = fields.Float(string="Amortización de Anticipo 30%:", compute="amortizacion_anticipo") #
-    estimacion_subtotal = fields.Float(string="Neto Estimación sin IVA:", compute="Estimacion_sinIva")#
-    estimacion_iva = fields.Float(string="I.V.A. 16%", compute="Estimacion_Iva") #
-    estimacion_facturado = fields.Float(string="Neto Estimación con IVA:", compute="Estimacion_conIva") #
+    amort_anticipo = fields.Float(string="Amortización de Anticipo:", compute="amortizacion_anticipo")
+    amort_anticipo_partida = fields.Float(related="obra.numero_contrato.contrato_partida_adjudicacion.porcentaje_anticipo")
+
+    estimacion_subtotal = fields.Float(string="Neto Estimación sin IVA:", compute="Estimacion_sinIva")
+    estimacion_iva = fields.Float(string="I.V.A. 16%", compute="Estimacion_Iva")
+    estimacion_facturado = fields.Float(string="Neto Estimación con IVA:", compute="Estimacion_conIva")
     estimado_deducciones = fields.Float(string="Menos Suma Deducciones:", required=False, )
     ret_dev = fields.Float(string="Retención/Devolución:", required=False, )
     sancion = fields.Float(string="Sanción por Incump. de plazo:", required=False, )
@@ -60,20 +64,29 @@ class Estimaciones(models.Model):
     # ID DE LA ESTIMACION
     estimacion_ids = fields.Char(string="ID", compute="IdEstimacion")
 
-    
+    # METODO PARA EL CONTADOR DE ESTIMACIONES ------- PROF ALAN AIUDA
+    @api.model
+    def create(self, values):
+        count = self.env['control.estimaciones'].search_count([('obra', '=', self.obra.id)])
+        print(count)
+        count = count + 1
+        values['numero_estimacion'] = count
+        return super(Estimaciones, self).create(values)
 
-    # METODO EN PROCESO
+    '''# METODO PARA EL CONTADOR DE ESTIMACIONES
+    @api.model
+    def create(self, values):
+        count = self.env['partidas.partidas'].search_count([('id', '=', self.obra.id)])
+        print(count)
+        count = count + 1
+        values['numero_estimacion'] = count
+        return super(Estimaciones, self).create(values)'''
+
+    # METODO CREATE PARA CREAR LA ID DE ESTIMACION
     @api.one
     def IdEstimacion(self):
         numero = 100000 + self.id
         self.estimacion_ids = str(numero)
-
-    # METODO PARA CONTAR NUMERO DE ESTIMACIONES
-    @api.one
-    def EstimacionIncremento(self):
-        count = self.env['control.estimaciones'].search_count([('numero_contrato', '=', self.obra)])
-        count = count + 1
-        self.numero_estimacion = count
 
     # METODO PARA JALAR DATOS DE LAS DEDUCCIONES DEL CONTRATO
     @api.multi
@@ -140,7 +153,7 @@ class Estimaciones(models.Model):
     def amortizacion_anticipo(self):
         for rec in self:
             rec.update({
-                'amort_anticipo': self.estimado * 0.30
+                'amort_anticipo': self.estimado * self.amort_anticipo_partida
             })
 
     # METODO PARA AGREGAR IMPORTE A DEDUCCIONES

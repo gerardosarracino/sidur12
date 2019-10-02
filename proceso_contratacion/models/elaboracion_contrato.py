@@ -108,7 +108,7 @@ class ElaboracionContratos(models.Model):
     @api.multi
     @api.onchange('contrato_partida_adjudicacion')  # if these fields are changed, call method
     def llenar_anexo(self):
-        adirecta_id = self.env['autorizacion_obra.anexo_tecnico'].search([('p_inv', '=', self.obra_partida.id)])
+        adirecta_id = self.env['autorizacion_obra.anexo_tecnico'].search([('concepto', '=', self.obra_partida.id)])
         self.update({
             'anexos': [[5]]
         })
@@ -308,7 +308,7 @@ class Fianza(models.Model):
     tipo_fianza = fields.Selection(select_tipo_fianza, string="Tipo Fianza", default="4", required=True)
     numero_fianza_fianzas = fields.Integer(string="Numero Fianza", required=True)
     monto = fields.Float(string="Monto", required=True)
-    fecha_fianza_fianzas = fields.Float(string="Fecha Fianza", required=True)
+    fecha_fianza_fianzas = fields.Date(string="Fecha Fianza", required=True)
     afianzadora_fianzas = fields.Char(string="Afianzadora", required=True)
 
 

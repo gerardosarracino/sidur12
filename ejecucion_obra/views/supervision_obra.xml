@@ -21,7 +21,7 @@
                                             
                                             <create string="Agregar actividad"/>
                                         </control>
-                                            <field name="name" widget="section_and_note_text" attrs="{'invisible':[('actividad','=',True)]}" readonly="1" force_save="1"/>
+                                            <field name="name" widget="section_and_note_text" attrs="{'invisible':[('actividad','=',True)]}" force_save="1"/>
                                             <field name="sequence" type="handle" invisible="1"/>
                                             <field name="display_type" invisible="1"/>
                                             <field name="actividad"/>
@@ -66,7 +66,7 @@
      <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'tree', 'view_id': ref('proc_contratacion_elaboracion_contrato_3')}),
             (0, 0, {'view_mode': 'form', 'view_id': ref('proceso_rutac_form')})]"/>
-        </record>
+ </record>
 
     <record model="ir.actions.act_window" id="proceso_informe_avance">
           <field name="name">Informe de avance</field>
@@ -113,7 +113,7 @@
                               </div>
                           </div>
                             <sheet>
-                          <field name="numero_contrato"  invisible="1"/>
+                          <field name="obra"  invisible="1"/>
                           <group>
                                <field name="ruta_critica" string="# Concepto de partidas" widget="section_and_note_one2many" create="false">
                                     <tree editable="bottom" delete="false" create="false">
@@ -175,8 +175,7 @@
                                     icon="fa-book"
                                 />
                       </div>
-                        
-                       
+
                   <group string="Nombre de la Obra:">
                             <field name="obra" nolabel="1"/>
                         </group>
@@ -243,7 +242,43 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <menuitem name="Supervisión de Obra" id="supervicion_obra" parent="ejecucion_obra.menu_root"
               action="proceso_supervicion_obra" sequence="2"/>
+
   </data>
 </odoo>

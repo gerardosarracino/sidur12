@@ -1,5 +1,6 @@
 from odoo import models, fields, api, exceptions
 
+
 from odoo.exceptions import UserError
 from odoo.exceptions import ValidationError
 from odoo import tools, _
@@ -16,12 +17,21 @@ class PartidasLicitacion(models.Model):
     iva_partida = fields.Float(string="Iva", compute="iva", required=True)
     total_partida = fields.Float(string="Total", compute="sumaPartidas", required=True)
 
+    b_iva = fields.Float(string="IVA DESDE CONFIGURACION")
+
+    # METODO BUSCAR IVA EN CONFIGURACION
+    @api.multi
+    @api.onchange('monto_partida')
+    def BuscarIva(self):
+        iva = self.env['ir.config_parameter'].sudo().get_param('generales.iva')
+        self.b_iva = iva
+
     # METODO CALCULAR TOTAL PARTIDA
     @api.depends('monto_partida')
     def sumaPartidas(self):
         for rec in self:
             rec.update({
-                'total_partida': (rec.monto_partida * 0.16) + rec.monto_partida
+                'total_partida': (rec.monto_partida * self.b_iva) + rec.monto_partida
             })
 
     # CALCULAR EL IVA TOTAL
@@ -29,13 +39,14 @@ class PartidasLicitacion(models.Model):
     def iva(self):
         for rec in self:
             rec.update({
-                'iva_partida': (rec.monto_partida * 0.16)
+                'iva_partida': (rec.monto_partida * self.b_iva)
             })
 
 
 # CLASE AUXILIAR DE PARTIDAS ADJUDICACION
 class PartidasAdjudicacion(models.Model):
     _name = 'partidas.adjudicacion'
+    _inherit = 'res.config.settings'
 
     obra = fields.Many2one('registro.programarobra', required=True)
     programaInversion = fields.Many2one('generales.programas_inversion', related="")
@@ -43,12 +54,21 @@ class PartidasAdjudicacion(models.Model):
     iva_partida = fields.Float(string="Iva", compute="iva", required=True)
     total_partida = fields.Float(string="Total", compute="sumaPartidas", required=True)
 
+    b_iva = fields.Float(string="IVA DESDE CONFIGURACION" )
+
+    # METODO BUSCAR IVA EN CONFIGURACION
+    @api.multi
+    @api.onchange('monto_partida')
+    def BuscarIva(self):
+        iva = self.env['ir.config_parameter'].sudo().get_param('generales.iva')
+        self.b_iva = iva
+
     # METODO CALCULAR TOTAL PARTIDA
     @api.depends('monto_partida')
     def sumaPartidas(self):
         for rec in self:
             rec.update({
-                'total_partida': (rec.monto_partida * 0.16) + rec.monto_partida
+                'total_partida': (rec.monto_partida * self.b_iva) + rec.monto_partida
             })
 
     # CALCULAR EL IVA TOTAL
@@ -56,7 +76,7 @@ class PartidasAdjudicacion(models.Model):
     def iva(self):
         for rec in self:
             rec.update({
-                'iva_partida': (rec.monto_partida * 0.16)
+                'iva_partida': (rec.monto_partida * self.b_iva)
             })
 
 
@@ -94,6 +114,20 @@ class Partidas(models.Model):
     total = fields.Float(string="Monto Total Contratado:", readonly=True, compute="totalContrato", required=True)
     total_catalogo = fields.Float(string="Monto Total del Catálogo:", compute="SumaImporte", required=True)
     diferencia = fields.Float(string="Diferencia:", compute="Diferencia", required=True)
+
+    # ANTICIPOS
+    fecha_anticipos = fields.Date(string="Fecha Anticipo", )
+    porcentaje_anticipo = fields.Float(string="Anticipo Inicio", default="0.30", )
+    total_anticipo_porcentaje = fields.Float(string="Total Anticipo", compute="anticipo_por")
+    anticipo_material = fields.Float(string="Anticipo Material", )
+    importe = fields.Float(string="Importe Contratado")
+    anticipo_a = fields.Integer(string="Anticipo", compute="anticipo_inicio")
+    iva_anticipo = fields.Float(string="I.V.A", compute="anticipo_iva")
+    total_anticipo = fields.Integer(string="Total Anticipo", compute="anticipo_total")
+    numero_fianza = fields.Integer(string="# Fianza", )
+    afianzadora = fields.Char(string="Afianzadora", )
+    fecha_fianza = fields.Date(string="Fecha Fianza", )
+    anticipada = fields.Boolean(string="Anticipada", compute="anticipada_Sel")
 
     # ESTIMACIONES
     radio_estimacion = [('1', "Estimacion"), ('2', "Escalatoria")]
@@ -152,27 +186,11 @@ class Partidas(models.Model):
     # Supervicion de obra (JFernandez)
     ruta_critica = fields.Many2many('proceso.rc')
     total_ = fields.Integer(compute='suma_importe')
-
-    # ANTICIPOS
-    # anticipos = fields.Many2many('proceso.anticipo_contratos', string="Anticipos:")
-    # new_field = fields.Float(string="")
+    # Contador de convenios por obra
+    count_convenios_modif = fields.Integer(compute="contar_covenios")
 
     # CONTAR REGISTROS DE ESTIMACIONES
     contar_estimaciones = fields.Integer(compute='ContarEstimaciones', string="PRUEBA")
-
-    # ANTICIPOS
-    fecha_anticipos = fields.Date(string="Fecha Anticipo", )
-    porcentaje_anticipo = fields.Float(string="Anticipo Inicio", default="0.30", )
-    total_anticipo_porcentaje = fields.Float(string="Total Anticipo", compute="anticipo_por")
-    anticipo_material = fields.Float(string="Anticipo Material", )
-    importe = fields.Float(string="Importe Contratado")
-    anticipo_a = fields.Integer(string="Anticipo", compute="anticipo_inicio")
-    iva_anticipo = fields.Float(string="I.V.A", compute="anticipo_iva")
-    total_anticipo = fields.Integer(string="Total Anticipo", compute="anticipo_total")
-    numero_fianza = fields.Integer(string="# Fianza", )
-    afianzadora = fields.Char(string="Afianzadora", )
-    fecha_fianza = fields.Date(string="Fecha Fianza", )
-    anticipada = fields.Boolean(string="Anticipada", compute="anticipada_Sel")
 
     # VISTA DE INFORMACION DE LA PARTIDA
     ejercicio = fields.Many2one("registro.ejercicio", string="Ejercicio", related="obra.name.ejercicio")
@@ -220,16 +238,15 @@ class Partidas(models.Model):
     # RESTRICCION DEL PROGRAMA, SI NO HAY PROGRAMA NO PERMITE REGISTRAR UNA ESTIMACION
     verif_programa = fields.Boolean(string="", compute="programa_verif" )
 
+    # METODO PARA VERIFICAR SI HAY PROGRAMAS
     @api.one
     def programa_verif(self):
-        verif = self.env['partidas.partidas'].search([('numero_contrato', '=', self.numero_contrato)])
-        for i in verif:
-            if i.fecha_inicio_programa:
-                print("SI HAY PROGRAMA")
-                self.verif_programa = True
-            else:
-                print("NO HAY PROGRAMA")
-                self.verif_programa = False
+        if self.fecha_inicio_programa:
+            print("SI HAY PROGRAMA")
+            self.verif_programa = True
+        else:
+            print("NO HAY PROGRAMA")
+            self.verif_programa = False
 
     @api.one
     def nombre_partidas(self):
@@ -341,6 +358,26 @@ class Partidas(models.Model):
             'view_id': view.id,
             'res_id': self.id,
         }
+
+    # Jesus Fernandez metodo para abrir programa de obra
+    @api.multi
+    def abrir_obra(self):
+        view = self.env.ref('ejecucion_obra.vista_form_programa')
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Programa',
+            'res_model': 'partidas.partidas',
+            'view_mode': 'form',
+            'target': 'new',
+            'view_id': view.id,
+            'res_id': self.id,
+        }
+
+    # JFernandez metodo para contar el numero de convenios que tiene cada obra
+    @api.one
+    def contar_covenios(self):
+        count = self.env['proceso.convenios_modificado'].search_count([('referencia', '=', self.id)])
+        self.count_convenios_modif = count
 
     # METODO PARA ASIGNAR EL TOTAL DEL CONTRATO
     @api.one
@@ -498,6 +535,15 @@ class ProgramaContrato(models.Model):
     fecha_termino = fields.Date('Fecha Término:')
     monto = fields.Float('Monto:')
 
+    # METODO para verificar fechas de programa
+    @api.onchange('fecha_termino')
+    @api.depends('fecha_termino', 'fecha_inicio')
+    def validar_fecha_programa(self):
+        if str(self.fecha_termino) < str(self.fecha_inicio):
+            raise exceptions.Warning('No se puede seleccionar una Fecha anterior a la fecha de inicio, '
+                                     'por favor seleccione una fecha posterior')
+        else:
+            return False
 
 class ruta_critica(models.Model):
     _name = 'proceso.rc'

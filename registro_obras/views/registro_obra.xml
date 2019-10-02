@@ -6,7 +6,8 @@
       <field name="name">Registro de obras</field>
       <field name="type">ir.actions.act_window</field>
       <field name="res_model">registro.obra</field>
-      <field name="view_mode">tree,form</field>
+
+        <field name="view_mode">tree,form</field>
     </record>
 
     <record model="ir.actions.act_window" id="registro_obras.proyectoej_action_window">
@@ -284,8 +285,17 @@
               <field name="tipolocalidad"/>
             </group>
             <group>
-              <field name="latitud" class="oe_inline"/>
-              <field name="longitud" class="oe_inline"/>
+
+          <map class="o_res_partner_map" library='geometry' string="Map" lat="partner_latitude"
+                 lng="partner_longitude" colors="blue:company_type=='person';green:company_type=='company';">
+
+                <field name="date_localization" class="oe_inline"/>
+                <field name="partner_latitude" class="oe_inline"/>
+                <field name="partner_longitude" class="oe_inline"/>
+                <button string="Geolocate" name="geo_localize" icon="fa-check" type="object"/>
+
+              </map>
+
             </group>
             <group string="Impacto de la obra" colspan="2" col="4">
               <field name="beneficiados"/>
