@@ -5,10 +5,10 @@
 <!-- View -->
     <record id="view_res_partner_map" model="ir.ui.view">
         <field name="name">view.res.partner.map</field>
-        <field name="model">res.partner</field>
+        <field name="model">registro.obra</field>
         <field name="arch" type="xml">
             <map class="o_res_partner_map" library='geometry' string="Map" lat="partner_latitude"
-                 lng="partner_longitude" colors="blue:company_type=='person';green:company_type=='company';">
+                 lng="partner_longitude" colors="blue:company_type=='person';green:company_type=='company';" drawing="">
                 <field name="id"/>
                 <field name="partner_latitude"/>
                 <field name="partner_longitude"/>
@@ -84,8 +84,12 @@
                                         <field name="city"/>
                 ,                        <field name="country_id"/>
                                     </li>
+                                    <li t-if="record.city.raw_value and record.country_id.raw_value">
+                ,                        <field name="descripcion"/>
+                ,
+                                    </li>
                                     <li t-if="record.email.raw_value" class="o_text_overflow">
-                                        <field name="email"/>
+                                        <p>Monto:</p><field name="monto"/>
                                     </li>
                                 </ul>
                                 <div class="oe_kanban_partner_links"/>
@@ -103,10 +107,9 @@
         <field name="name">MAPAS</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form,map</field>
-        <field name="res_model">res.partner</field>
+        <field name="res_model">registro.obra</field>
     </record>
 
-    <menuitem name="Mapas" id="registro_obras.mapas" parent="registro_obras.menu_root" action="action_partner_map" sequence="3"/>
 
     </data>
 </odoo>

@@ -16,7 +16,7 @@ class AdjudicacionDirecta(models.Model):
     # /// Partidas
     programar_obra_adjudicacion = fields.Many2many("partidas.adjudicacion", string="Partida(s):", ondelete="cascade")
 
-    iva = fields.Float(string="I.V.A", default=0.16, required=True)
+    iva = fields.Float(string="I.V.A", compute="BuscarIva")
 
     importe_adjudicacion = fields.Float(string="Importe",)
 
@@ -45,6 +45,12 @@ class AdjudicacionDirecta(models.Model):
     recurso_municipal_indirecto = fields.Float(string="Municipal Indirecto")
     recurso_otros = fields.Float(string="Otros")
     total_recurso = fields.Float(string="Total", compute='sumaRecursos')
+
+    # METODO BUSCAR IVA EN CONFIGURACION
+    @api.one
+    def BuscarIva(self):
+        iva = self.env['ir.config_parameter'].sudo().get_param('generales.iva')
+        self.iva = iva
 
     @api.one
     def VerificarContrato(self):

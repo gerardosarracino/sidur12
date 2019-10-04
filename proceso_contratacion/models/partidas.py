@@ -205,6 +205,7 @@ class Partidas(models.Model):
     # RELACION CONTRATISTA
     contratista = fields.Many2one('contratista.contratista', related="numero_contrato.contratista")
 
+    # NOMBRE DE LA PARTIDA = AL DEL CONTRATO
     nombre_partida = fields.Char(string="nombre partida", required=False, )
     # PENDIENTE
     nueva_partida = fields.Char(string="nombre partida", required=False, )
@@ -233,10 +234,17 @@ class Partidas(models.Model):
 
     # ID PARTIDA
     p_id = fields.Integer('ID DE LA PARTIDA')
-    nombre_part = fields.Integer(compute="nombre_partidas")
 
     # RESTRICCION DEL PROGRAMA, SI NO HAY PROGRAMA NO PERMITE REGISTRAR UNA ESTIMACION
     verif_programa = fields.Boolean(string="", compute="programa_verif" )
+
+    b_iva = fields.Float(string="IVA DESDE CONFIGURACION", compute="BuscarIva")
+
+    # METODO BUSCAR IVA EN CONFIGURACION
+    @api.one
+    def BuscarIva(self):
+        iva = self.env['ir.config_parameter'].sudo().get_param('generales.iva')
+        self.b_iva = iva
 
     # METODO PARA VERIFICAR SI HAY PROGRAMAS
     @api.one
@@ -247,10 +255,6 @@ class Partidas(models.Model):
         else:
             print("NO HAY PROGRAMA")
             self.verif_programa = False
-
-    @api.one
-    def nombre_partidas(self):
-        return 1
 
     # METODO PARA VERIFICAR SI YA SE ANTICIPO UNA PARTIDA
     @api.one
@@ -292,7 +296,7 @@ class Partidas(models.Model):
     def anticipo_iva(self):
         for rec in self:
             rec.update({
-                'iva_anticipo': rec.anticipo_a * 0.16
+                'iva_anticipo': rec.anticipo_a * self.b_iva
             })
 
     # METODO PARA CALCULAR EL TOTAL DEL ANTICIPO
@@ -311,7 +315,7 @@ class Partidas(models.Model):
         self.nueva_partida = self.nombre_partida
 
     # METODO PARA ABRIR ANTICIPOS CON BOTON
-    @api.multi
+    @api.one
     def anticipo(self):
         view = self.env.ref('proceso_contratacion.partidas_form')
         return {
@@ -393,11 +397,12 @@ class Partidas(models.Model):
             })
 
     # METODO CALCULAR TOTAL PARTIDA UNICA
+    @api.one
     @api.depends('monto_partida')
     def SumaContrato(self):
         for rec in self:
             rec.update({
-                'total_partida': (rec.monto_partida * 0.16) + rec.monto_partida
+                'total_partida': (rec.monto_partida * self.b_iva) + rec.monto_partida
             })
 
     # CALCULAR EL IVA TOTAL
@@ -405,7 +410,7 @@ class Partidas(models.Model):
     def iva(self):
         for rec in self:
             rec.update({
-                'iva_partida': (rec.monto_partida * 0.16)
+                'iva_partida': (rec.monto_partida * self.b_iva)
             })
 
     # METODO PARA SUMAR LOS IMPORTES DE LOS CONCEPTOS
@@ -428,9 +433,11 @@ class Partidas(models.Model):
 
     # METODO PARA SACAR LA FECHA DEL M2M
     @api.one
+    @api.depends('programa_contrato')
     def fechaInicio(self):
         for i in self.programa_contrato:
             resultado = str(i.fecha_inicio)
+            print(resultado)
             self.fecha_inicio_programa = str(resultado)
 
     # METODO PARA SACAR LA FECHA DEL M2M

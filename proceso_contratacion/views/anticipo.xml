@@ -24,6 +24,7 @@
                 <form string="Anticipo" create="false" delete="false" edit="false">
                     <sheet>
                         <group string="Anticipo" >
+                            <field name="id" />
                             <field name="numero_contrato" />
                             <field name="contratista"/>
                             <field name="anticipada" invisible="1"/>

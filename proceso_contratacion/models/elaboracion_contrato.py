@@ -106,7 +106,7 @@ class ElaboracionContratos(models.Model):
 
     # METODO PARA INYECTAR ANEXOS
     @api.multi
-    @api.onchange('contrato_partida_adjudicacion')  # if these fields are changed, call method
+    @api.onchange('adjudicacion')
     def llenar_anexo(self):
         adirecta_id = self.env['autorizacion_obra.anexo_tecnico'].search([('concepto', '=', self.obra_partida.id)])
         self.update({
@@ -177,6 +177,7 @@ class ElaboracionContratos(models.Model):
                                                           }]]
                      })
 
+    # NO FUNCIONA METODO PARA INSERTAR NUMERO DEL CONTRATO
     @api.model
     def create(self, values):
         self.write({
@@ -339,7 +340,9 @@ class ConveniosModificados(models.Model):
         '1', "Ampliación:"), ('2', "Reducción:")]
     tipo_monto = fields.Selection(select_monto, string="Monto:")
     monto_importe = fields.Float(string="Importe:")
-    monto_iva = fields.Float(string="I.V.A:", default=0.16)
+
+    monto_iva = fields.Float(string="I.V.A:", compute="BuscarIva")
+
     monto_total = fields.Float(string="Total:", compute="sumaMonto")
     # CONDICION MONTO PLAZO
     monto_plazo_fecha_inicio = fields.Date(string="Fecha Inicio:")
@@ -348,7 +351,9 @@ class ConveniosModificados(models.Model):
         '1', "Ampliación:"), ('2', "Reducción:")]
     tipo_monto_plazo = fields.Selection(select_monto_plazo, string="Monto:")
     monto_plazo_importe = fields.Float(string="Importe:")
-    monto_plazo_iva = fields.Float(string="I.V.A:", default=0.16)
+
+    monto_plazo_iva = fields.Float(string="I.V.A:", compute="BuscarIva")
+
     monto_plazo_total = fields.Float(string="Total:", compute="sumaMontoPlazo")
     # TERMINA CONDICIONES RADIO BUTTON
 
@@ -356,6 +361,12 @@ class ConveniosModificados(models.Model):
     convenio_numero_fianza = fields.Integer(string="Numero Fianza:")
     convenio_afianzadora = fields.Char(string="Afianzadora:")
     convenio_monto_afianzadora = fields.Integer(string="Afianzadora:")
+
+    # METODO BUSCAR IVA EN CONFIGURACION
+    @api.one
+    def BuscarIva(self):
+        iva = self.env['ir.config_parameter'].sudo().get_param('generales.iva')
+        return iva
 
     @api.one
     def nombre(self):

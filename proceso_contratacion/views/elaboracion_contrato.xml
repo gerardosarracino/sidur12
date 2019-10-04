@@ -40,8 +40,8 @@
           <field name="arch" type="xml">
             <form create="false" delete="false" edit="false">
                 <sheet>
+                    <field name="id" invisible="1"/>
                     <group colspan="2" col="4" class="oe_read_only" string="Partida">
-                        <field name="id" invisible="1"/>
                         <field name="obra"/>
                         <field name="programaInversion"/>
                         <field name="monto_partida" sum="Monto" widget="monetary" />
@@ -52,7 +52,7 @@
                         <field name="nueva_partida" invisible="1"/>
                     </group>
 
-                    <group string="Anticipo" >
+                    <group string="Anticipo" colspan="2" col="4">
                         <field name="numero_contrato" />
                         <field name="contratista"/>
                         <field name="anticipada" invisible="1"/>
@@ -80,6 +80,44 @@
                         <field name="afianzadora" attrs="{'readonly':[('anticipada', '=' , True)]}" required="True"/>
                         <field name="fecha_fianza" attrs="{'readonly':[('anticipada', '=' , True)]}" required="True"/>
                     </group>
+                </sheet>
+            </form>
+          </field>
+      </record>
+
+
+      <!-- FORMULARIO AL DAR CLICK M2M PARTIDAS -->
+      <record id="anexos_form" model="ir.ui.view">
+          <field name="name">anexos form</field>
+          <field name="model">autorizacion_obra.anexo_tecnico</field>
+          <field name="priority">17</field>
+          <field name="context">17</field>
+          <field name="arch" type="xml">
+            <form create="false" delete="false" edit="false">
+                <sheet>
+                    <group colspan="2" col="6" class="oe_read_only" string="Lista de Recursos/Anexos">
+                        <field name="name" string="Número de oficio"/>
+                        <field name="claveobra" string="Clave de obra" />
+                        <field name="clave_presupuestal" string="Clave presupuestal"/>
+                    </group>
+                    <group>
+                        <field name="concepto" />
+                    </group>
+                    <group string="Montos directos" colspan="6" col="6">
+                          <field name="federal"/>
+                          <field name="estatal"/>
+                          <field name="municipal"/>
+                          <field name="otros"/>
+                        </group>
+                        <group string="Montos indirectos" colspan="6" col="6">
+                          <field name="federalin"/>
+                          <field name="estatalin"/>
+                          <field name="municipalin"/>
+                          <field name="otrosin"/>
+                        </group>
+                        <group colspan="1" col="2" class="oe_subtotal_footer">
+                          <field name="total" string="Total Anexo" class="oe_subtotal_footer_separator"/>
+                        </group>
                 </sheet>
             </form>
           </field>
@@ -175,8 +213,8 @@
                                         <field name="nueva_partida" invisible="1"/>
 
                                         <button name="anticipo" type="object" string="Anticipo" />
-                                </tree>
-                                </field>
+                                    </tree>
+                                 </field>
                             </group>
                                      <!-- CONTADORES -->
                                      <field name="contar_finiquito"  invisible="1"/>
@@ -239,9 +277,10 @@
                          </field>
                     </page>
                     <!-- LISTA DE RECURSOS -->
-                    <page string="Lista De Recursos" >
+                    <page string="Lista De Recursos">
                         <separator string="Lista De Recursos" />
-                        <field name="anexos" readonly="1" string="" force_save="1">
+                        <field name="anexos" readonly="1" string="" force_save="1"
+                               context="{'form_view_ref': 'proceso_contratacion.anexos_form'}">
                             <tree force_save="1">
                                 <field name="name" force_save="1" invisible="1"/>
                                 <field name="claveobra" force_save="1"/>
@@ -377,7 +416,7 @@
                           <group class="oe_subtotal_footer">
                                         <h6 style="position:relative;
                                                       display: inline-block;
-                                                         left: -75px;
+                                                         left: -89px;
                                                           top: -50px;
                                                   white-space: nowrap;"> TOTAL:  </h6>
                                 </group>

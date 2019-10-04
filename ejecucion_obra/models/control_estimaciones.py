@@ -5,6 +5,7 @@ class Estimaciones(models.Model):
     _name = 'control.estimaciones'
     _rec_name = 'obra'
 
+    ide_estimacion = fields.Char(string="ID", compute="estid")
     # enlace
     estimacion_id = fields.Char()
 
@@ -23,7 +24,7 @@ class Estimaciones(models.Model):
     tipo_estimacion = fields.Selection(radio_estimacion, string="")
 
     # estimacions_id = fields.Char(compute="estimacionId", store=True)
-    numero_estimacion = fields.Integer(string="Número de Estimación:")
+    numero_estimacion = fields.Char(string="Número de Estimación:")
 
     fecha_inicio_estimacion = fields.Date(string="Del:", required=False, )
     fecha_termino_estimacion = fields.Date(string="Al:", required=False, )
@@ -62,15 +63,35 @@ class Estimaciones(models.Model):
     total_conceptos = fields.Float(string="Total:",  required=False)
 
     # ID DE LA ESTIMACION
-    estimacion_ids = fields.Char(string="ID", compute="IdEstimacion")
+    estimacion_ids = fields.Char(string="ID")
 
-    # METODO PARA EL CONTADOR DE ESTIMACIONES ------- PROF ALAN AIUDA
+    b_iva = fields.Float(string="IVA DESDE CONFIGURACION", compute="BuscarIva")
+
+    idobra = fields.Char(string="Numero de Estimacion:")
+
+    @api.one
+    def estid(self):
+        numero = 100000 + self.id
+        self.ide_estimacion = str(numero)
+
+    # COMPUTE CONTAR ESTIMACIONES
+    '''@api.one
+    @api.depends('obra')
+    def ido(self):
+        self.idobra = str(self.env['control.estimaciones'].search_count([('obra', '=', self.obra.id)]))'''
+
+    # METODO BUSCAR IVA EN CONFIGURACION
+    @api.one
+    def BuscarIva(self):
+        iva = self.env['ir.config_parameter'].sudo().get_param('generales.iva')
+        self.b_iva = iva
+
     @api.model
     def create(self, values):
-        count = self.env['control.estimaciones'].search_count([('obra', '=', self.obra.id)])
-        print(count)
-        count = count + 1
-        values['numero_estimacion'] = count
+        num = int(values['estimacion_ids'])
+        num = num + 1
+        print(num)
+        values['idobra'] = str(num)
         return super(Estimaciones, self).create(values)
 
     '''# METODO PARA EL CONTADOR DE ESTIMACIONES
@@ -83,10 +104,10 @@ class Estimaciones(models.Model):
         return super(Estimaciones, self).create(values)'''
 
     # METODO CREATE PARA CREAR LA ID DE ESTIMACION
-    @api.one
+    @api.multi
+    @api.onchange('obra')
     def IdEstimacion(self):
-        numero = 100000 + self.id
-        self.estimacion_ids = str(numero)
+        self.estimacion_ids = str(self.env['control.estimaciones'].search_count([('obra', '=', self.obra.id)]))
 
     # METODO PARA JALAR DATOS DE LAS DEDUCCIONES DEL CONTRATO
     @api.multi
@@ -116,7 +137,7 @@ class Estimaciones(models.Model):
     def Estimacion_sinIva(self):
         for rec in self:
             rec.update({
-                'estimacion_subtotal': (self.estimado - self.amort_anticipo) - (self.estimado * 0.16)
+                'estimacion_subtotal': (self.estimado - self.amort_anticipo) - (self.estimado * self.b_iva)
             })
 
     # METODO PARA CALCULAR ESTIMACION IVA.
@@ -125,7 +146,7 @@ class Estimaciones(models.Model):
     def Estimacion_Iva(self):
         for rec in self:
             rec.update({
-                'estimacion_iva': (self.estimado - self.amort_anticipo) * 0.16
+                'estimacion_iva': (self.estimado - self.amort_anticipo) * self.b_iva
             })
 
     # METODO PARA CALCULAR ESTIMACION + IVA

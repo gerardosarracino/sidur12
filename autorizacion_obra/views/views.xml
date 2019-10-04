@@ -183,10 +183,10 @@
           <field name="municipalin"/>
           <field name="otrosin"/>
         </group>
-        <group colspan="4" col="6">
-          <field name="total" string="Total anexo"/>
-          <field name="total_ca" attrs="{'invisible': [('cancelados', '=', 0)]}"/>
-          <field name="total1" attrs="{'invisible': [('cancelados', '=', 0)]}"/>
+        <group colspan="1" col="2" class="oe_subtotal_footer">
+          <field name="total" string="Total anexo" class="oe_subtotal_footer_separator"/>
+          <field name="total_ca" attrs="{'invisible': [('cancelados', '=', 0)]}" class="oe_subtotal_footer_separator"/>
+          <field name="total1" attrs="{'invisible': [('cancelados', '=', 0)]}" class="oe_subtotal_footer_separator"/>
         </group>
         <group string="Recursos cancelados" colspan="10" col="1" attrs="{'invisible': [('cancelados', '=', 0)]}">
           <field name="cancelado" nolabel="1">

@@ -9,23 +9,24 @@
                 <sheet>
                     <div>
                         <h1>
-                            <field name="estimacion_ids" readonly="1" force_save="1"/>
+                            <field name="ide_estimacion" readonly="1" force_save="1"/>
+
                         </h1>
                     </div>
                     <notebook>
                         <page string="Datos Generales De La Estimación">
                             <group string="Datos Generales De La Estimación" colspan="1" col="2">
                                 <group>
+                                    <field name="estimacion_ids" readonly="1" force_save="1" invisible="1"/>
                                     <!-- por mientras para activar metodos -->
                                     <field name="p_id" invisible="1"/>
-
                                     <field name="obra"/>
 
                                     <br/>
                                     <field name="tipo_estimacion" widget="radio"/>
                                 </group>
                                 <group>
-                                    <field name="numero_estimacion" attrs="{'readonly': [('tipo_estimacion','!=', '2')]}"/>
+                                    <field name="idobra" attrs="{'readonly': [('tipo_estimacion','!=', '2')]}" />
                                 </group>
                             </group>
 
@@ -150,7 +151,7 @@
          <field name="arch" type="xml">
             <search>
                 <field name="obra"/>
-                <field name="estimacion_ids"/>
+                <field name="ide_estimacion"/>
                 <field name="tipo_estimacion"/>
                 <field name="fecha_inicio_estimacion"/>
                 <field name="fecha_termino_estimacion"/>
@@ -173,7 +174,7 @@
         <field name="arch" type="xml">
             <tree string="">
                 <field name="obra" invisible="1"/>
-                <field name="estimacion_ids" string="#"/>
+                <field name="ide_estimacion" string="#"/>
                 <field name="tipo_estimacion" string="Tipo"/>
                 <field name="fecha_inicio_estimacion"/>
                 <field name="fecha_termino_estimacion"/>
@@ -215,7 +216,7 @@
       <field name="arch" type="xml">
         <tree create="false">
             <field name="fecha" string="Fecha"/>
-            <field name="numero_contrato" string="# Conctrato"/>
+            <field name="numero_contrato" string="# Contrato"/>
             <field name="objeto" string="Objeto" />
             <field name="contratista" string="Contratista" />
             <field name="obra" string="Obra"/>
