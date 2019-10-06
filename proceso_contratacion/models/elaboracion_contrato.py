@@ -65,11 +65,11 @@ class ElaboracionContratos(models.Model):
     saldo = fields.Float(string="Saldo:", compute="saldo_total")
 
     # IMPORTE DEL CONTRATO LICITACION Y ADJUDICACION
-    impcontra = fields.Float(string="Importe:")
+    impcontra = fields.Float(string="Importe:", compute="importeT")
 
     # METODO PARA CALCULAR EL IMPORTE DEL CONTRATO
-    @api.multi
-    @api.onchange('contrato_partida_adjudicacion')
+    @api.one
+    @api.depends('contrato_partida_adjudicacion')
     def importeT(self):
         suma = 0
         for i in self.contrato_partida_adjudicacion:
@@ -472,10 +472,6 @@ class conceptos_partidas(models.Model):
             rec.update({
                 'importe_ejecutado': rec.estimacion * rec.precio_unitario
             })
-
-    @api.one
-    def test(self):
-        return 0
 
     @api.depends('precio_unitario', 'cantidad')
     def sumaCantidad(self):

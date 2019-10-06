@@ -20,7 +20,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'informacion_basica', 'web_google_maps'],
+    'depends': ['base', 'informacion_basica', 'web_google_maps', 'web_google_maps_drawing'],
 
     # always loaded
     'data': [

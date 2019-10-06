@@ -468,6 +468,55 @@
       <field name="view_mode">form</field>
     </record>
 
+      <record id="proceso_anexos_form" model="ir.ui.view">
+          <field name="name">proceso anexos</field>
+          <field name="model">proceso.anexos</field>
+          <field name="arch" type="xml">
+              <form string="">
+                  <sheet>
+                      <group>
+                          <field name="name" force_save="1" invisible="1"/>
+                                <field name="claveobra" force_save="1"/>
+                                <field name="clave_presupuestal" force_save="1"/>
+                                <field name="federal" force_save="1"/>
+                                <field name="concepto" force_save="1" invisible="1"/>
+                                <field name="estatal" force_save="1"/>
+                                <field name="municipal" force_save="1"/>
+                                <field name="otros" force_save="1" />
+                                <field name="federalin" force_save="1" invisible="1"/>
+                                <field name="estatalin" force_save="1" invisible="1"/>
+                                <field name="municipalin" force_save="1" invisible="1"/>
+                                <field name="otrosin" force_save="1" invisible="1"/>
+                                <field name="total" force_save="1" invisible="1"/>
+                                <field name="cancelados" force_save="1" invisible="1"/>
+                                <field name="total_ca" force_save="1"/>
+                                <field name="totalin" force_save="1"/>
+                                <field name="total1" force_save="1"/>
+                                <field name="total_at" force_save="1" invisible="1"/>
+                      </group>
+                  </sheet>
+              </form>
+          </field>
+      </record>
+
+      <record id="proceso_anexos_tree" model="ir.ui.view">
+          <field name="name">proceso anexos</field>
+          <field name="model">proceso.anexos</field>
+          <field name="arch" type="xml">
+              <tree string="">
+                  <field name="name"/>
+                  <field name="claveobra"/>
+              </tree>
+          </field>
+      </record>
+
+      <record id="proceso_anexos_action" model="ir.actions.act_window">
+          <field name="name">proceso anexos</field>
+          <field name="type">ir.actions.act_window</field>
+          <field name="res_model">proceso.anexos</field>
+          <field name="view_mode">tree,form</field>
+      </record>
+
     <!-- MENUS ELABORACION DE CONTRATO -->
       <menuitem name="Elaboración de contratos" id="proc_contratacion_elaboracion_contrato"
                 parent="proc_contratacion_menu_root" action="proc_contratacion_elaboracion_contrato_action_window" sequence="4"/>
@@ -476,6 +525,8 @@
     <!-- MENUS CONCEPTOS CONTRATADOS-->
       <menuitem name="Conceptos Contratados" id="proc_contratacion_conceptos_contratados"
                 parent="proc_contratacion_menu_root" action="proc_contratacion_concepto_contratados_action_window" sequence="6"/>
+      <menuitem name="VER" id="anexos_te"
+                parent="proc_contratacion_menu_root" action="proceso_anexos_action" sequence="7"/>
 
 </data>
 </odoo>

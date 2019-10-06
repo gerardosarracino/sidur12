@@ -51,19 +51,20 @@ class PartidasAdjudicacion(models.Model):
     obra = fields.Many2one('registro.programarobra', required=True)
     programaInversion = fields.Many2one('generales.programas_inversion', related="")
     monto_partida = fields.Float(string="Monto", required=True)
-    iva_partida = fields.Float(string="Iva", compute="iva", required=True)
+    iva_partida = fields.Float(string="Iva", compute="iva", required=True, store=True)
     total_partida = fields.Float(string="Total", compute="sumaPartidas", required=True)
 
-    b_iva = fields.Float(string="IVA DESDE CONFIGURACION" )
+    b_iva = fields.Float(string="IVA DESDE CONFIGURACION", compute="BuscarIva" )
 
     # METODO BUSCAR IVA EN CONFIGURACION
-    @api.multi
-    @api.onchange('monto_partida')
+    @api.one
+    @api.depends('monto_partida')
     def BuscarIva(self):
         iva = self.env['ir.config_parameter'].sudo().get_param('generales.iva')
         self.b_iva = iva
 
     # METODO CALCULAR TOTAL PARTIDA
+    @api.one
     @api.depends('monto_partida')
     def sumaPartidas(self):
         for rec in self:
@@ -72,6 +73,7 @@ class PartidasAdjudicacion(models.Model):
             })
 
     # CALCULAR EL IVA TOTAL
+    @api.one
     @api.depends('monto_partida')
     def iva(self):
         for rec in self:

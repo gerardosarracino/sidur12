@@ -1,5 +1,6 @@
 from odoo import models, fields, api, exceptions
 from datetime import datetime
+from odoo.tools.safe_eval import safe_eval
 
 
 class ejercicio(models.Model):
@@ -49,6 +50,16 @@ class registro_obra(models.Model):
 	_name = "registro.obra"
 	_inherit = 'res.partner'
 
+	shape_name = fields.Char(string='Name')
+	shape_area = fields.Float(string='Area')
+	shape_radius = fields.Float(string='Radius')
+	shape_description = fields.Text(string='Description')
+	shape_type = fields.Selection([
+		('circle', 'Circle'), ('polygon', 'Polygon'),
+		('rectangle', 'Rectangle')], string='Type', default='polygon',
+		required=True)
+	shape_paths = fields.Text(string='Paths')
+
 	name = fields.Char(string="Número de obra", required=True)
 	ejercicio = fields.Many2one("registro.ejercicio", string="Ejercicio", required=True)
 	grupoObra = fields.Boolean(string="Grupo de obra")
@@ -80,6 +91,11 @@ class registro_obra(models.Model):
 	programada = fields.Integer(compute='contar2')
 	# estate = fields.Selection([('planeada', 'Planeada'),('programada', 'Programada'),], default='planeada')
 	estado_obra = fields.Char(compute="contar_programada")
+
+	@api.multi
+	def decode_shape_paths(self):
+		self.ensure_one()
+		return safe_eval(self.shape_paths)
 
 	@api.one
 	def contar_programada(self):
@@ -280,22 +296,23 @@ class EstructuraFinanciera(models.Model):
 		for r in self:
 			r.Total = r.sumaIaoe + r.sumaIde + r.sumaIar
 
-#class proyecto_ejecutivo(models.Model):
-#	_name = "registro.proyectoejecutivo"
-#
-#	name = fields.Many2one('generales.apartados_proyectos', 'name', required=True)
-#	documento fields.Binary(string="Documento", required=True)
-#	nombre = fields.Char(string="Nombre", required=True)
-#	observaciones = fields.Text(string="Observaciones", required=True)
 
-# class registro_obras(models.Model):
-#     _name = 'registro_obras.registro_obras'
+class GoogleMapsDrawingShapeMixin(models.AbstractModel):
+	_name = 'google_maps.drawing.shape.mixin'
+	_description = 'Google Maps Shape Mixin'
+	_rec_name = 'shape_name'
 
-#     name = fields.Char()
-#     value = fields.Integer()
-#     value2 = fields.Float(compute="_value_pc", store=True)
-#     description = fields.Text()
-#
-#     @api.depends('value')
-#     def _value_pc(self):
-#         self.value2 = float(self.value) / 100
+	shape_name = fields.Char(string='Name')
+	shape_area = fields.Float(string='Area')
+	shape_radius = fields.Float(string='Radius')
+	shape_description = fields.Text(string='Description')
+	shape_type = fields.Selection([
+		('circle', 'Circle'), ('polygon', 'Polygon'),
+		('rectangle', 'Rectangle')], string='Type', default='polygon',
+		required=True)
+	shape_paths = fields.Text(string='Paths')
+
+	@api.multi
+	def decode_shape_paths(self):
+		self.ensure_one()
+		return safe_eval(self.shape_paths)
