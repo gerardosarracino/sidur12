@@ -275,11 +275,13 @@
               <field name="tipoproyecto"/>
               <field name="tipoobraetapa" string="Tipo de obra etapa"/>
             </group>
+            <field name="ubicacion" string="Ubicación" invisible="1"/>
+              <field name="localidad" string="Localidad" invisible="1"/>
+            <field name="estado" string="Estado" invisible="1"/>
             <group string="Ubicación de la obra" colspan="1" col="6">
-              <field name="estado" string="Estado"/>
+
               <field name="municipio" string="Municipio"/>
-              <field name="ubicacion" string="Ubicación"/>
-              <field name="localidad" string="Localidad"/>
+
               <field name="cabeceraMunicipal"/>
               <field name="tipolocalidad"/>
             </group>
@@ -288,22 +290,22 @@
           <map class="o_res_partner_map" library='geometry' string="Map" lat="partner_latitude"
                  lng="partner_longitude" colors="blue:company_type=='person';green:company_type=='company';">
             <group colspan="2" col="4">
-              <field name="city" string="Ciudad"/>
+              <field name="city" string="Localidad"/>
               <field name="state_id" string="Estado"/>
               <field name="country_id" string="País"/>
-              <field name="street" string="Calle 1" widget="google_places"/>
-              <field name="street2"/>
+              <field name="street" string="Ubicación" widget="google_places"/>
+              <field name="street2" invisible="1"/>
               <field name="zip" string="CP"/>
             </group>
               <group colspan="2" col="6">
               <field name="partner_latitude" class="oe_inline" string="Latitud"/>
               <field name="partner_longitude" class="oe_inline" string="Longitud"/>
-              <button string="Geolocate" name="geo_localize" icon="fa-check" type="object"/>
+              <button string="Geolocalizar" name="geo_localize" icon="fa-check" type="object"/>
             </group>
               </map>
             </group>
 
-            <group>
+            <!-- <group>
 
             <map library="drawing" string="Shape" class="o_res_partner_map" lat="partner_latitude"
                  lng="partner_longitude" colors="blue:company_type=='person';green:company_type=='company';">
@@ -315,26 +317,10 @@
               </group>
                 <field name="shape_paths" widget="map_drawing_shape"/>
 
-              <templates>
-                    <t t-name="kanban-box">
-                        <div class="oe_kanban_global_click o_res_partner_kanban">
-                            <div class="oe_kanban_details">
-                                <strong class="o_kanban_record_title oe_partner_heading">
-                                    <field name="shape_name"/>
-                                </strong>
-                                <div attrs="{'invisible': [('shape_type', 'not in', ['rectangle', 'polygon'])]}">
-                                    Area: <field name="shape_area"/>
-                                </div>
-                                <div attrs="{'invisible': [('shape_type', '!=', 'circle')]}">
-                                    Radius: <field name="shape_radius"/>
-                                </div>
-                            </div>
-                        </div>
-                    </t>
-                </templates>
+
 
             </map>
-            </group>
+            </group> -->
 
             <group string="Impacto de la obra" colspan="2" col="4">
               <field name="beneficiados"/>

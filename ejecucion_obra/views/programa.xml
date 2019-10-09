@@ -112,7 +112,7 @@
     </record>
 
      <menuitem name="Programa de obra" id="programa_obra" parent="ejecucion_obra.menu_root"
-              action="programa_record" sequence="4"/>
+              action="programa_record" sequence="0"/>
 
     </data>
 </odoo>

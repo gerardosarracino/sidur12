@@ -35,6 +35,7 @@ class PartidasLicitacion(models.Model):
             })
 
     # CALCULAR EL IVA TOTAL
+    @api.one
     @api.depends('monto_partida')
     def iva(self):
         for rec in self:
@@ -49,10 +50,10 @@ class PartidasAdjudicacion(models.Model):
     _inherit = 'res.config.settings'
 
     obra = fields.Many2one('registro.programarobra', required=True)
-    programaInversion = fields.Many2one('generales.programas_inversion', related="")
+    programaInversion = fields.Many2one('generales.programas_inversion')
     monto_partida = fields.Float(string="Monto", required=True)
-    iva_partida = fields.Float(string="Iva", compute="iva", required=True, store=True)
-    total_partida = fields.Float(string="Total", compute="sumaPartidas", required=True)
+    iva_partida = fields.Float(string="Iva", compute="iva", store=True)
+    total_partida = fields.Float(string="Total", compute="sumaPartidas")
 
     b_iva = fields.Float(string="IVA DESDE CONFIGURACION", compute="BuscarIva" )
 
@@ -101,7 +102,7 @@ class Partidas(models.Model):
     # PROGRAMA DE INVERSION
     programaInversion = fields.Many2one('generales.programas_inversion', string="Programa de Inversión")
     monto_partida = fields.Float(string="Monto",)
-    iva_partida = fields.Float(string="Iva", compute="iva")
+    iva_partida = fields.Float(string="Iva", compute="iva", store=True)
     total_partida = fields.Float(string="Total", compute="SumaContrato")
 
     # SUMA DE LAS PARTIDAS
@@ -179,8 +180,8 @@ class Partidas(models.Model):
     puesto_director_obras = fields.Text('Puesto director de obras:')
 
     # PROGRAMA DE OBRA JCHAIREZ AQUI
-    fecha_inicio_programa = fields.Date('Fecha Inicio:', compute='fechaInicio')
-    fecha_termino_programa = fields.Date('Fecha Término:', compute='fechaTermino')
+    fecha_inicio_programa = fields.Date('Fecha Inicio:', related="programa_contrato.fecha_inicio")
+    fecha_termino_programa = fields.Date('Fecha Término:', compute="fechaTermino")
     monto_programa_aux = fields.Float(compute='SumaProgramas')
     restante_programa = fields.Float(string="Restante:", compute='DiferenciaPrograma')
     programa_contrato = fields.Many2many('proceso.programa', string="Agregar Periodo:")
@@ -408,6 +409,7 @@ class Partidas(models.Model):
             })
 
     # CALCULAR EL IVA TOTAL
+    @api.one
     @api.depends('monto_partida')
     def iva(self):
         for rec in self:
@@ -436,14 +438,6 @@ class Partidas(models.Model):
     # METODO PARA SACAR LA FECHA DEL M2M
     @api.one
     @api.depends('programa_contrato')
-    def fechaInicio(self):
-        for i in self.programa_contrato:
-            resultado = str(i.fecha_inicio)
-            print(resultado)
-            self.fecha_inicio_programa = str(resultado)
-
-    # METODO PARA SACAR LA FECHA DEL M2M
-    @api.one
     def fechaTermino(self):
         for i in self.programa_contrato:
             resultado = str(i.fecha_termino)
@@ -540,13 +534,13 @@ class ConveniosM(models.Model):
 class ProgramaContrato(models.Model):
     _name = 'proceso.programa'
 
-    fecha_inicio = fields.Date('Fecha Inicio:')
-    fecha_termino = fields.Date('Fecha Término:')
-    monto = fields.Float('Monto:')
+    fecha_inicio = fields.Date('Fecha Inicio:', default=fields.Date.today(), required=True)
+    fecha_termino = fields.Date('Fecha Término:', required=True)
+    monto = fields.Float('Monto:', required=True)
 
     # METODO para verificar fechas de programa
+    @api.multi
     @api.onchange('fecha_termino')
-    @api.depends('fecha_termino', 'fecha_inicio')
     def validar_fecha_programa(self):
         if str(self.fecha_termino) < str(self.fecha_inicio):
             raise exceptions.Warning('No se puede seleccionar una Fecha anterior a la fecha de inicio, '
@@ -558,9 +552,8 @@ class ruta_critica(models.Model):
     _name = 'proceso.rc'
 
     obra = fields.Many2one('registro.programarobra')
-    actividad = fields.Char(string="ACTIVIDADES PRINCIPALES")
+    name = fields.Char(string="ACTIVIDADES PRINCIPALES")
     porcentaje_est = fields.Integer(string="P.R.C")
-    name = fields.Char(string="FRENTE")
     sequence = fields.Integer()
     avance_fisico = fields.Integer(string="% Avance")
 
@@ -573,7 +566,7 @@ class ruta_critica(models.Model):
     @api.model
     def create(self, values):
         if values.get('display_type', self.default_get(['display_type'])['display_type']):
-            values.update(actividad=False, porcentaje_est=0)
+            values.update(name=False, porcentaje_est=0)
         line = super(ruta_critica, self).create(values)
         return line
 
@@ -590,9 +583,9 @@ class ruta_critica_avance(models.Model):
     _name = 'proceso.rc_a'
 
     numero_contrato = fields.Many2one('partidas.partidas')
-    actividad = fields.Char(string="ACTIVIDADES PRINCIPALES")
+    # actividad = fields.Char(string="ACTIVIDADES PRINCIPALES")
     porcentaje_est = fields.Float(string="P.R.C")
-    name = fields.Char(string="FRENTE")
+    name = fields.Char(string="ACTIVIDADES PRINCIPALES")
     sequence = fields.Integer()
     avance_fisico = fields.Integer(string="% AVANCE")
     obra = fields.Many2one('registro.programarobra')
@@ -614,7 +607,7 @@ class ruta_critica_avance(models.Model):
     @api.model
     def create(self, values):
         if values.get('display_type', self.default_get(['display_type'])['display_type']):
-            values.update(actividad=False, porcentaje_est=0)
+            values.update(name=False, porcentaje_est=0)
         line = super(ruta_critica_avance, self).create(values)
         return line
 
@@ -676,7 +669,7 @@ class informe_avance(models.Model):
             self.update({
                 'ruta_critica': [[0, 0, {'name': rt.name, 'secuence': rt.sequence,
                                          'display_type': rt.display_type, 'obra': rt.obra,
-                                         'actividad': rt.actividad, 'porcentaje_est': rt.porcentaje_est}]]
+                                         'porcentaje_est': rt.porcentaje_est}]]
             })
 
 

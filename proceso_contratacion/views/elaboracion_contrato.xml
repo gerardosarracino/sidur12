@@ -399,7 +399,7 @@
                             <tree editable="bottom">
                                 <control>
                                     <create string="Agregar Sección" context="{'default_display_type': 'line_section'}"/>
-                                    <create string="Agregar Nivel"/>
+                                    <create string="Agregar Nivel" context="{'default_name': '-'}"/>
                                 </control>
                                 <field name="name" widget="section_and_note_Text" string="Sección"/>
                                 <field name="sequence" type="handle" invisible="1"/>
@@ -525,8 +525,9 @@
     <!-- MENUS CONCEPTOS CONTRATADOS-->
       <menuitem name="Conceptos Contratados" id="proc_contratacion_conceptos_contratados"
                 parent="proc_contratacion_menu_root" action="proc_contratacion_concepto_contratados_action_window" sequence="6"/>
-      <menuitem name="VER" id="anexos_te"
-                parent="proc_contratacion_menu_root" action="proceso_anexos_action" sequence="7"/>
+
+      <!-- <menuitem name="VER" id="anexos_te"
+                parent="proc_contratacion_menu_root" action="proceso_anexos_action" sequence="7"/> -->
 
 </data>
 </odoo>

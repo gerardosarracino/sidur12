@@ -394,7 +394,7 @@
                     </group>
                         </page>
 
-                        <page string="Programa">
+                        <!-- <page string="Programa">
                             <group string="Programa">
                                 <group colspan="1" col="4">
                                     <field name="fecha_inicio_programa" readonly="1"/>
@@ -414,7 +414,7 @@
                                     </tree>
                                 </field>
                             </group>
-                        </page>
+                        </page> -->
                     </notebook>
 
                 </sheet>
@@ -442,6 +442,6 @@
     <menuitem name="Ejecución de Obra" id="ejecucion_obra.menu_root" sequence="0"/>
 
     <menuitem name="Control de Estimaciones" id="control_esstimacion" parent="ejecucion_obra.menu_root"
-              action="ejecucion_obra_control_estimacion_action_window" sequence="1"/>
+              action="ejecucion_obra_control_estimacion_action_window" sequence="2"/>
   </data>
 </odoo>

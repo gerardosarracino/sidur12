@@ -53,7 +53,7 @@ class ElaboracionContratos(models.Model):
     deducciones = fields.Many2many("generales.deducciones", string="Deducciones")
 
     # RECURSOS ANEXOS
-    anexos = fields.Many2many('proceso.anexos', string="Anexos:")
+    anexos = fields.Many2many('proceso.anexos', string="Anexos:", compute="llenar_anexo", store=True)
     enlace_oficio = fields.Many2one('autorizacion_obra.oficios_de_autorizacion', string="Enlace a Oficio",)
     # related="anexos.name"
     recurso_autorizado = fields.Float(string='Recursos Autorizados:', related="anexos.name.total_at")
@@ -105,8 +105,8 @@ class ElaboracionContratos(models.Model):
             return False
 
     # METODO PARA INYECTAR ANEXOS
-    @api.multi
-    @api.onchange('adjudicacion')
+    @api.one
+    @api.depends('adjudicacion')
     def llenar_anexo(self):
         adirecta_id = self.env['autorizacion_obra.anexo_tecnico'].search([('concepto', '=', self.obra_partida.id)])
         self.update({

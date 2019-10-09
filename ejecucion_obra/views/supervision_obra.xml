@@ -21,10 +21,11 @@
                                             
                                             <create string="Agregar actividad"/>
                                         </control>
-                                            <field name="name" widget="section_and_note_text" attrs="{'invisible':[('actividad','=',True)]}" force_save="1"/>
-                                            <field name="sequence" type="handle" invisible="1"/>
+                                            <field name="sequence" type="handle" invisible="1" />
                                             <field name="display_type" invisible="1"/>
-                                            <field name="actividad"/>
+                                            <field name="name" widget="section_and_note_text"  force_save="1"/>
+
+
                                             <field name="porcentaje_est" />
                                             <field name="avance_fisico" invisible="1" />
 
@@ -117,10 +118,9 @@
                           <group>
                                <field name="ruta_critica" string="# Concepto de partidas" widget="section_and_note_one2many" create="false">
                                     <tree editable="bottom" delete="false" create="false">
-                                            <field name="name" widget="section_and_note_text" attrs="{'invisible':[('actividad','=',True)]}" readonly="1" force_save="1"/>
+                                            <field name="name" widget="section_and_note_text" readonly="1" force_save="1" string="ACTIVIDADES PRINCIPALES"/>
                                             <field name="sequence" type="handle" invisible="1"/>
                                             <field name="display_type" invisible="1"/>
-                                            <field name="actividad" readonly="1" force_save="1" />
                                             <field name="porcentaje_est" sum="PORCENTAJE PROGRAMADO" readonly="1" force_save="1"/>
                                             <field name="avance_fisico"/>
                                             <field name="avance_fisico_ponderado" sum="% AVANCE TOTAL" readonly="1" force_save="1"/>
@@ -138,7 +138,7 @@
                                 <group>
                                         <h6 style=" position:relative;
                                                     display: inline-block;
-                                                       left: 403px;
+                                                       left: 310px;
                                                         top: -47px;
                                                   white-space: nowrap;"> PORCENTAJE PROGRAMADO:  </h6>
                                 </group>
@@ -239,46 +239,8 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     <menuitem name="Supervisión de Obra" id="supervicion_obra" parent="ejecucion_obra.menu_root"
-              action="proceso_supervicion_obra" sequence="2"/>
+              action="proceso_supervicion_obra" sequence="4"/>
 
   </data>
 </odoo>
