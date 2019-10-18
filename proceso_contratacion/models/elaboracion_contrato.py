@@ -16,9 +16,9 @@ class ElaboracionContratos(models.Model):
 
     contrato_id = fields.Char(compute="nombre", store=True)
 
-    # LICITACION
+    # LICITACION PARTIDAS
     obra = fields.Many2one('proceso.licitacion', string="Seleccionar obra")
-    # ADJUDICACION
+    # ADJUDICACION PARTIDAS
     adjudicacion = fields.Many2one('proceso.adjudicacion_directa', string="Nombre de Adjudicacion", ondelete='cascade')
 
     # CONTAR REGISTROS DE FINIQUITO
@@ -159,6 +159,7 @@ class ElaboracionContratos(models.Model):
     @api.multi
     @api.onchange('adjudicacion')  # if these fields are changed, call method
     def check_change_adjudicacion(self):
+        print(self.adjudicacion.contratado)
         adirecta_id = self.env['proceso.adjudicacion_directa'].browse(self.adjudicacion.id)
         self.update({
             'contrato_partida_adjudicacion': [[5]]
@@ -432,6 +433,8 @@ class conceptos_partidas(models.Model):
         ('line_note', "Note")], default=False, help="")
     # prueba
     obra = fields.Many2one('partidas.partidas', string='Obra:', )
+
+    idgrupo = fields.Many2one('partidas.partidas')
 
     categoria = fields.Many2one('proceso.categoria')
     concepto = fields.Many2one('proceso.concepto')

@@ -47,12 +47,12 @@ class PartidasLicitacion(models.Model):
 # CLASE AUXILIAR DE PARTIDAS ADJUDICACION
 class PartidasAdjudicacion(models.Model):
     _name = 'partidas.adjudicacion'
-    _inherit = 'res.config.settings'
+    # _inherit = 'res.config.settings'
 
     obra = fields.Many2one('registro.programarobra', required=True)
     programaInversion = fields.Many2one('generales.programas_inversion')
     monto_partida = fields.Float(string="Monto", required=True)
-    iva_partida = fields.Float(string="Iva", compute="iva", store=True)
+    iva_partida = fields.Float(string="Iva", compute="iva")
     total_partida = fields.Float(string="Total", compute="sumaPartidas")
 
     b_iva = fields.Float(string="IVA DESDE CONFIGURACION", compute="BuscarIva" )
@@ -243,6 +243,20 @@ class Partidas(models.Model):
 
     b_iva = fields.Float(string="IVA DESDE CONFIGURACION", compute="BuscarIva")
 
+    # METODO PARA ABRIR ANTICIPOS CON BOTON
+    @api.multi
+    def anticipoBoton(self):
+        view = self.env.ref('proceso_contratacion.partidas_form')
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'anticipos',
+            'res_model': 'partidas.partidas',
+            'view_mode': 'form',
+            'target': 'new',
+            'view_id': view.id,
+            'res_id': self.id,
+        }
+
     # METODO BUSCAR IVA EN CONFIGURACION
     @api.one
     def BuscarIva(self):
@@ -316,20 +330,6 @@ class Partidas(models.Model):
     def nombrePartida(self):
         self.numero_contrato = self.env['proceso.elaboracion_contrato'].search([('contrato', '=', self.nombre_partida)]).id
         self.nueva_partida = self.nombre_partida
-
-    # METODO PARA ABRIR ANTICIPOS CON BOTON
-    @api.one
-    def anticipo(self):
-        view = self.env.ref('proceso_contratacion.partidas_form')
-        return {
-            'type': 'ir.actions.act_window',
-            'name': 'anticipo',
-            'res_model': 'partidas.partidas',
-            'view_mode': 'form',
-            'target': 'new',
-            'view_id': view.id,
-            'res_id': self.id,
-        }
 
     # METODO DE CONTAR REGISTROS DE FINIQUITOS PARA ABRIR VISTA EN MODO NEW O TREE VIEW
     @api.one
@@ -614,7 +614,7 @@ class ruta_critica_avance(models.Model):
     @api.multi
     def write(self, values):
         if 'display_type' in values and self.filtered(lambda line: line.display_type != values.get('display_type')):
-            raise UserError(
+            raise UserError (
                 "You cannot change the type of a sale order line. Instead you should delete the current line and create a new line of the proper type.")
         result = super(ruta_critica_avance, self).write(values)
         return result
@@ -655,22 +655,7 @@ class informe_avance(models.Model):
             suma += resultado
             self.total_ = suma
 
-    @api.multi
-    @api.onchange('numero_contrato')
-    def informe_de_avance_field(self):
-        adirecta_id = self.env['partidas.partidas'].search([('id', '=', self.numero_contrato.id)])
 
-
-        self.update({
-            'ruta_critica': [[5]]
-        })
-
-        for rt in adirecta_id.ruta_critica:
-            self.update({
-                'ruta_critica': [[0, 0, {'name': rt.name, 'secuence': rt.sequence,
-                                         'display_type': rt.display_type, 'obra': rt.obra,
-                                         'porcentaje_est': rt.porcentaje_est}]]
-            })
 
 
     @api.onchange('ruta_critica')

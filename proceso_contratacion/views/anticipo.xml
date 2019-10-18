@@ -24,7 +24,6 @@
                 <form string="Anticipo" create="false" delete="false" edit="false">
                     <sheet>
                         <group string="Anticipo" >
-                            <field name="id" />
                             <field name="numero_contrato" />
                             <field name="contratista"/>
                             <field name="anticipada" invisible="1"/>
@@ -62,8 +61,8 @@
             <field name="res_model">partidas.partidas</field>
             <field name="view_mode">tree,form</field>
             <field name="view_ids" eval="[(5, 0, 0),
-    (0, 0, {'view_mode': 'tree', 'view_id': ref('anticipo_tree')}),
-    (0, 0, {'view_mode': 'form', 'view_id': ref('anticipo_form')})]"/>
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('anticipo_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('anticipo_form')})]"/>
         </record>
 
         <!-- This Menu Item must have a parent and an action -->

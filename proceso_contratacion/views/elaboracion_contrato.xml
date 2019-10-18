@@ -40,7 +40,6 @@
           <field name="arch" type="xml">
             <form create="false" delete="false" edit="false">
                 <sheet>
-                    <field name="id" invisible="1"/>
                     <group colspan="2" col="4" class="oe_read_only" string="Partida">
                         <field name="obra"/>
                         <field name="programaInversion"/>
@@ -142,7 +141,7 @@
         <form>
           <sheet>
               <div class="oe_button_box oe_read_only" name="button_box">
-
+                 <!-- FINIQUITAR CONTRATO ANTICIPADAMENTE BUTTONS -->
                    <button string="Fin. Contrato Anticipadamente" type="object" name="finiquitarContrato1" class="oe_highlight" context="{
                        'search_default_contrato': active_id,
                        'default_contrato': active_id
@@ -154,98 +153,88 @@
                 </div>
 
             <notebook >
-                    <page string="Datos Generales" icon="fa-bitbucket">
+                <page string="Datos Generales" icon="fa-bitbucket">
+                     <group string="Contrato Datos Generales"  >
+                         <!-- LICITACION -->
+                        <field name="obra" string="Seleccionar Licitacion"  attrs="{'invisible':
+                        [('adjudicacion', '!=', False)]}" />
+                         <!-- ADJUDICACION -->
+                        <field name="adjudicacion" attrs="{'invisible': [('obra', '!=', False)]}"
+                               domain="[('contratado','&lt;','1')]" /> <!-- domain="[('contratado','=','True')]" -->
+                     </group>
 
-                             <group string="Contrato Datos Generales"  >
+                     <group colspan="1" col="4">
+                        <field name="fecha" class="oe_inline"/>
+                        <field name="contrato" />
+                        <field name="obra_partida" invisible="1"/>
+                        <!-- importe contrato auxiliar -->
+                        <field name="impcontra" invisible="1" force_save="1"/>
+                     </group>
 
-                                <field name="obra" string="Seleccionar Licitacion"  attrs="{'invisible':
-                                [('adjudicacion', '!=', False)]}" />
+                    <!-- PARTIDA ADJUDICACION -->
+                     <group colspan="2" col="1">
+                         <field name="contrato_partida_adjudicacion" context="{'form_view_ref': 'proceso_contratacion.partidas_form'}"
+                         attrs="{'invisible': [('adjudicacion', '=', False)]}"
+                                string="" nolabel="1">
+                         <tree create="false" editable="bottom" delete="false" decoration-warning="fecha_anticipos==True">
+                            <field name="obra" readonly="1" force_save="1"/>
+                            <field name="programaInversion" readonly="1" force_save="1"/>
+                            <field name="monto_partida" sum="Monto" widget="monetary" />
+                            <field name="iva_partida" readonly="True" sum="I.V.A" widget="monetary"/>
+                            <field name="total_partida" readonly="True" sum="Total" widget="monetary"/>
+                            <field name="numero_contrato" invisible="1"/>
+                            <field name="nombre_partida" invisible="1"/>
+                            <field name="nueva_partida" invisible="1"/>
+                            <field name="fecha_anticipos" invisible="1"/>
+                            <!-- BOTON ANTICIPO -->
+                            <button name="anticipoBoton" type="object" string="Anticipo" class="btn btn-primary"/>
+                            <!-- id de la partida -->
+                            <field name="p_id" invisible="1"/>
+                         </tree>
+                    </field>
+                    <!-- PARTIDA LICITACION -->
+                    <field name="contrato_partida_licitacion" context="{'form_view_ref': 'proceso_contratacion.partidas_form'}"
+                           attrs="{'invisible': [('obra', '=', False)]}" string="" nolabel="1">
+                        <tree editable="bottom" create="false" delete="false" >
+                            <field name="obra" readonly="1"/>
+                            <field name="programaInversion" readonly="1"/>
+                            <field name="monto_partida" sum="Monto" widget="monetary"/>
+                            <field name="iva_partida" readonly="True" sum="I.V.A" widget="monetary"/>
+                            <field name="total_partida" readonly="True" sum="Total" widget="monetary"/>
+                            <field name="numero_contrato" invisible="1"/>
+                            <field name="nombre_partida" invisible="1"/>
+                            <field name="nueva_partida" invisible="1"/>
+                            <field name="nueva_partida" invisible="1"/>
+                            <!-- BOTON ANTICIPO -->
+                            <button name="anticipoBoton" type="object" string="Anticipo" />
+                        </tree>
+                    </field>
+                    </group>
+                     <!-- CONTADORES -->
+                     <field name="contar_finiquito"  invisible="1"/>
+                     <field name="contar_convenio"  invisible="1"/>
 
-
-
-                                 <field name="adjudicacion" attrs="{'invisible': [('obra', '!=', False)]}"
-                                       domain="[('contratado','=',True)]" /> <!-- domain="[('contratado','=','True')]" -->
-                                </group>
-
-                                  <group colspan="1" col="4">
-                                    <field name="fecha" class="oe_inline"/>
-
-                                    <field name="contrato" />
-                                    <field name="obra_partida" invisible="1"/>
-                                      <!-- importe contrato auxiliar -->
-                                    <field name="impcontra" invisible="1" force_save="1"/>
-                                  </group>
-
-                            <group colspan="2" col="1">
-                                 <field name="contrato_partida_adjudicacion" context="{'form_view_ref': 'proceso_contratacion.partidas_form'}"
-                                 attrs="{'invisible': [('adjudicacion', '=', False)]}"
-                                        string="" nolabel="1">
-                                    <tree create="false" editable="bottom" delete="false" decoration-warning="fecha_anticipos==True">
-                                        <field name="obra" readonly="1" force_save="1"/>
-                                        <field name="programaInversion" readonly="1" force_save="1"/>
-                                        <field name="monto_partida" sum="Monto" widget="monetary" />
-                                        <field name="iva_partida" readonly="True" sum="I.V.A" widget="monetary"/>
-                                        <field name="total_partida" readonly="True" sum="Total" widget="monetary"/>
-                                        <field name="numero_contrato" invisible="1"/>
-                                        <field name="nombre_partida" invisible="1"/>
-                                        <field name="nueva_partida" invisible="1"/>
-                                        <field name="fecha_anticipos" invisible="1"/>
-
-                                        <button name="anticipo" type="object" string="Anticipo" class="btn btn-primary"
-                                        />
-
-                                        <!-- id de la partida -->
-                                        <field name="p_id" invisible="1"/>
-                                </tree>
-                            </field>
-
-                                 <field name="contrato_partida_licitacion" context="{'form_view_ref': 'proceso_contratacion.partidas_form'}"
-                                 attrs="{'invisible': [('obra', '=', False)]}" string="" nolabel="1">
-                                    <tree editable="bottom" create="false" delete="false" >
-                                        <field name="obra" readonly="1"/>
-                                        <field name="programaInversion" readonly="1"/>
-                                        <field name="monto_partida" sum="Monto" widget="monetary"/>
-                                        <field name="iva_partida" readonly="True" sum="I.V.A" widget="monetary"/>
-                                        <field name="total_partida" readonly="True" sum="Total" widget="monetary"/>
-                                        <field name="numero_contrato" invisible="1"/>
-                                        <field name="nombre_partida" invisible="1"/>
-                                        <field name="nueva_partida" invisible="1"/>
-                                        <field name="nueva_partida" invisible="1"/>
-
-                                        <button name="anticipo" type="object" string="Anticipo" />
-                                    </tree>
-                                 </field>
-                            </group>
-                                     <!-- CONTADORES -->
-                                     <field name="contar_finiquito"  invisible="1"/>
-                                     <field name="contar_convenio"  invisible="1"/>
-
-                            <group colspan="1" col="4">
-                                <field name="name"/>
-                                <field name="unidadresponsableejecucion" class="oe_inline"/>
-                                <field name="descripciontrabajos"/>
-                            </group>
-                            <group colspan="1" col="4">
-                                <field name="supervisionexterna" />
-                                <field name="supervisionexterna1" />
-                            </group>
-
-
-                        <group>
-                            <field name="contratista"/>
-                        </group>
-
-                        <group colspan="1" col="2">
-                            <group><field name="fechainicio" class="oe_inline"/></group>
-                            <group><field name="fechatermino" class="oe_inline"/></group>
-                            <group><field name="periodicidadretencion" class="oe_inline"/></group>
-                            <group><field name="retencion" class="oe_inline"/></group>
-                        </group>
-
+                    <group colspan="1" col="4">
+                        <field name="name"/>
+                        <field name="unidadresponsableejecucion" class="oe_inline"/>
+                        <field name="descripciontrabajos"/>
+                    </group>
+                    <group colspan="1" col="4">
+                        <field name="supervisionexterna" />
+                        <field name="supervisionexterna1" />
+                    </group>
+                    <group>
+                        <field name="contratista"/>
+                    </group>
+                    <group colspan="1" col="4">
+                        <field name="fechainicio" class="oe_inline"/>
+                        <field name="fechatermino" class="oe_inline"/>
+                        <field name="periodicidadretencion" class="oe_inline"/>
+                        <field name="retencion" class="oe_inline"/>
+                    </group>
                     </page>
 
-
-                    <!-- FIANZAS -->
+                    <!-- PAGINA FIANZAS -->
                     <page string="Fianzas"  >
                         <separator string="Fianzas"/>
                         <field name="fianzas" widget="one2many" string="">
@@ -262,7 +251,7 @@
                         </field>
                     </page>
 
-                    <!-- DEDUCCIONES -->
+                    <!-- PAGINA DEDUCCIONES -->
                      <page string="Deducciones" >
                         <group string="Deducciones">
                         </group>
@@ -326,7 +315,6 @@
                             </group>
                         </group>
                     </page>
-
             </notebook>
           </sheet>
         </form>
@@ -405,7 +393,8 @@
                                 <field name="sequence" type="handle" invisible="1"/>
                                 <field name="display_type" invisible="1" />
                                 <field name="categoria" string="Clave"/>
-                                <field name="grupo"/>
+                                <field name="idgrupo" context="{'default_idgrupo': active_id}"/>
+                                <field name="grupo" domain="[('grupo','in',id)]"/>
                                 <field name="concepto"/>
                                 <field name="medida"/>
                                 <field name="cantidad"/>

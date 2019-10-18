@@ -8,7 +8,7 @@ class AdjudicacionDirecta(models.Model):
     _rec_name = "numerocontrato"
 
     # CAMPO BOOLEAN PARA VERIFICAR SI YA SE CONTRATO ESTA ADJUDICACION
-    contratado = fields.Boolean(string="", compute="VerificarContrato")
+    contratado = fields.Integer(string="", compute="VerificarContrato", store=True)
 
     #  HACER LOS FILTROS DE RELACION DE PROGRAMAS DE INVERSION CON OBRAS PROGRAMADAS(partidas)
     name = fields.Text(string="Descripción/Meta", required=True)
@@ -32,11 +32,7 @@ class AdjudicacionDirecta(models.Model):
     fechatermino = fields.Date(string="Fecha termino", required=True, )
     plazodias = fields.Integer(string="Plazo/Días", required=True)
     contratista = fields.Many2one('contratista.contratista', string='Contratista', required=True)
-
-    # Recursos
-    # FALTA LA RELACION, NECESITO EL MODULO DE AUTORIZACION DE OBRAS
-    # oficio_autorizacion = fields.Many2many('oficios.autorizacion', string="Seleccione un oficio de autorización")
-
+    # RECURSOS
     recurso_federal = fields.Float(string="Federal")
     recurso_federal_indirecto = fields.Float(string="Federal Indirecto")
     recurso_estatal = fields.Float(string="Estatal")
@@ -46,20 +42,26 @@ class AdjudicacionDirecta(models.Model):
     recurso_otros = fields.Float(string="Otros")
     total_recurso = fields.Float(string="Total", compute='sumaRecursos')
 
+    @api.multi
+    @api.onchange('programas_inversion_adjudicacion')
+    def BorrarTabla(self):
+        self.update({
+            'programar_obra_adjudicacion': [[5]]
+        })
+
     # METODO BUSCAR IVA EN CONFIGURACION
     @api.one
     def BuscarIva(self):
         iva = self.env['ir.config_parameter'].sudo().get_param('generales.iva')
         self.iva = iva
 
-    @api.one
+    @api.multi
+    @api.depends('fechaadjudicacion')
     def VerificarContrato(self):
-        contrato = self.env['proceso.elaboracion_contrato'].search_count([('adjudicacion', '=', self.numerocontrato)])
-        if contrato > 0:
-            self.contratado = True
-        else:
-            self.contratado = False
+        contador = self.env['proceso.elaboracion_contrato'].search_count([('adjudicacion', '=', self.numerocontrato)])
+        self.contratado = contador
 
+    @api.multi
     @api.onchange('programar_obra_adjudicacion')
     def importe(self):
         suma = 0
@@ -83,7 +85,7 @@ class AdjudicacionDirecta(models.Model):
         }
 
     # METODO DE EXCEPCION DE LA FECHA ANTERIOR
-    @api.onchange('fechatermino')
+    @api.one
     @api.depends('fechatermino', 'fechainicio')
     def onchange_date(self):
         if str(self.fechatermino) < str(self.fechainicio):
@@ -93,6 +95,7 @@ class AdjudicacionDirecta(models.Model):
             return False
 
     # METODO PARA SUMA DE RECURSOS
+    @api.one
     @api.depends('recurso_federal', 'recurso_federal_indirecto', 'recurso_estatal', 'recurso_estatal_indirecto',
                  'recurso_municipal', 'recurso_municipal_indirecto', 'recurso_otros')
     def sumaRecursos(self):

@@ -302,33 +302,36 @@
 
                         <!-- ANTICIPOS -->
                         <page string="Anticipos">
-                            <group string="Anticipo">
-                            <field name="numero_contrato" readonly="1"/>
-                            <field name="contratista" readonly="1"/>
-                            <field name="anticipada" invisible="1" readonly="1"/>
-                        </group>
-                        <group >
-                            <field name="fecha_anticipos" readonly="1" />
-                        </group>
+                            <group attrs="{'invisible':[('anticipada', '=' , True)]}">
+                            <p>NO HAY ANTICIPO</p>
+                            </group>
 
-                        <group colspan="1" col="4">
-                            <field name="porcentaje_anticipo" class="oe_inline" readonly="1"/>
-                            <field name="total_anticipo_porcentaje" readonly="1"/>
-                            <field name="anticipo_material" class="oe_inline" readonly="1"/>
-                            <field name="total_partida" readonly="1" string="Importe Contratado"/>
-                        </group>
+                            <group attrs="{'invisible':[('anticipada', '=' , False)]}" colspan="1" col="4">
+                                <group string="Anticipo">
+                                    <field name="numero_contrato" readonly="1"/>
+                                    <field name="contratista" readonly="1"/>
+                                    <field name="anticipada" invisible="1" readonly="1"/>
+                                </group>
+                                <group colspan="1" col="4">
+                                    <field name="fecha_anticipos" readonly="1" />
+                                    <field name="porcentaje_anticipo" class="oe_inline" readonly="1"/>
+                                    <field name="total_anticipo_porcentaje" readonly="1"/>
+                                    <field name="anticipo_material" class="oe_inline" readonly="1"/>
+                                    <field name="total_partida" readonly="1" string="Importe Contratado"/>
+                                </group>
 
-                        <group>
-                            <field name="anticipo_a" readonly="1"/>
-                            <field name="iva_anticipo" readonly="1"/>
-                            <field name="total_anticipo" readonly="1"/>
-                        </group>
+                                <group>
+                                    <field name="anticipo_a" readonly="1"/>
+                                    <field name="iva_anticipo" readonly="1"/>
+                                    <field name="total_anticipo" readonly="1"/>
+                                </group>
 
-                        <group colspan="1" col="4">
-                            <field name="numero_fianza" class="oe_inline" readonly="1"/>
-                            <field name="afianzadora" readonly="1"/>
-                            <field name="fecha_fianza" readonly="1"/>
-                        </group>
+                                <group colspan="1" col="4">
+                                    <field name="numero_fianza" class="oe_inline" readonly="1"/>
+                                    <field name="afianzadora" readonly="1"/>
+                                    <field name="fecha_fianza" readonly="1"/>
+                                </group>
+                             </group>
                         </page>
 
                         <!-- PAGINA DE CONV. MODIFICATORIOS -->
