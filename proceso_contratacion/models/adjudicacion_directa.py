@@ -55,7 +55,7 @@ class AdjudicacionDirecta(models.Model):
         iva = self.env['ir.config_parameter'].sudo().get_param('generales.iva')
         self.iva = iva
 
-    @api.multi
+    @api.one
     @api.depends('fechaadjudicacion')
     def VerificarContrato(self):
         contador = self.env['proceso.elaboracion_contrato'].search_count([('adjudicacion', '=', self.numerocontrato)])

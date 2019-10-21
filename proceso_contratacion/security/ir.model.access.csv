@@ -23,6 +23,7 @@ access_proceso_unidad_responsable,proceso.unidad_responsable,model_proceso_unida
 access_proceso_rc_a,proceso.rc_a,model_proceso_rc_a,,1,1,1,1
 access_proceso_anexos,proceso.anexos,model_proceso_anexos,,1,1,1,1
 access_proceso_iavance,proceso.iavance,model_proceso_iavance,,1,1,1,1
+access_proceso_conceptos_modificados,proceso_conceptos_modificados,model_proceso_conceptos_modificados,,1,1,1,1
 
 
 

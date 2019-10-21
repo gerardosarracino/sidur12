@@ -354,13 +354,10 @@
 
                         <!-- PAGINA DE CATALOGOS -->
                         <page string="Catálogo">
+                      <div class="panel-body">
+                        <h2 colspan="2" align="left"> Catálogo de Niveles/Conceptos del Contrato: <field name="numero_contrato" nolabel="1"/></h2>
+                      </div>
                             <group>
-
-                        <group colspan="2" col="2">
-                            <group string="Catálogo de Niveles/Conceptos del Contrato:"></group>
-                            <group><field name="name" string="" class="o_light_label"/></group>
-                        </group>
-
                         <group colspan="2" col="6">
                             <field name="total" />
                             <field name="total_contrato"/>

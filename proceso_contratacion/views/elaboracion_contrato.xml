@@ -373,15 +373,17 @@
                           <field name="supervisionexterna1" string="" nolabel="1"/>
                         </group>
                      <hr/>
+                      <notebook>
+                          <page string="Conceptos del Contrato">
+                      <div class="panel-body">
+                        <h2 colspan="2" align="left"> Catálogo de Niveles/Conceptos del Contrato: <field name="numero_contrato" nolabel="1"/></h2>
+                      </div>
+
                       <group>
-                        <group colspan="2" col="2">
-                            <group string="Catálogo de Niveles/Conceptos del Contrato:"></group>
-                            <group><field name="name" string="" class="o_light_label"/></group>
-                        </group>
-                        <group colspan="2" col="3">
-                            <group><field name="total_partida" /></group>
-                            <group> <field name="total_catalogo"/></group>
-                            <group><field name="diferencia"  class="o_light_label"/></group>
+                        <group colspan="2" col="6">
+                            <field name="total_partida" />
+                            <field name="total_catalogo"/>
+                            <field name="diferencia"  class="o_light_label"/>
                         </group>
                         <field name="conceptos_partidas" widget="section_and_note_one2many" string="# Concepto de partidas">
                             <tree editable="bottom">
@@ -410,6 +412,41 @@
                                                   white-space: nowrap;"> TOTAL:  </h6>
                                 </group>
                     </group>
+
+                    </page>
+
+                    <page string="Modificaciones de Conceptos">
+                        <field name="xd2" invisible="1"/>
+                        <field name="conceptos_modificados" widget="section_and_note_one2many" string="# Concepto de partidas">
+                            <tree editable="bottom" decoration-info="fecha_modificacion,'!=', parent.fecha">
+                                <control>
+                                    <create string="Agregar Sección" context="{'default_display_type': 'line_section'}"/>
+                                    <create string="Agregar Nivel" context="{'default_name': '-'}"/>
+                                </control>
+                                <field name="fecha_modificacion"/>
+                                <field name="justificacion"/>
+                                <field name="name" widget="section_and_note_Text" string="Sección"/>
+                                <field name="sequence" type="handle" invisible="1"/>
+                                <field name="display_type" invisible="1" />
+                                <field name="categoria" string="Clave"/>
+                                <field name="grupo" />
+                                <field name="concepto"/>
+                                <field name="medida"/>
+                                <field name="cantidad"/>
+                                <field name="precio_unitario" widget="monetary"/>
+                                <field name="importe" sum="importe" widget="monetary"/>
+                            </tree>
+                        </field>
+                        <group class="oe_subtotal_footer">
+                                        <h6 style="position:relative;
+                                                      display: inline-block;
+                                                         left: -89px;
+                                                          top: -50px;
+                                                  white-space: nowrap;"> TOTAL:  </h6>
+                        </group>
+                    </page>
+
+                  </notebook>
                   </sheet>
               </form>
           </field>

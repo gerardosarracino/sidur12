@@ -6,13 +6,13 @@ class Estimaciones(models.Model):
     _rec_name = 'obra'
 
     ide_estimacion = fields.Char(string="ID", compute="estid")
-    # enlace
+    # VER SI UTILIZAR
     estimacion_id = fields.Char()
 
     obra = fields.Many2one('partidas.partidas', string='Obra:', readonly=True)
-
     obra_id = fields.Char(compute="ConvenioEnlace", store=True)
 
+    # ver si utilizar
     p_id = fields.Integer("ID PARTIDA", related="obra.p_id")
 
     # AUXILIAR DE CONEXION HACIA CONTRATO

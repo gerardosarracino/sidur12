@@ -1,8 +1,130 @@
 <odoo>
     <data>
+        <!-- VERSION DE PROGRAMA FORM -->
+      <record id="vista_form_programa_version" model="ir.ui.view">
+        <field name="name">Versiones de Programa</field>
+        <field name="model">programa.programa_obra_version</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                       <field name="obra" string="Partida:"/>
+                       <field name="auxiliar" invisible="1" />
+                   </group>
+                   <group>
+                       <field name="razon"/>
+                   </group>
+                   <group>
+                       <group colspan="1" col="4">
+                          <field name="fecha_inicio_programa" readonly="1"/>
+                          <field name="fecha_termino_programa" readonly="1"/>
+                          <field name="total_partida" readonly="True" widget="monetary"/>
+                          <field name="restante_programa" readonly="1"/>
+                       </group>
+                           <field name="programa_contrato_version">
+                             <tree create="false" delete="false">
+                                 <field name="fecha_inicio"/>
+                                 <field name="fecha_termino"/>
+                                 <field name="monto" sum="Total:"/>
+                             </tree>
+                           </field>
+                       </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- VERSION DE PROGRAMA VENTANA EMERGENTE -->
+    <record id="vista_form_programa" model="ir.ui.view">
+        <field name="name">Programa</field>
+        <field name="model">programa.programa_obra</field>
+        <field name="priority">17</field>
+        <field name="context">17</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                       <field name="obra" string="Partida:"/>
+                   </group>
+                   <group>
+                       <group colspan="1" col="4">
+                          <field name="fecha_inicio_programa" readonly="1"/>
+                          <field name="fecha_termino_programa" readonly="1"/>
+                          <field name="total_partida" readonly="True" widget="monetary"/>
+                          <field name="restante_programa" readonly="1"/>
+                       </group>
+                           <field name="programa_contratos" widget='one2many'>
+                             <control>
+                                <create string="Agregar Periodo"/>
+                             </control>
+                             <tree editable="bottom">
+                                 <field name="fecha_inicio"/>
+                                 <field name="fecha_termino"/>
+                                 <field name="monto" sum="Total:"/>
+                             </tree>
+                           </field>
+                       </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+        <!-- FILTRO SEARCH DE ENLACE VERSION DE PROGRAMA -->
+        <record id="programa_search" model="ir.ui.view">
+           <field name="name">programa search</field>
+           <field name="model">programa.programa_obra_version</field>
+            <field name="arch" type="xml">
+            <search string="">
+              <field name="obra"/>
+              <field name="fecha_inicio_programa"/>
+              <field name="fecha_termino_programa"/>
+              <field name="total_partida" />
+              <field name="restante_programa" />
+            </search>
+           </field>
+        </record>
 
+        <!-- VERSION DE PROGRAMA TREE -->
+    <record id="obra_programa_tree_version" model="ir.ui.view">
+        <field name="name">Versiones de Programa Tree</field>
+        <field name="model">programa.programa_obra_version</field>
+        <field name="arch" type="xml">
+            <tree string="">
+              <field name="obra"/>
+              <field name="fecha_inicio_programa"/>
+              <field name="fecha_termino_programa"/>
+              <field name="total_partida" />
+              <field name="restante_programa" />
+            </tree>
+        </field>
+    </record>
+
+        <!-- PROGRAMA TREE -->
+    <record id="obra_programa_tree" model="ir.ui.view">
+        <field name="name">programa tree</field>
+        <field name="model">programa.programa_obra</field>
+        <field name="arch" type="xml">
+            <tree string="">
+              <field name="obra"/>
+              <field name="fecha_inicio_programa"/>
+              <field name="fecha_termino_programa"/>
+              <field name="total_partida" />
+              <field name="restante_programa" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- ACCION DEL BOTON HACIA VERSION DE PROGRAMAS -->
+    <record model="ir.actions.act_window" id="programa_action">
+      <field name="name">Programa Versiones</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">programa.programa_obra_version</field>
+      <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('obra_programa_tree_version')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('vista_form_programa_version')})]"/>
+    </record>
+
+        <!-- PARTIDAS TREE PROGRAMAS -->
      <record model="ir.ui.view" id="programa_tree">
-      <field name="name">proceso.elaboracion_contrato.tree3</field>
+      <field name="name">Programa tree</field>
       <field name="model">partidas.partidas</field>
       <field name="arch" type="xml">
         <tree create="false">
@@ -16,17 +138,21 @@
       </field>
     </record>
 
+        <!-- PARTIDAS PROGRAMA FORM -->
     <record model="ir.ui.view" id="programa_form">
-      <field name="name">Ruta critica</field>
+      <field name="name">Programa Partida</field>
       <field name="model">partidas.partidas</field>
       <field name="arch" type="xml">
         <form>
             <sheet>
                     <div  class="oe_button_box oe_read_only" name="button_box">
-                        <button name="abrir_obra" class="oe_inline oe_stat_button" type="object"
-                             string="Programa"
-                             icon="fa-clock-o"
-                             />
+                        <button name="programas" class="oe_highlight" type="object"
+                             string="Programa" context="{'default_obra': active_id}"
+                             icon="fa-clock-o"/>
+
+                        <button name="%(programa_action)d" class="oe_highlight" type="action"
+                             string="Versiones de Programa"
+                             icon="fa-hdd-o" context="{'search_default_obra': active_id,'default_obra': active_id}"/>
                      </div>
 
                   <group string="Nombre de la Obra:">
@@ -61,45 +187,12 @@
                           <field name="fechainicio" string="" nolabel="1"/>
                           <field name="fechatermino" string="" nolabel="1"/>
                           <field name="supervisionexterna1" string="" nolabel="1"/>
-                        </group>
+                  </group>
               </sheet>
             </form>
           </field>
         </record>
-
-      <!--Programa trabajando agregar al boton para poder abrilo y agregar un contrador para saber cuantos convenios tiene esa partida-->
-      <record id="vista_form_programa" model="ir.ui.view">
-        <field name="name">Programa</field>
-        <field name="model">partidas.partidas</field>
-        <field name="arch" type="xml">
-            <form>
-                <sheet>
-                   <group>
-                       <group colspan="1" col="4">
-                          <field name="fecha_inicio_programa" readonly="1"/>
-                          <field name="fecha_termino_programa" readonly="1"/>
-                          <field name="total_partida" readonly="True" widget="monetary"/>
-                          <field name="restante_programa" readonly="1"/>
-                       </group>
-                           <field name="programa_contrato" widget='one2many'>
-                             <control>
-                                <create string="Agregar Periodo"/>
-                             </control>
-                             <tree editable="bottom">
-                                 <field name="fecha_inicio"/>
-                                 <field name="fecha_termino"/>
-                                 <field name="monto" sum="Total:"/>
-                             </tree>
-                           </field>
-                       </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
-
-
-
-
+        <!-- ACTION MENU ITEM -->
     <record model="ir.actions.act_window" id="programa_record">
           <field name="name">Programa</field>
           <field name="type">ir.actions.act_window</field>

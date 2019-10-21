@@ -3,8 +3,6 @@ from odoo import models, fields, api, exceptions
 
 from odoo.exceptions import UserError
 from odoo.exceptions import ValidationError
-from odoo import tools, _
-from odoo.modules.module import get_module_resource
 
 
 # CLASE AUXILIAR DE PARTIDAS LICITACION
@@ -112,6 +110,7 @@ class Partidas(models.Model):
 
     # CONCEPTOS CONTRATADOS DE PARTIDAS
     conceptos_partidas = fields.Many2many('proceso.conceptos_part', required=True)
+    conceptos_modificados = fields.Many2many('proceso.conceptos_modificados', required=True)
 
     name = fields.Many2one('proceso.elaboracion_contrato', readonly=True)
     total = fields.Float(string="Monto Total Contratado:", readonly=True, compute="totalContrato", required=True)
@@ -169,7 +168,6 @@ class Partidas(models.Model):
 
     # CONVENIOS MODIFICATORIOS
     convenios_modificatorios = fields.Many2many('proceso.convenios', string="Conv. Modificatorios")
-
     # RESIDENCIA
     residente_obra = fields.Many2one(
         comodel_name='res.users',
@@ -242,6 +240,51 @@ class Partidas(models.Model):
     verif_programa = fields.Boolean(string="", compute="programa_verif" )
 
     b_iva = fields.Float(string="IVA DESDE CONFIGURACION", compute="BuscarIva")
+    xd2 = fields.Char()
+
+    @api.multi
+    @api.onchange('xd2')  # if these fields are changed, call method
+    def conceptos_modifi(self):
+        adirecta_id = self.env['partidas.partidas'].search([('numero_contrato', '=', self.numero_contrato.id)])
+        '''self.update({
+            'conceptos_modificados': [[5]]
+        })'''
+        for conceptos in adirecta_id.conceptos_partidas:
+            self.update({
+                'conceptos_modificados': [[0, 0, {'name': conceptos.name, 'sequence': conceptos.sequence,
+                                                   'display_type': conceptos.display_type,
+                                                   'categoria': conceptos.categoria, 'concepto': conceptos.concepto,
+                                                   'grupo': conceptos.grupo,
+                                                   'medida': conceptos.medida,
+                                                   'precio_unitario': conceptos.precio_unitario,
+                                                   'cantidad': conceptos.cantidad}]]
+            })
+
+    # METODO PARA INGRESAR A RECURSOS BOTON
+    @api.multi
+    def programas(self):
+        view = self.env.ref('ejecucion_obra.vista_form_programa')
+        count = self.env['programa.programa_obra'].search_count([('obra.id', '=', self.id)])
+        print(count)
+        if count == 1:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': 'Programa',
+                'res_model': 'programa.programa_obra',
+                'view_mode': 'form',
+                'target': 'new',
+                'view_id': view.id,
+                'res_id': self.obra.id,
+            }
+        else:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': 'Programa',
+                'res_model': 'programa.programa_obra',
+                'view_mode': 'form',
+                'target': 'new',
+                'view_id': view.id,
+            }
 
     # METODO PARA ABRIR ANTICIPOS CON BOTON
     @api.multi
@@ -266,7 +309,8 @@ class Partidas(models.Model):
     # METODO PARA VERIFICAR SI HAY PROGRAMAS
     @api.one
     def programa_verif(self):
-        if self.fecha_inicio_programa:
+        busqueda = self.env['programa.programa_obra'].search([('obra.id', '=', self.id)])
+        if busqueda.fecha_inicio_programa:
             print("SI HAY PROGRAMA")
             self.verif_programa = True
         else:
@@ -366,20 +410,6 @@ class Partidas(models.Model):
             'res_id': self.id,
         }
 
-    # Jesus Fernandez metodo para abrir programa de obra
-    @api.multi
-    def abrir_obra(self):
-        view = self.env.ref('ejecucion_obra.vista_form_programa')
-        return {
-            'type': 'ir.actions.act_window',
-            'name': 'Programa',
-            'res_model': 'partidas.partidas',
-            'view_mode': 'form',
-            'target': 'new',
-            'view_id': view.id,
-            'res_id': self.id,
-        }
-
     # JFernandez metodo para contar el numero de convenios que tiene cada obra
     @api.one
     def contar_covenios(self):
@@ -453,71 +483,6 @@ class Partidas(models.Model):
     def nombre(self):
         self.estimacion_id = self.obra
 
-    '''@api.multi
-        def create_customer_invoice(self):
-            """
-            Method to open create customer invoice form
-            """
-            # Get the client id from transport form
-            obra = self.obra
-
-            # Initialize required parameters for opening the form view of invoice
-            # Get the view ref. by paasing module & name of the required form
-            view_ref = self.env['ir.model.data'].get_object_reference('proceso_contratacion', 'partidas_form')
-            view_id = view_ref[1] if view_ref else False
-
-            # Let's prepare a dictionary with all necessary info to open create invoice form with
-            # customer/client pre-selected
-            res = {
-                'type': 'ir.actions.act_window',
-                'name': _('prueba'),
-                'res_model': 'partidas.partidas',
-                'view_type': 'form',
-                'view_mode': 'form',
-                'view_id': view_id,
-                'target': 'new',
-                'context': {'default_obra': obra}
-            }
-
-            return res'''
-
-    '''@api.multi
-    @api.onchange('new_field')  # if these fields are changed, call method
-    def check_change_anticipo(self):
-        adirecta_id = self.env['proceso.elaboracion_contrato'].browse(self.obra.id)
-        self.update({
-            'anticipos': [[5]]
-        })
-        for partidas in adirecta_id.anticipos:
-            self.update({
-                'anticipos': [[0, 0, {'obra': partidas.obra,
-                                      'fecha_anticipo': partidas.fecha_anticipo,
-                                      'porcentaje_anticipo': partidas.porcentaje_anticipo,
-                                      'total_anticipo_porcentaje': partidas.total_anticipo_porcentaje,
-                                      'anticipo_material': partidas.anticipo_material,
-                                      'importe': partidas.importe,
-                                      'anticipo': partidas.anticipo,
-                                      'iva': partidas.iva,
-                                      'total_anticipo': partidas.total_anticipo,
-                                      'numero_fianza': partidas.numero_fianza,
-                                      'afianzadora': partidas.total_anticipo,
-                                      'fecha_fianza': partidas.numero_fianza,
-                                      }]]
-            })'''
-
-    '''@api.multi
-    @api.onchange('new_field')  # if these fields are changed, call method
-    def prueba(self):
-        adirecta_id = self.env['registro.obra'].browse(self.obra.id)
-        self.update({
-            'ejercicio': [[5]]
-        })
-        for ejercicio in adirecta_id.ejercicio:
-            self.update({
-                'ejercicio': [[0, 0, {'ejercicio': ejercicio.ejercicio
-                                      }]]
-            })'''
-
 
 class ConveniosM(models.Model):
     _name = 'proceso.convenios'
@@ -548,6 +513,7 @@ class ProgramaContrato(models.Model):
         else:
             return False
 
+
 class ruta_critica(models.Model):
     _name = 'proceso.rc'
 
@@ -573,8 +539,8 @@ class ruta_critica(models.Model):
     @api.multi
     def write(self, values):
         if 'display_type' in values and self.filtered(lambda line: line.display_type != values.get('display_type')):
-            raise UserError(
-                "You cannot change the type of a sale order line. Instead you should delete the current line and create a new line of the proper type.")
+            raise UserError("You cannot change the type of a sale order line. Instead you should delete the current "
+                            "line and create a new line of the proper type.")
         result = super(ruta_critica, self).write(values)
         return result
 
@@ -654,9 +620,6 @@ class informe_avance(models.Model):
             resultado = i.porcentaje_est
             suma += resultado
             self.total_ = suma
-
-
-
 
     @api.onchange('ruta_critica')
     def porcest(self):
