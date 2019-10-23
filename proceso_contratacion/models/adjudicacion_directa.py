@@ -8,7 +8,7 @@ class AdjudicacionDirecta(models.Model):
     _rec_name = "numerocontrato"
 
     # CAMPO BOOLEAN PARA VERIFICAR SI YA SE CONTRATO ESTA ADJUDICACION
-    contratado = fields.Integer(string="", compute="VerificarContrato", store=True)
+    contratado = fields.Integer(string="", store=True)
 
     #  HACER LOS FILTROS DE RELACION DE PROGRAMAS DE INVERSION CON OBRAS PROGRAMADAS(partidas)
     name = fields.Text(string="Descripción/Meta", required=True)
@@ -55,11 +55,11 @@ class AdjudicacionDirecta(models.Model):
         iva = self.env['ir.config_parameter'].sudo().get_param('generales.iva')
         self.iva = iva
 
-    @api.one
+    '''@api.one
     @api.depends('fechaadjudicacion')
     def VerificarContrato(self):
         contador = self.env['proceso.elaboracion_contrato'].search_count([('adjudicacion', '=', self.numerocontrato)])
-        self.contratado = contador
+        self.contratado = contador'''
 
     @api.multi
     @api.onchange('programar_obra_adjudicacion')

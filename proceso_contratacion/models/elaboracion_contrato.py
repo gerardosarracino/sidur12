@@ -179,12 +179,13 @@ class ElaboracionContratos(models.Model):
                      })
 
     # NO FUNCIONA METODO PARA INSERTAR NUMERO DEL CONTRATO
-    @api.model
-    def create(self, values):
-        self.write({
-            'contrato_partida_adjudicacion': [(0, 0, {'numero_contrato': self.contrato})]
-        })
-        return super(ElaboracionContratos, self).create(values)
+    @api.multi
+    def write(self, values):
+        b_contador = self.env['proceso.adjudicacion_directa'].search([('numerocontrato', '=', self.contrato)])
+        contador = self.env['proceso.adjudicacion_directa'].search_count([('numerocontrato', '=', self.contrato)])
+        values[str(b_contador.contratado)] = contador
+        b_contador.contratado = contador
+        return super(ElaboracionContratos, self).write(values)
 
     # METODO DE LAS PARTIDAS LICITACION
     @api.multi
@@ -516,6 +517,7 @@ class conceptosModificados(models.Model):
 
     importe = fields.Float(compute="sumaCantidad")
 
+    @api.multi
     @api.depends('precio_unitario', 'cantidad')
     def sumaCantidad(self):
         for rec in self:

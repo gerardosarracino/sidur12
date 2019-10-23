@@ -7,13 +7,17 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <group>
+                    <field name="auxiliar" invisible="1" />
+                    <field name="programa_ids" readonly="1" force_save="1" invisible="1"/>
+                    <group colspan="1" col="4">
+                       <field name="programa_id" readonly="1"/>
                        <field name="obra" string="Partida:"/>
-                       <field name="auxiliar" invisible="1" />
-                   </group>
+                    </group>
                    <group>
+                       <field name="fecha_version" class="oe_inline"/>
                        <field name="razon"/>
                    </group>
+                    <hr/>
                    <group>
                        <group colspan="1" col="4">
                           <field name="fecha_inicio_programa" readonly="1"/>
@@ -28,7 +32,7 @@
                                  <field name="monto" sum="Total:"/>
                              </tree>
                            </field>
-                       </group>
+                   </group>
                 </sheet>
             </form>
         </field>
@@ -74,6 +78,8 @@
             <field name="arch" type="xml">
             <search string="">
               <field name="obra"/>
+              <field name="programa_id"/>
+              <field name="fecha_version"/>
               <field name="fecha_inicio_programa"/>
               <field name="fecha_termino_programa"/>
               <field name="total_partida" />
@@ -88,6 +94,8 @@
         <field name="model">programa.programa_obra_version</field>
         <field name="arch" type="xml">
             <tree string="">
+              <field name="programa_id"/>
+              <field name="fecha_version"/>
               <field name="obra"/>
               <field name="fecha_inicio_programa"/>
               <field name="fecha_termino_programa"/>

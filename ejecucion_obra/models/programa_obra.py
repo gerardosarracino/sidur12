@@ -45,8 +45,11 @@ class ProgramaObraVersion(models.Model):
     _name = 'programa.programa_obra_version'
     _rec_name = 'obra'
 
+    fecha_version = fields.Date('Fecha de la Versión:')
     razon = fields.Text(string="Versión:", required=False, )
 
+    programa_ids = fields.Char(string="ID")
+    programa_id = fields.Char(string="Numero de Version del Programa:")
     obra = fields.Many2one('partidas.partidas', string='Obra:', readonly=True)
     obra_id = fields.Char(compute="partidaEnlace", store=True)
 
@@ -58,6 +61,20 @@ class ProgramaObraVersion(models.Model):
 
     total_partida = fields.Float(string="Total", related="obra.total_partida")
     auxiliar = fields.Float(string="auxiliar", )
+
+    @api.model
+    def create(self, values):
+        num = int(values['programa_ids'])
+        num = num + 1
+        print(num)
+        values['programa_id'] = str(num)
+        return super(ProgramaObraVersion, self).create(values)
+
+    # METODO CREATE PARA CREAR LA ID DE ESTIMACION
+    @api.multi
+    @api.onchange('obra')
+    def idPrograma(self):
+        self.programa_ids = str(self.env['programa.programa_obra_version'].search_count([('obra.id', '=', self.obra.id)]))
 
     # METODO INSERTAR PROGRAMA
     @api.multi

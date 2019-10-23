@@ -56,7 +56,7 @@
           <group string="Agregar nueva adjudicación directa" >
                 <!-- PROGRAMAS DE INVERSION -->
                 <field name="programas_inversion_adjudicacion" string="Programa de inversión"/>
-                <field name="contratado"/>
+                <field name="contratado" force_save="1"/>
           </group>
 
           <group>

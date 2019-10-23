@@ -415,8 +415,19 @@
 
                     </page>
 
-                    <page string="Modificaciones de Conceptos">
-                        <field name="xd2" invisible="1"/>
+
+                    <page string="Modificaciones de Conceptos" attrs="{'invisible':[('conceptos_partidas', '=' , [])]}">
+
+                        <group colspan="1" col="4">
+                        <button string="Crear Modificacion de Conceptos" type="object" name="conceptos_modifi"
+                                class="oe_stat_button" icon="fa-refresh" attrs="{'invisible':[('conceptos_modificados', '!=' , [])]}"/>
+
+                        <button string="Limpiar" type="object" name="limpiar_conceptos_modifi"
+                                class="oe_stat_button" icon="fa-trash-o" attrs="{'invisible':[('conceptos_modificados', '=' , [])]}"/>
+                            <p></p>
+                            <p></p>
+                        </group>
+
                         <field name="conceptos_modificados" widget="section_and_note_one2many" string="# Concepto de partidas">
                             <tree editable="bottom" decoration-info="fecha_modificacion,'!=', parent.fecha">
                                 <control>

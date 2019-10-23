@@ -1,6 +1,5 @@
 from odoo import models, fields, api, exceptions
 
-
 from odoo.exceptions import UserError
 from odoo.exceptions import ValidationError
 
@@ -53,7 +52,7 @@ class PartidasAdjudicacion(models.Model):
     iva_partida = fields.Float(string="Iva", compute="iva")
     total_partida = fields.Float(string="Total", compute="sumaPartidas")
 
-    b_iva = fields.Float(string="IVA DESDE CONFIGURACION", compute="BuscarIva" )
+    b_iva = fields.Float(string="IVA DESDE CONFIGURACION", compute="BuscarIva")
 
     # METODO BUSCAR IVA EN CONFIGURACION
     @api.one
@@ -99,7 +98,7 @@ class Partidas(models.Model):
 
     # PROGRAMA DE INVERSION
     programaInversion = fields.Many2one('generales.programas_inversion', string="Programa de Inversión")
-    monto_partida = fields.Float(string="Monto",)
+    monto_partida = fields.Float(string="Monto", )
     iva_partida = fields.Float(string="Iva", compute="iva", store=True)
     total_partida = fields.Float(string="Total", compute="SumaContrato")
 
@@ -172,17 +171,10 @@ class Partidas(models.Model):
     residente_obra = fields.Many2one(
         comodel_name='res.users',
         string='Residente obra:',
-        default=lambda self: self.env.user.id,)
+        default=lambda self: self.env.user.id, )
     supervision_externa = fields.Many2one('proceso.elaboracion_contrato', string="Supervisión externa:")
     director_obras = fields.Char('Director de obras:')
     puesto_director_obras = fields.Text('Puesto director de obras:')
-
-    # PROGRAMA DE OBRA JCHAIREZ AQUI
-    fecha_inicio_programa = fields.Date('Fecha Inicio:', related="programa_contrato.fecha_inicio")
-    fecha_termino_programa = fields.Date('Fecha Término:', compute="fechaTermino")
-    monto_programa_aux = fields.Float(compute='SumaProgramas')
-    restante_programa = fields.Float(string="Restante:", compute='DiferenciaPrograma')
-    programa_contrato = fields.Many2many('proceso.programa', string="Agregar Periodo:")
 
     # Supervicion de obra (JFernandez)
     ruta_critica = fields.Many2many('proceso.rc')
@@ -237,28 +229,29 @@ class Partidas(models.Model):
     p_id = fields.Integer('ID DE LA PARTIDA')
 
     # RESTRICCION DEL PROGRAMA, SI NO HAY PROGRAMA NO PERMITE REGISTRAR UNA ESTIMACION
-    verif_programa = fields.Boolean(string="", compute="programa_verif" )
+    verif_programa = fields.Boolean(string="", compute="programa_verif")
 
     b_iva = fields.Float(string="IVA DESDE CONFIGURACION", compute="BuscarIva")
-    xd2 = fields.Char()
 
     @api.multi
-    @api.onchange('xd2')  # if these fields are changed, call method
     def conceptos_modifi(self):
-        adirecta_id = self.env['partidas.partidas'].search([('numero_contrato', '=', self.numero_contrato.id)])
-        '''self.update({
-            'conceptos_modificados': [[5]]
-        })'''
-        for conceptos in adirecta_id.conceptos_partidas:
+        b_concepto = self.env['partidas.partidas'].search([('conceptos_partidas', '=', self.conceptos_partidas[0].id)])
+        for conceptos in b_concepto.conceptos_partidas:
             self.update({
                 'conceptos_modificados': [[0, 0, {'name': conceptos.name, 'sequence': conceptos.sequence,
-                                                   'display_type': conceptos.display_type,
-                                                   'categoria': conceptos.categoria, 'concepto': conceptos.concepto,
-                                                   'grupo': conceptos.grupo,
-                                                   'medida': conceptos.medida,
-                                                   'precio_unitario': conceptos.precio_unitario,
-                                                   'cantidad': conceptos.cantidad}]]
+                                                  'display_type': conceptos.display_type,
+                                                  'categoria': conceptos.categoria, 'concepto': conceptos.concepto,
+                                                  'grupo': conceptos.grupo,
+                                                  'medida': conceptos.medida,
+                                                  'precio_unitario': conceptos.precio_unitario,
+                                                  'cantidad': conceptos.cantidad}]]
             })
+
+    @api.one
+    def limpiar_conceptos_modifi(self):
+        self.update({
+            'conceptos_modificados': [[5]]
+        })
 
     # METODO PARA INGRESAR A RECURSOS BOTON
     @api.multi
@@ -372,7 +365,8 @@ class Partidas(models.Model):
     # METODO PARA INSERTAR EL NUMERO DEL CONTRATO DENTRO DE LA PARTIDA PARA HACER CONEXION
     @api.one
     def nombrePartida(self):
-        self.numero_contrato = self.env['proceso.elaboracion_contrato'].search([('contrato', '=', self.nombre_partida)]).id
+        self.numero_contrato = self.env['proceso.elaboracion_contrato'].search(
+            [('contrato', '=', self.nombre_partida)]).id
         self.nueva_partida = self.nombre_partida
 
     # METODO DE CONTAR REGISTROS DE FINIQUITOS PARA ABRIR VISTA EN MODO NEW O TREE VIEW
@@ -455,28 +449,6 @@ class Partidas(models.Model):
             resultado = i.importe
             suma = suma + resultado
             self.total_catalogo = suma
-
-    # METODO PARA SUMAR LOS IMPORTES DE LOS PROGRAMAS ---
-    @api.onchange('programa_contrato')
-    def SumaProgramas(self):
-        suma = 0
-        for i in self.programa_contrato:
-            resultado = i.monto
-            suma = suma + resultado
-            self.monto_programa_aux = suma
-
-    # METODO PARA SACAR LA FECHA DEL M2M
-    @api.one
-    @api.depends('programa_contrato')
-    def fechaTermino(self):
-        for i in self.programa_contrato:
-            resultado = str(i.fecha_termino)
-            self.fecha_termino_programa = str(resultado)
-
-    # METODO CALCULAR DIFERENCIA ENTRE PROGRAMAS Y TOTAL DEL CONTRATO
-    @api.one
-    def DiferenciaPrograma(self):
-        self.restante_programa = self.total_partida - self.monto_programa_aux
 
     # METODO DE ENLACE A ESTIMACIONES
     @api.one
@@ -569,7 +541,6 @@ class ruta_critica_avance(models.Model):
         ('line_section', "Section"),
         ('line_note', "Note")], default=False)
 
-
     @api.model
     def create(self, values):
         if values.get('display_type', self.default_get(['display_type'])['display_type']):
@@ -580,7 +551,7 @@ class ruta_critica_avance(models.Model):
     @api.multi
     def write(self, values):
         if 'display_type' in values and self.filtered(lambda line: line.display_type != values.get('display_type')):
-            raise UserError (
+            raise UserError(
                 "You cannot change the type of a sale order line. Instead you should delete the current line and create a new line of the proper type.")
         result = super(ruta_critica_avance, self).write(values)
         return result
@@ -605,7 +576,7 @@ class informe_avance(models.Model):
         ('satisfactorio', "2- Satisfactorio"),
         ('regular', "3- Regular"),
         ('deficiente', "4- Deficiente"),
-        ('mal', "5- Mal")], default='bien',string="Situación del contrato")
+        ('mal', "5- Mal")], default='bien', string="Situación del contrato")
 
     com_avance_obra = fields.Text()
 
@@ -626,7 +597,6 @@ class informe_avance(models.Model):
         r_porcentaje_est = 0
         r_avance_fisico = 0
         for i in self.ruta_critica:
-
             porcentaje_est = i.porcentaje_est
             r_porcentaje_est += porcentaje_est
 
