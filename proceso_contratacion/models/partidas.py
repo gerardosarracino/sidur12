@@ -110,6 +110,7 @@ class Partidas(models.Model):
     # CONCEPTOS CONTRATADOS DE PARTIDAS
     conceptos_partidas = fields.Many2many('proceso.conceptos_part', required=True)
     conceptos_modificados = fields.Many2many('proceso.conceptos_modificados', required=True)
+    justificacion = fields.Text('Justificación de Modificación')
 
     name = fields.Many2one('proceso.elaboracion_contrato', readonly=True)
     total = fields.Float(string="Monto Total Contratado:", readonly=True, compute="totalContrato", required=True)
@@ -258,7 +259,7 @@ class Partidas(models.Model):
     def programas(self):
         view = self.env.ref('ejecucion_obra.vista_form_programa')
         count = self.env['programa.programa_obra'].search_count([('obra.id', '=', self.id)])
-        print(count)
+        search = self.env['programa.programa_obra'].search([('obra.id', '=', self.id)])
         if count == 1:
             return {
                 'type': 'ir.actions.act_window',
@@ -267,7 +268,7 @@ class Partidas(models.Model):
                 'view_mode': 'form',
                 'target': 'new',
                 'view_id': view.id,
-                'res_id': self.obra.id,
+                'res_id': search.id,
             }
         else:
             return {

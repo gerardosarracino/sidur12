@@ -69,6 +69,24 @@ class Estimaciones(models.Model):
 
     idobra = fields.Char(string="Numero de Estimacion:")
 
+    # DATOS DEL CONTRATO PARA REPORTE
+    fecha_contrato = fields.Date(string="", related="obra.fecha", )
+    monto_contrato = fields.Float(string="", related="obra.total_partida", )
+    anticipo_contrato = fields.Integer(string="", related="obra.total_anticipo", )
+    fechainicio_contrato = fields.Date(string="", related="obra.fechainicio", )
+    fechatermino_contrato = fields.Date(string="", related="obra.fechatermino", )
+    municipio_contrato = fields.Many2one(string="", related="obra.municipio", )
+    tipobra_contrato = fields.Many2one(string="", related="obra.obra.name.tipoObra", )
+    contratista_contrato = fields.Many2one(string="", related="obra.contratista", )
+    subdirector_contrato = fields.Char(string="", compute="BuscarDirector")
+
+    # METODO BUSCAR DIRECTOR DE OBRAS CONFIGURACION
+    @api.one
+    def BuscarDirector(self):
+        b_director = self.env['ir.config_parameter'].sudo().get_param('firmas_logos.nombre_subdirector_obra')
+        print(b_director)
+        self.subdirector_contrato = b_director
+
     @api.one
     def estid(self):
         numero = 100000 + self.id

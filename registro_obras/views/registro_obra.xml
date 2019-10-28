@@ -252,7 +252,7 @@
             <div class="oe_title">
                             <label for="name" class="oe_edit_only"/>
                             <h1>
-                                <field name="name" placeholder="Número de obra" required="True"/>
+                                <field name="name" placeholder="Número de obra"/>
                             </h1>
                         </div>
 
@@ -305,7 +305,7 @@
               </map>
             </group>
 
-          <group>
+            <!-- <group>
 
             <map library="drawing" string="Shape" class="o_res_partner_map" lat="partner_latitude"
                  lng="partner_longitude" colors="blue:company_type=='person';green:company_type=='company';">
@@ -320,7 +320,7 @@
 
 
             </map>
-            </group>
+            </group> -->
 
             <group string="Impacto de la obra" colspan="2" col="4">
               <field name="beneficiados"/>

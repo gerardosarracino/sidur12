@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report
+            id="estimacion_report_test"
+            model="control.estimaciones"
+            string="Control de Estimaciones"
+            report_type="qweb-pdf"
+            paperformat="paperformat_euro_invoice_test"
+            name="report_invoice_test.report_estimaciones"
+        />
+    </data>
+</odoo>

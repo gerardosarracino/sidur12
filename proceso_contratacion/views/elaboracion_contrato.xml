@@ -417,15 +417,18 @@
 
 
                     <page string="Modificaciones de Conceptos" attrs="{'invisible':[('conceptos_partidas', '=' , [])]}">
-
                         <group colspan="1" col="4">
                         <button string="Crear Modificacion de Conceptos" type="object" name="conceptos_modifi"
-                                class="oe_stat_button" icon="fa-refresh" attrs="{'invisible':[('conceptos_modificados', '!=' , [])]}"/>
+                                class="oe_stat_button oe_edit_only" icon="fa-refresh" attrs="{'invisible':[('conceptos_modificados', '!=' , [])]}"/>
 
                         <button string="Limpiar" type="object" name="limpiar_conceptos_modifi"
-                                class="oe_stat_button" icon="fa-trash-o" attrs="{'invisible':[('conceptos_modificados', '=' , [])]}"/>
+                                class="oe_stat_button oe_edit_only" icon="fa-trash-o" attrs="{'invisible':[('conceptos_modificados', '=' , [])]}"/>
                             <p></p>
                             <p></p>
+                        </group>
+
+                        <group>
+                        <field name="justificacion"/>
                         </group>
 
                         <field name="conceptos_modificados" widget="section_and_note_one2many" string="# Concepto de partidas">
@@ -435,7 +438,6 @@
                                     <create string="Agregar Nivel" context="{'default_name': '-'}"/>
                                 </control>
                                 <field name="fecha_modificacion"/>
-                                <field name="justificacion"/>
                                 <field name="name" widget="section_and_note_Text" string="Sección"/>
                                 <field name="sequence" type="handle" invisible="1"/>
                                 <field name="display_type" invisible="1" />
