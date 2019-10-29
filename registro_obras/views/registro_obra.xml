@@ -275,6 +275,19 @@
               <field name="tipoproyecto"/>
               <field name="tipoobraetapa" string="Tipo de obra etapa"/>
             </group>
+
+            <group string="Impacto de la obra" colspan="2" col="4">
+              <field name="beneficiados"/>
+              <field name="metaFisicaProyecto"/>
+              <field name="metaProyectoUnidad"/>
+              <field name="metaEjercicio"/>
+              <field name="metaEjercicioUnidad"/>
+            </group>
+            <group>
+              <field name="justificacionTecnica"/>
+              <field name="justificacionSocial"/>
+            </group>
+
             <field name="ubicacion" string="Ubicación" invisible="1"/>
               <field name="localidad" string="Localidad" invisible="1"/>
             <field name="estado" string="Estado" invisible="1"/>
@@ -305,12 +318,12 @@
               </map>
             </group>
 
-            <!-- <group>
+            <group>
 
             <map library="drawing" string="Shape" class="o_res_partner_map" lat="partner_latitude"
                  lng="partner_longitude" colors="blue:company_type=='person';green:company_type=='company';">
               <group colspan="2" col="4">
-                <field name="shape_name" class="oe_inline"/>
+                <field name="shape_name" class="oe_inline" invisible="1"/>
                 <field name="shape_type" invisible="1"/>
                 <field name="shape_radius" invisible="1"/>
                 <field name="shape_area" invisible="1"/>
@@ -320,18 +333,6 @@
 
 
             </map>
-            </group> -->
-
-            <group string="Impacto de la obra" colspan="2" col="4">
-              <field name="beneficiados"/>
-              <field name="metaFisicaProyecto"/>
-              <field name="metaProyectoUnidad"/>
-              <field name="metaEjercicio"/>
-              <field name="metaEjercicioUnidad"/>
-            </group>
-            <group>
-              <field name="justificacionTecnica"/>
-              <field name="justificacionSocial"/>
             </group>
 
           </sheet>

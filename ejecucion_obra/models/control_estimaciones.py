@@ -1,4 +1,4 @@
-from odoo import models, fields, api, exceptions
+from odoo import models, fields, api
 
 
 class Estimaciones(models.Model):
@@ -10,7 +10,7 @@ class Estimaciones(models.Model):
     estimacion_id = fields.Char()
 
     obra = fields.Many2one('partidas.partidas', string='Obra:', readonly=True)
-    obra_id = fields.Char(compute="ConvenioEnlace", store=True)
+    obra_id = fields.Char(compute="obra_enlace", store=True)
 
     # ver si utilizar
     p_id = fields.Integer("ID PARTIDA", related="obra.p_id")
@@ -228,7 +228,7 @@ class Estimaciones(models.Model):
         self.estimacion_id = self.id
 
     @api.one
-    def ConvenioEnlace(self):
+    def obra_enlace(self):
         self.obra_id = self.obra
 
 

@@ -26,9 +26,10 @@
     # always loaded
     'data': [
         'security/ir.model.access.csv',
-        'views/views.xml',
+        'views/licitacion.xml',
         'views/adjudicacion_directa.xml',
         'views/elaboracion_contrato.xml',
+        'views/catalogo_conceptos.xml',
         'views/convenios.xml',
         'views/finiquitar_contrato_anticipadamente.xml',
         'views/anticipo.xml',

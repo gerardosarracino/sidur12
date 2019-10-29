@@ -312,7 +312,7 @@
                                     <field name="contratista" readonly="1"/>
                                     <field name="anticipada" invisible="1" readonly="1"/>
                                 </group>
-                                <group colspan="1" col="4">
+                                <group colspan="2" col="4">
                                     <field name="fecha_anticipos" readonly="1" />
                                     <field name="porcentaje_anticipo" class="oe_inline" readonly="1"/>
                                     <field name="total_anticipo_porcentaje" readonly="1"/>
@@ -326,7 +326,7 @@
                                     <field name="total_anticipo" readonly="1"/>
                                 </group>
 
-                                <group colspan="1" col="4">
+                                <group colspan="2" col="4">
                                     <field name="numero_fianza" class="oe_inline" readonly="1"/>
                                     <field name="afianzadora" readonly="1"/>
                                     <field name="fecha_fianza" readonly="1"/>
@@ -423,7 +423,7 @@
     </record>
 
 
-<!-- ACCIONES VENTANA LICITACIONES -->
+<!-- ACCIONES VENTANA ESTIMACIONES -->
     <record model="ir.actions.act_window" id="ejecucion_obra_control_estimacion_action_window">
       <field name="name">Control de Estimaciones</field>
       <field name="type">ir.actions.act_window</field>
