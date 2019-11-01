@@ -1,6 +1,51 @@
 <odoo>
     <data>
-        <!-- VERSION DE PROGRAMA FORM -->
+        <!-- VERSION NUEVA FORM -->
+    <record id="vista_form_programa_version_nuevo" model="ir.ui.view">
+        <field name="name">Version de Programa</field>
+        <field name="model">programa.programa_version</field>
+        <field name="arch" type="xml">
+            <form string="Versión del Programa">
+                <sheet>
+                    <group colspan="1" col="4">
+                        <field name="programa" readonly="1"/>
+                        <field name="fecha" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="tipo" widget="selection" class="oe_inline"/>
+                        <field name="comentario" string="Comentario:"/>
+                    </group>
+
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+        <!-- VERSION NUEVA TREE -->
+        <record id="obra_programa_tree_version_nuevo" model="ir.ui.view">
+        <field name="name">Version de Programa Tree</field>
+        <field name="model">programa.programa_version</field>
+        <field name="arch" type="xml">
+            <tree string="Versiones de Programa">
+              <field name="programa"/>
+              <field name="tipo"/>
+              <field name="fecha"/>
+              <field name="comentario"/>
+            </tree>
+        </field>
+    </record>
+        <!--ACTION NUEVO -->
+    <record model="ir.actions.act_window" id="programa_action_nuevo">
+      <field name="name">Programa Version</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">programa.programa_version</field>
+      <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('obra_programa_tree_version_nuevo')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('vista_form_programa_version_nuevo')})]"/>
+    </record>
+
+
+        <!-- VERSION DE PROGRAMA FORM viejooooo-->
       <record id="vista_form_programa_version" model="ir.ui.view">
         <field name="name">Versiones de Programa</field>
         <field name="model">programa.programa_obra_version</field>
@@ -37,6 +82,8 @@
             </form>
         </field>
     </record>
+
+
     <!-- VERSION DE PROGRAMA VENTANA EMERGENTE -->
     <record id="vista_form_programa" model="ir.ui.view">
         <field name="name">Programa</field>
@@ -66,7 +113,12 @@
                                  <field name="monto" sum="Total:"/>
                              </tree>
                            </field>
-                       </group>
+                    </group>
+                    <group>
+                        <field name="tipo" widget="selection" class="oe_inline"/>
+                        <field name="razon" string="Modificación" attrs="{'invisible': [('programa_contratos', '=', [])]}"/>
+                    </group>
+
                 </sheet>
             </form>
         </field>
@@ -158,9 +210,9 @@
                              string="Programa" context="{'default_obra': active_id}"
                              icon="fa-clock-o"/>
 
-                        <button name="%(programa_action)d" class="oe_highlight" type="action"
+                        <!-- button name="%(programa_action)d" class="oe_highlight" type="action"
                              string="Versiones de Programa"
-                             icon="fa-hdd-o" context="{'search_default_obra': active_id,'default_obra': active_id}"/>
+                             icon="fa-hdd-o" context="{'search_default_obra': active_id,'default_obra': active_id}"/ -->
                      </div>
 
                   <group string="Nombre de la Obra:">
@@ -214,6 +266,9 @@
 
      <menuitem name="Programa de obra" id="programa_obra" parent="ejecucion_obra.menu_root"
               action="programa_record" sequence="0"/>
+
+        <menuitem name="Historial de Cambios del Programa" id="programa_obra_version" parent="ejecucion_obra.menu_root"
+              action="programa_action_nuevo" sequence="1"/>
 
     </data>
 </odoo>

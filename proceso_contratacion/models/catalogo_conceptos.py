@@ -14,9 +14,6 @@ class conceptos_partidas(models.Model):
     # prueba
     obra = fields.Many2one('partidas.partidas', string='Obra:', )
 
-    # PENDIENTE
-    idgrupo = fields.Many2one('partidas.partidas')
-
     categoria = fields.Many2one('proceso.categoria')
     concepto = fields.Many2one('proceso.concepto')
     grupo = fields.Many2one('proceso.grupo')
@@ -69,39 +66,14 @@ class conceptos_partidas(models.Model):
             })
 
 
-class conceptosModificados(models.Model):
+class ConceptosModificados(models.Model):
     _name = "proceso.conceptos_modificados"
 
-    name = fields.Char()
-    sequence = fields.Integer()
-    display_type = fields.Selection([
-        ('line_section', "Section"),
-        ('line_note', "Note")], default=False, help="")
-    # prueba
     obra = fields.Many2one('partidas.partidas', string='Obra:', )
 
-    # PENDIENTE
-    idgrupo = fields.Many2one('partidas.partidas')
-
-    categoria = fields.Many2one('proceso.categoria')
-    concepto = fields.Many2one('proceso.concepto')
-    grupo = fields.Many2one('proceso.grupo')
-    medida = fields.Many2one('proceso.medida')
-    precio_unitario = fields.Float()
-    cantidad = fields.Integer()
-
-    # MODIFICACIONES
-    fecha_modificacion = fields.Date('Fecha de la Modificación')
-
-    importe = fields.Float(compute="sumaCantidad")
-
-    @api.multi
-    @api.depends('precio_unitario', 'cantidad')
-    def sumaCantidad(self):
-        for rec in self:
-            rec.update({
-                'importe': rec.cantidad * rec.precio_unitario
-            })
+    justificacion = fields.Text('Justificación de Modificación')
+    select_tipo = [('1', 'Monto'), ('2', 'Plazo'), ('3', 'Ambos')]
+    tipo = fields.Selection(select_tipo, string="Tipo:")
 
 
 class categoria(models.Model):

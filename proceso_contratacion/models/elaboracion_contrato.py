@@ -67,6 +67,29 @@ class ElaboracionContratos(models.Model):
     # IMPORTE DEL CONTRATO LICITACION Y ADJUDICACION
     impcontra = fields.Float(string="Importe:", compute="importeT")
 
+    @api.model
+    def create(self, values):
+        # if len(values['adjudicacion']) > 0:
+        b_adj = self.env['proceso.adjudicacion_directa'].browse(values['adjudicacion'])
+        b_adj.write({'contratado': 1})
+        return super(ElaboracionContratos, self).create(values)
+
+    '''@api.multi
+    def write(self, values):
+        b_adj = self.env['proceso.adjudicacion_directa'].browse(self.adjudicacion)
+        # b_adj.write({'contratado': 1})
+        print(values)
+        print('---')
+        print(self)
+        # values['programa_id'] = str(num)
+        return super(ElaboracionContratos, self).write(values)'''
+
+    '''@api.multi
+    def unlink(self):
+        b_adj = self.env['proceso.adjudicacion_directa'].browse(self.adjudicacion)
+        b_adj.write({'contratado': 0})
+        return super(ElaboracionContratos, self).unlink()'''
+
     # METODO PARA CALCULAR EL IMPORTE DEL CONTRATO
     @api.one
     @api.depends('contrato_partida_adjudicacion')

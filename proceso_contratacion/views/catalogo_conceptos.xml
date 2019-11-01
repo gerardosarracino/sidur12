@@ -1,5 +1,45 @@
 <odoo>
   <data>
+
+      <record id="catalogo_conceptos_cambios_form" model="ir.ui.view">
+          <field name="name">Historial de Cambios de Catalogo</field>
+          <field name="model">proceso.conceptos_modificados</field>
+          <field name="arch" type="xml">
+              <form string="">
+                  <sheet>
+                      <group>
+                          <field name="obra" readonly="1"/>
+                          <field name="tipo" readonly="1"/>
+                          <field name="justificacion" readonly="1"/>
+                      </group>
+                  </sheet>
+              </form>
+          </field>
+      </record>
+
+      <record id="catalogo_conceptos_cambios_tree" model="ir.ui.view">
+          <field name="name">Historial de Cambios de Catalogo</field>
+          <field name="model">proceso.conceptos_modificados</field>
+          <field name="arch" type="xml">
+              <tree string="">
+                  <field name="obra"/>
+                  <field name="tipo"/>
+                  <field name="justificacion"/>
+              </tree>
+          </field>
+      </record>
+
+      <!--ACTION NUEVO -->
+    <record model="ir.actions.act_window" id="catalogo_conceptos_cambios_action">
+      <field name="name">Historial de Cambios de Catalogo</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">proceso.conceptos_modificados</field>
+      <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('catalogo_conceptos_cambios_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('catalogo_conceptos_cambios_form')})]"/>
+    </record>
+
+
     <!-- FORMULARIOS Y TREE DE LAS PARTIDAS CON SUS CATALOGOS -->
       <record id="conceptos_contratados_partidas_form" model="ir.ui.view">
           <field name="name">conceptos contratados form</field>
@@ -63,8 +103,7 @@
                                 <field name="sequence" type="handle" invisible="1"/>
                                 <field name="display_type" invisible="1" />
                                 <field name="categoria" string="Clave"/>
-                                <field name="idgrupo" context="{'default_idgrupo': active_id}"/>
-                                <field name="grupo" domain="[('grupo','in',id)]"/>
+                                <field name="grupo" domain="[('grupo','=',parent.id)]"/>
                                 <field name="concepto"/>
                                 <field name="medida"/>
                                 <field name="cantidad"/>
@@ -79,12 +118,17 @@
                                                           top: -50px;
                                                   white-space: nowrap;"> TOTAL:  </h6>
                                 </group>
+                        <group>
+                          <field name="tipo" string="Tipo" class="oe_inline"/>
+                          <field name="justificacion" string="Justificación"/>
+                        </group>
+
                     </group>
 
                     </page>
 
 
-                    <page string="Modificaciones de Conceptos" attrs="{'invisible':[('conceptos_partidas', '=' , [])]}">
+                    <!-- page string="Modificaciones de Conceptos" attrs="{'invisible':[('conceptos_partidas', '=' , [])]}">
                         <group colspan="1" col="4">
                         <button string="Crear Modificacion de Conceptos" type="object" name="conceptos_modifi"
                                 class="oe_stat_button oe_edit_only" icon="fa-refresh" attrs="{'invisible':[('conceptos_modificados', '!=' , [])]}"/>
@@ -125,7 +169,7 @@
                                                           top: -50px;
                                                   white-space: nowrap;"> TOTAL:  </h6>
                         </group>
-                    </page>
+                    </page -->
 
                   </notebook>
                   </sheet>
@@ -178,5 +222,8 @@
     <!-- MENUS CONCEPTOS CONTRATADOS-->
       <menuitem name="Conceptos Contratados" id="proc_contratacion_conceptos_contratados"
                 parent="proc_contratacion_menu_root" action="proc_contratacion_concepto_contratados_action_window" sequence="6"/>
+
+      <menuitem name="Historial de Cambios de Catalogo" id="catalogo_cambios_menu"
+                parent="proc_contratacion_menu_root" action="catalogo_conceptos_cambios_action" sequence="7"/>
 </data>
 </odoo>

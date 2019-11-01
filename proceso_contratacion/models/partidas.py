@@ -111,6 +111,8 @@ class Partidas(models.Model):
     conceptos_partidas = fields.Many2many('proceso.conceptos_part', required=True)
     conceptos_modificados = fields.Many2many('proceso.conceptos_modificados', required=True)
     justificacion = fields.Text('Justificación de Modificación')
+    select_tipo = [('1', 'Monto'), ('2', 'Plazo'), ('3', 'Ambos')]
+    tipo = fields.Selection(select_tipo, string="Tipo:")
 
     name = fields.Many2one('proceso.elaboracion_contrato', readonly=True)
     total = fields.Float(string="Monto Total Contratado:", readonly=True, compute="totalContrato", required=True)
@@ -235,6 +237,16 @@ class Partidas(models.Model):
     b_iva = fields.Float(string="IVA DESDE CONFIGURACION", compute="BuscarIva")
 
     @api.multi
+    def write(self, values):
+        version = self.env['proceso.conceptos_modificados']
+        id_partida = self.id
+        datos = {'justificacion': values['justificacion'], 'obra': id_partida, 'tipo': values['tipo']}
+        nueva_version = version.create(datos)
+        values['tipo'] = ""
+        values['justificacion'] = ""
+        return super(Partidas, self).write(values)
+
+    '''@api.multi
     def conceptos_modifi(self):
         b_concepto = self.env['partidas.partidas'].search([('conceptos_partidas', '=', self.conceptos_partidas[0].id)])
         for conceptos in b_concepto.conceptos_partidas:
@@ -246,13 +258,13 @@ class Partidas(models.Model):
                                                   'medida': conceptos.medida,
                                                   'precio_unitario': conceptos.precio_unitario,
                                                   'cantidad': conceptos.cantidad}]]
-            })
+            })'''
 
-    @api.one
+    '''@api.one
     def limpiar_conceptos_modifi(self):
         self.update({
             'conceptos_modificados': [[5]]
-        })
+        })'''
 
     # METODO PARA INGRESAR A RECURSOS BOTON
     @api.multi
