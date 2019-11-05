@@ -24,8 +24,10 @@
     # always loaded
     'data': [
         'data/paperformat.xml',
-        'report/reports.xml',
-        'report/account_invoice_report.xml'
+        'report/control_estimaciones_report.xml',
+        'report/reporte_control_est.xml',
+        'report/relacion_conceptos_report.xml',
+        'report/reporte_relacion_conceptos.xml'
     ],
     # only loaded in demonstration mode
    'installable': True,

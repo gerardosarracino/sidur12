@@ -21,14 +21,12 @@
                                             
                                             <create string="Agregar actividad"/>
                                         </control>
-                                            <field name="sequence" type="handle" invisible="1" />
-                                            <field name="display_type" invisible="1"/>
-                                            <field name="name" widget="section_and_note_text"  force_save="1"/>
-
+                                            <field name="name" widget="section_and_note_text" force_save="1"/>
+                                            <field name="sequence" type="handle" readonly="1" force_save="1" invisible="1"/>
+                                            <field name="display_type" readonly="1" force_save="1" invisible="1"/>
 
                                             <field name="porcentaje_est" />
                                             <field name="avance_fisico" invisible="1" />
-
                                      </tree>
                                 </field>
 
@@ -119,8 +117,8 @@
                                <field name="ruta_critica" string="# Concepto de partidas" widget="section_and_note_one2many" create="false">
                                     <tree editable="bottom" delete="false" create="false">
                                             <field name="name" widget="section_and_note_text" readonly="1" force_save="1" string="ACTIVIDADES PRINCIPALES"/>
-                                            <field name="sequence" type="handle" invisible="1"/>
-                                            <field name="display_type" invisible="1"/>
+                                            <field name="sequence" type="handle" readonly="1" force_save="1" invisible="1"/>
+                                            <field name="display_type" readonly="1" force_save="1" invisible="1"/>
                                             <field name="porcentaje_est" sum="PORCENTAJE PROGRAMADO" readonly="1" force_save="1"/>
                                             <field name="avance_fisico"/>
                                             <field name="avance_fisico_ponderado" sum="% AVANCE TOTAL" readonly="1" force_save="1"/>

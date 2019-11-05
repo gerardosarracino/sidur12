@@ -9,21 +9,22 @@ class PartidasLicitacion(models.Model):
     _name = 'partidas.licitacion'
 
     obra = fields.Many2one('registro.programarobra', required=True)
-    programaInversion = fields.Many2one('generales.programas_inversion', required=True)
+    programaInversion = fields.Many2one('generales.programas_inversion')
     monto_partida = fields.Float(string="Monto", required=True)
-    iva_partida = fields.Float(string="Iva", compute="iva", required=True)
-    total_partida = fields.Float(string="Total", compute="sumaPartidas", required=True)
+    iva_partida = fields.Float(string="Iva", compute="iva")
+    total_partida = fields.Float(string="Total", compute="sumaPartidas")
 
-    b_iva = fields.Float(string="IVA DESDE CONFIGURACION")
+    b_iva = fields.Float(string="IVA DESDE CONFIGURACION", compute="BuscarIva")
 
     # METODO BUSCAR IVA EN CONFIGURACION
-    @api.multi
-    @api.onchange('monto_partida')
+    @api.one
+    @api.depends('monto_partida')
     def BuscarIva(self):
         iva = self.env['ir.config_parameter'].sudo().get_param('generales.iva')
         self.b_iva = iva
 
     # METODO CALCULAR TOTAL PARTIDA
+    @api.one
     @api.depends('monto_partida')
     def sumaPartidas(self):
         for rec in self:
@@ -127,7 +128,7 @@ class Partidas(models.Model):
     importe = fields.Float(string="Importe Contratado")
     anticipo_a = fields.Integer(string="Anticipo", compute="anticipo_inicio")
     iva_anticipo = fields.Float(string="I.V.A", compute="anticipo_iva")
-    total_anticipo = fields.Integer(string="Total Anticipo", compute="anticipo_total")
+    total_anticipo = fields.Float(string="Total Anticipo", compute="anticipo_total")
     numero_fianza = fields.Integer(string="# Fianza", )
     afianzadora = fields.Char(string="Afianzadora", )
     fecha_fianza = fields.Date(string="Fecha Fianza", )
@@ -191,7 +192,7 @@ class Partidas(models.Model):
     # VISTA DE INFORMACION DE LA PARTIDA
     ejercicio = fields.Many2one("registro.ejercicio", string="Ejercicio", related="obra.name.ejercicio")
     municipio = fields.Many2one('generales.municipios', 'Municipio', related="obra.name.municipio")
-    localidad = fields.Text(string="Localidad", readonly="True", related="obra.name.localidad")
+    localidad = fields.Char(string="Localidad", readonly="True", related="obra.name.city")
     fecha = fields.Date(string="Fecha", related="numero_contrato.fecha")
     fechainicio = fields.Date(string="Fecha de Inicio", related="numero_contrato.fechainicio")
     fechatermino = fields.Date(string="Fecha de Termino", related="numero_contrato.fechatermino")
@@ -238,33 +239,21 @@ class Partidas(models.Model):
 
     @api.multi
     def write(self, values):
-        version = self.env['proceso.conceptos_modificados']
-        id_partida = self.id
-        datos = {'justificacion': values['justificacion'], 'obra': id_partida, 'tipo': values['tipo']}
-        nueva_version = version.create(datos)
-        values['tipo'] = ""
-        values['justificacion'] = ""
-        return super(Partidas, self).write(values)
-
-    '''@api.multi
-    def conceptos_modifi(self):
-        b_concepto = self.env['partidas.partidas'].search([('conceptos_partidas', '=', self.conceptos_partidas[0].id)])
-        for conceptos in b_concepto.conceptos_partidas:
-            self.update({
-                'conceptos_modificados': [[0, 0, {'name': conceptos.name, 'sequence': conceptos.sequence,
-                                                  'display_type': conceptos.display_type,
-                                                  'categoria': conceptos.categoria, 'concepto': conceptos.concepto,
-                                                  'grupo': conceptos.grupo,
-                                                  'medida': conceptos.medida,
-                                                  'precio_unitario': conceptos.precio_unitario,
-                                                  'cantidad': conceptos.cantidad}]]
-            })'''
-
-    '''@api.one
-    def limpiar_conceptos_modifi(self):
-        self.update({
-            'conceptos_modificados': [[5]]
-        })'''
+        if self.fecha_anticipos and self.fecha_fianza and self.afianzadora and self.numero_fianza and \
+                self.anticipo_material:
+            return super(Partidas, self).write(values)
+        elif self.ruta_critica is not False:
+            return super(Partidas, self).write(values)
+        elif self.conceptos_partidas:
+            version = self.env['proceso.conceptos_modificados']
+            id_partida = self.id
+            datos = {'justificacion': values['justificacion'], 'obra': id_partida, 'tipo': values['tipo']}
+            nueva_version = version.create(datos)
+            values['tipo'] = ""
+            values['justificacion'] = ""
+            return super(Partidas, self).write(values)
+        else:
+            return super(Partidas, self).write(values)
 
     # METODO PARA INGRESAR A RECURSOS BOTON
     @api.multi
@@ -291,6 +280,21 @@ class Partidas(models.Model):
                 'target': 'new',
                 'view_id': view.id,
             }
+
+    @api.one
+    def FechaAnticipo(self):
+        search = self.env['anticipo.anticipo'].search([('obra.id', '=', self.id)])
+        self.fecha_anticipos = search.fecha_anticipos
+
+    @api.one
+    def PorcentajeAnticipo(self):
+        search = self.env['anticipo.anticipo'].search([('obra.id', '=', self.id)])
+        self.porcentaje_anticipo = search.porcentaje_anticipo
+
+    @api.one
+    def TotalAnticipo(self):
+        search = self.env['anticipo.anticipo'].search([('obra.id', '=', self.id)])
+        self.total_anticipo = search.total_anticipo
 
     # METODO PARA ABRIR ANTICIPOS CON BOTON
     @api.multi
@@ -498,4 +502,5 @@ class ProgramaContrato(models.Model):
                                      'por favor seleccione una fecha posterior')
         else:
             return False
+
 

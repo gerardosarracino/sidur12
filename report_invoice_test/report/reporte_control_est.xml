@@ -6,8 +6,10 @@
             model="control.estimaciones"
             string="Control de Estimaciones"
             report_type="qweb-pdf"
-            paperformat="paperformat_euro_invoice_test"
+            paperformat="paperformat_estimacion"
             name="report_invoice_test.report_estimaciones"
         />
+
+
     </data>
 </odoo>

@@ -45,45 +45,6 @@
     </record>
 
 
-        <!-- VERSION DE PROGRAMA FORM viejooooo-->
-      <record id="vista_form_programa_version" model="ir.ui.view">
-        <field name="name">Versiones de Programa</field>
-        <field name="model">programa.programa_obra_version</field>
-        <field name="arch" type="xml">
-            <form>
-                <sheet>
-                    <field name="auxiliar" invisible="1" />
-                    <field name="programa_ids" readonly="1" force_save="1" invisible="1"/>
-                    <group colspan="1" col="4">
-                       <field name="programa_id" readonly="1"/>
-                       <field name="obra" string="Partida:"/>
-                    </group>
-                   <group>
-                       <field name="fecha_version" class="oe_inline"/>
-                       <field name="razon"/>
-                   </group>
-                    <hr/>
-                   <group>
-                       <group colspan="1" col="4">
-                          <field name="fecha_inicio_programa" readonly="1"/>
-                          <field name="fecha_termino_programa" readonly="1"/>
-                          <field name="total_partida" readonly="True" widget="monetary"/>
-                          <field name="restante_programa" readonly="1"/>
-                       </group>
-                           <field name="programa_contrato_version">
-                             <tree create="false" delete="false">
-                                 <field name="fecha_inicio"/>
-                                 <field name="fecha_termino"/>
-                                 <field name="monto" sum="Total:"/>
-                             </tree>
-                           </field>
-                   </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
-
-
     <!-- VERSION DE PROGRAMA VENTANA EMERGENTE -->
     <record id="vista_form_programa" model="ir.ui.view">
         <field name="name">Programa</field>
@@ -95,6 +56,7 @@
                 <sheet>
                     <group>
                        <field name="obra" string="Partida:"/>
+                       <field name="obraid" string="Partida:"/>
                    </group>
                    <group>
                        <group colspan="1" col="4">
@@ -114,8 +76,8 @@
                              </tree>
                            </field>
                     </group>
-                    <group>
-                        <field name="tipo" widget="selection" class="oe_inline"/>
+                    <group class="oe_edit_only">
+                        <field name="tipo" widget="selection" class="oe_inline" attrs="{'invisible': [('programa_contratos', '=', [])]}"/>
                         <field name="razon" string="Modificación" attrs="{'invisible': [('programa_contratos', '=', [])]}"/>
                     </group>
 
@@ -126,36 +88,16 @@
         <!-- FILTRO SEARCH DE ENLACE VERSION DE PROGRAMA -->
         <record id="programa_search" model="ir.ui.view">
            <field name="name">programa search</field>
-           <field name="model">programa.programa_obra_version</field>
+           <field name="model">programa.programa_version</field>
             <field name="arch" type="xml">
             <search string="">
-              <field name="obra"/>
-              <field name="programa_id"/>
-              <field name="fecha_version"/>
-              <field name="fecha_inicio_programa"/>
-              <field name="fecha_termino_programa"/>
-              <field name="total_partida" />
-              <field name="restante_programa" />
+              <field name="tipo"/>
+              <field name="fecha"/>
+              <field name="programa"/>
+              <field name="comentario"/>
             </search>
            </field>
         </record>
-
-        <!-- VERSION DE PROGRAMA TREE -->
-    <record id="obra_programa_tree_version" model="ir.ui.view">
-        <field name="name">Versiones de Programa Tree</field>
-        <field name="model">programa.programa_obra_version</field>
-        <field name="arch" type="xml">
-            <tree string="">
-              <field name="programa_id"/>
-              <field name="fecha_version"/>
-              <field name="obra"/>
-              <field name="fecha_inicio_programa"/>
-              <field name="fecha_termino_programa"/>
-              <field name="total_partida" />
-              <field name="restante_programa" />
-            </tree>
-        </field>
-    </record>
 
         <!-- PROGRAMA TREE -->
     <record id="obra_programa_tree" model="ir.ui.view">
@@ -176,10 +118,10 @@
     <record model="ir.actions.act_window" id="programa_action">
       <field name="name">Programa Versiones</field>
       <field name="type">ir.actions.act_window</field>
-      <field name="res_model">programa.programa_obra_version</field>
+      <field name="res_model">programa.programa_version</field>
       <field name="view_ids" eval="[(5, 0, 0),
-            (0, 0, {'view_mode': 'tree', 'view_id': ref('obra_programa_tree_version')}),
-            (0, 0, {'view_mode': 'form', 'view_id': ref('vista_form_programa_version')})]"/>
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('obra_programa_tree_version_nuevo')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('vista_form_programa_version_nuevo')})]"/>
     </record>
 
         <!-- PARTIDAS TREE PROGRAMAS -->
@@ -207,16 +149,16 @@
             <sheet>
                     <div  class="oe_button_box oe_read_only" name="button_box">
                         <button name="programas" class="oe_highlight" type="object"
-                             string="Programa" context="{'default_obra': active_id}"
+                             string="Programa" context="{'default_obra': active_id, 'default_obraid': id}"
                              icon="fa-clock-o"/>
 
-                        <!-- button name="%(programa_action)d" class="oe_highlight" type="action"
-                             string="Versiones de Programa"
-                             icon="fa-hdd-o" context="{'search_default_obra': active_id,'default_obra': active_id}"/ -->
+                        <button name="%(programa_action)d" class="oe_highlight" type="action"
+                             string="Historial de Cambios"
+                             icon="fa-hdd-o" context="{'search_default_programa': obra, 'default_programa': obra}"/>
                      </div>
 
                   <group string="Nombre de la Obra:">
-                            <field name="obra" nolabel="1"/>
+                            <field name="obra" nolabel="1" readonly="1"/>
                         </group>
                             <hr/>
                         <group colspan="2" col="5" context="{'default_ejercicio': obra.id}">
@@ -266,9 +208,6 @@
 
      <menuitem name="Programa de obra" id="programa_obra" parent="ejecucion_obra.menu_root"
               action="programa_record" sequence="0"/>
-
-        <menuitem name="Historial de Cambios del Programa" id="programa_obra_version" parent="ejecucion_obra.menu_root"
-              action="programa_action_nuevo" sequence="1"/>
 
     </data>
 </odoo>

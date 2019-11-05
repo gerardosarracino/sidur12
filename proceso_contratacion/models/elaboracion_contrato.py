@@ -13,7 +13,7 @@ class ElaboracionContratos(models.Model):
 
     # RELATED CON LA OBRA DE LA PARTIDA PARA RELACIONARLA CON EL ANEXO TECNICO
     obra_partida = fields.Many2one(string="obra partida", related="contrato_partida_adjudicacion.obra")
-
+    obra_partida_licitacion = fields.Many2one(string="obra partida", related="contrato_partida_licitacion.obra")
     contrato_id = fields.Char(compute="nombre", store=True)
 
     # LICITACION PARTIDAS
@@ -25,45 +25,34 @@ class ElaboracionContratos(models.Model):
     contar_finiquito = fields.Integer(compute='contar', string="PRUEBA")
     # CONTAR REGISTROS DE CONVENIO
     contar_convenio = fields.Integer(compute='contar2', string="PRUEBA")
-
     fecha = fields.Date(string="Fecha", required=True, default=fields.Date.today())
 
     contrato = fields.Char(string="Contrato", required=True)
-
     name = fields.Text(string="Descripción/Meta", required=True)
 
     descripciontrabajos = fields.Text(string="Descripción trabajos:", required=True)
     unidadresponsableejecucion = fields.Many2one('proceso.unidad_responsable', string="Unidad responsable de su ejecución", required=True)
     supervisionexterna = fields.Text(string="Supervisión externa")
     supervisionexterna1 = fields.Many2one('proceso.elaboracion_contrato', string="Supervisión externa:")
-
     contratista = fields.Many2one('contratista.contratista', related="adjudicacion.contratista")
     fechainicio = fields.Date(string="Fecha de Inicio", required=True)
-
     fechatermino = fields.Date(string="Fecha de Termino", required=True)
-
     select = [('1', 'Diario'), ('2', 'Mensual'), ('3', 'Ninguno')]
     periodicidadretencion = fields.Selection(select, string="Periodicidad Retención", required=True, default="3")
     retencion = fields.Float(string="% Retención")
-
     # Fianzas
     fianzas = fields.Many2many('proceso.fianza', string="Fianzas:")
-
     # Deducciones
     deducciones = fields.Many2many("generales.deducciones", string="Deducciones")
-
     # RECURSOS ANEXOS
     anexos = fields.Many2many('proceso.anexos', string="Anexos:", compute="llenar_anexo", store=True)
     enlace_oficio = fields.Many2one('autorizacion_obra.oficios_de_autorizacion', string="Enlace a Oficio",)
-    # related="anexos.name"
     recurso_autorizado = fields.Float(string='Recursos Autorizados:', related="anexos.name.total_at")
     importe_cancelado = fields.Float(string='Recursos Cancelados:', related="anexos.total_ca")
     total_recurso_aut = fields.Float(string='Total de Recursos Autorizados:', compute="recurso_total")
-    # contratado_original = fields.Float(string="Contratado Original:	", related="contrato_partida_adjudicacion.total_partida")
     convenios_escalatorias = fields.Float(string="Convenios y Escalatorias:", readonly="True")
     total_contratado = fields.Float(string="Total Contratado:", compute="contratado_total")
     saldo = fields.Float(string="Saldo:", compute="saldo_total")
-
     # IMPORTE DEL CONTRATO LICITACION Y ADJUDICACION
     impcontra = fields.Float(string="Importe:", compute="importeT")
 
@@ -92,13 +81,20 @@ class ElaboracionContratos(models.Model):
 
     # METODO PARA CALCULAR EL IMPORTE DEL CONTRATO
     @api.one
-    @api.depends('contrato_partida_adjudicacion')
+    @api.depends('contrato_partida_adjudicacion', 'contrato_partida_licitacion')
     def importeT(self):
-        suma = 0
-        for i in self.contrato_partida_adjudicacion:
-            resultado = i.total_partida
-            suma += resultado
-            self.impcontra = suma
+        if self.adjudicacion:
+            suma = 0
+            for i in self.contrato_partida_adjudicacion:
+                resultado = i.total_partida
+                suma += resultado
+                self.impcontra = suma
+        else:
+            suma = 0
+            for i in self.contrato_partida_licitacion:
+                resultado = i.total_partida
+                suma += resultado
+                self.impcontra = suma
 
     # VALIDACIONES DE FECHAS
     @api.onchange('fechatermino')
@@ -129,13 +125,14 @@ class ElaboracionContratos(models.Model):
 
     # METODO PARA INYECTAR ANEXOS
     @api.one
-    @api.depends('adjudicacion')
+    @api.depends('adjudicacion', 'obra')
     def llenar_anexo(self):
-        adirecta_id = self.env['autorizacion_obra.anexo_tecnico'].search([('concepto', '=', self.obra_partida.id)])
+        b_anexo = self.env['autorizacion_obra.anexo_tecnico'].search([('concepto', '=', self.obra_partida.id or
+                                                                       self.obra_partida_licitacion.id)])
         self.update({
             'anexos': [[5]]
         })
-        for anexos_b in adirecta_id:
+        for anexos_b in b_anexo:
             self.update({
                 'anexos': [[0, 0, {'name': anexos_b.name, 'claveobra': anexos_b.claveobra,
                                    'clave_presupuestal': anexos_b.clave_presupuestal,
@@ -218,13 +215,18 @@ class ElaboracionContratos(models.Model):
         self.update({
             'contrato_partida_licitacion': [[5]]
         })
+        cont = 0
         for partidas in adirecta_id.programar_obra_licitacion:
+            cont = cont + 1
             self.update({
                 'contrato_partida_licitacion': [[0, 0, {'obra': partidas.obra,
                                                           'programaInversion': partidas.programaInversion,
                                                           'monto_partida': partidas.monto_partida,
                                                           'iva_partida': partidas.iva_partida,
-                                                          'total_partida': partidas.total_partida}]]
+                                                          'total_partida': partidas.total_partida,
+                                                          'nombre_partida': self.contrato,
+                                                          'p_id': cont
+                                                        }]]
             })
 
     # METODO DE CONTAR REGISTROS DE FINIQUITOS PARA ABRIR VISTA EN MODO NEW O TREE VIEW

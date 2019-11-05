@@ -10,6 +10,7 @@ class Licitacion(models.Model):
     licitacion_id = fields.Char(compute="nombre", store=True)
 
     programa_inversion_licitacion = fields.Many2one('generales.programas_inversion', 'name')
+
     programar_obra_licitacion = fields.Many2many("partidas.licitacion", string="Partida(s):", ondelete="cascade")
 
     name = fields.Text(string="Objeto De La Licitación", required=True)

@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <record id="paperformat_euro_invoice_test" model="report.paperformat">
+        <record id="paperformat_estimacion" model="report.paperformat">
             <field name="name">Invoice A4 Test</field>
             <field name="default" eval="True"/>
-            <field name="format">A4</field>
+            <field name="format">B3</field>
             <field name="page_height">0</field>
             <field name="page_width">0</field>
-            <field name="orientation">Portrait</field>
+            <field name="orientation">Landscape</field>
             <field name="margin_top">35</field>
             <field name="margin_bottom">5</field>
             <field name="margin_left">5</field>
             <field name="margin_right">5</field>
             <field name="header_line" eval="False"/>
-            <field name="header_spacing">20</field>
+            <field name="header_spacing">15</field>
             <field name="dpi">90</field>
+        </record>
+
+        <record id="report_invoice_test.estimacion_report_test" model="ir.actions.report">
+            <field name="paperformat_id" ref="report_invoice_test.paperformat_estimacion" />
         </record>
     </data>
 </odoo>

@@ -52,7 +52,7 @@
                                 <group colspan="10" col="1" string="Deducciones">
                                     <field name="deducciones" nolabel="1" force_save="1">
                                         <tree create="false" force_save="1">
-                                            <field name="name" />
+                                            <field name="name" string="Deducción"/>
                                             <field name="porcentaje" force_save="1" />
                                             <field name="valor" force_save="1" />
                                         </tree>
@@ -118,8 +118,8 @@
                                             <create string="Agregar Nivel"/>
                                         </control>
                                         <field name="name" widget="section_and_note_Text" string="Sección" readonly="1" force_save="1"/>
-                                        <field name="sequence" type="handle" readonly="1" force_save="1"/>
-                                        <field name="display_type" readonly="1" force_save="1" />
+                                        <field name="sequence" type="handle" readonly="1" force_save="1" invisible="1"/>
+                                        <field name="display_type" readonly="1" force_save="1" invisible="1"/>
                                         <field name="categoria" string="Clave" readonly="1" force_save="1"/>
                                         <field name="grupo" readonly="1" force_save="1"/>
                                         <field name="concepto" readonly="1" force_save="1"/>
@@ -128,8 +128,6 @@
 
                                         <field name="cantidad" readonly="1" force_save="1" />
                                         <field name="est_ant" />
-                                        <field name="pendiente" />
-
                                         <field name="estimacion" force_save="1"/>
 
                                         <field name="importe_ejecutado" sum="Importe Ejecutado"/>
@@ -372,7 +370,7 @@
                                     <create string="Add a note" context="{'default_display_type': 'line_note'}"/>
                                     <create string="Agregar Nivel"/>
                                 </control>
-                                <field name="name" string="" widget="section_and_note_Text" />
+                                <field name="name" string="Sección" widget="section_and_note_Text"/>
                                 <field name="sequence" type="handle" invisible="1"/>
                                 <field name="display_type" invisible="1" />
                                 <field name="categoria" />

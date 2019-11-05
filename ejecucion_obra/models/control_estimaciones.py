@@ -72,7 +72,7 @@ class Estimaciones(models.Model):
     # DATOS DEL CONTRATO PARA REPORTE
     fecha_contrato = fields.Date(string="", related="obra.fecha", )
     monto_contrato = fields.Float(string="", related="obra.total_partida", )
-    anticipo_contrato = fields.Integer(string="", related="obra.total_anticipo", )
+    anticipo_contrato = fields.Float(string="", related="obra.total_anticipo", )
     fechainicio_contrato = fields.Date(string="", related="obra.fechainicio", )
     fechatermino_contrato = fields.Date(string="", related="obra.fechatermino", )
     municipio_contrato = fields.Many2one(string="", related="obra.municipio", )

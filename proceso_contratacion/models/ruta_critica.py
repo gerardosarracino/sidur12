@@ -95,9 +95,9 @@ class informe_avance(models.Model):
 
     com_avance_obra = fields.Text()
 
-    @api.one
+    '''@api.one
     def nombre(self):
-        self.contrato_id = self.contrato
+        self.contrato_id = self.contrato'''
 
     @api.onchange('ruta_critica')
     def suma_importe(self):
