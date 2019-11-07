@@ -5,7 +5,8 @@
             <field name="name">Anticipos Tree</field>
             <field name="model">partidas.partidas</field>
             <field name="arch" type="xml">
-                <tree string="" decoration-success="anticipada==True" decoration-warning="anticipada==False">
+                <tree string="" decoration-success="anticipada==True" decoration-warning="anticipada==False"
+                create="false" delete="false">
                     <field name="anticipada" widget="boolean" string="Anticipada"/>
                     <field name="numero_contrato"/>
                     <field name="fecha_anticipos"/>

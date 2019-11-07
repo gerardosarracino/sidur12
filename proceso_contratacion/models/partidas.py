@@ -193,6 +193,7 @@ class Partidas(models.Model):
     ejercicio = fields.Many2one("registro.ejercicio", string="Ejercicio", related="obra.name.ejercicio")
     municipio = fields.Many2one('generales.municipios', 'Municipio', related="obra.name.municipio")
     localidad = fields.Char(string="Localidad", readonly="True", related="obra.name.city")
+    # localidad = fields.Text(string="Localidad", readonly="True", related="obra.name.localidad")
     fecha = fields.Date(string="Fecha", related="numero_contrato.fecha")
     fechainicio = fields.Date(string="Fecha de Inicio", related="numero_contrato.fechainicio")
     fechatermino = fields.Date(string="Fecha de Termino", related="numero_contrato.fechatermino")

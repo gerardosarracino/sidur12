@@ -6,42 +6,42 @@ from odoo.tools.safe_eval import safe_eval
 class ejercicio(models.Model):
 	_name = "registro.ejercicio"
 
-	name = fields.Integer(string="Ejercicio", required=True)
+	name = fields.Integer(string="Ejercicio", )
 	ejercicio = fields.One2many("registro.obra", "ejercicio")
 
 
 class unidadAdminSol(models.Model):
 	_name = "registro.unidadadminsol"
 
-	name = fields.Char(string="Descripción", required=True)
+	name = fields.Char(string="Descripción", )
 	unidad = fields.One2many("registro.obra", "unidadadminsol")
 
 
 class tipoProyecto(models.Model):
 	_name = "registro.tipoproyecto"
 
-	name = fields.Char(string="Tipo de proyecto", required=True)
+	name = fields.Char(string="Tipo de proyecto", )
 	tipoproyecto = fields.One2many("registro.obra", "tipoproyecto")
 
 
 class tipoObraEtapa(models.Model):
 	_name = "registro.tipoobraetapa"
 
-	name = fields.Char(string="Tipo de proyecto", required=True)
+	name = fields.Char(string="Tipo de proyecto", )
 	tipoobraetapa = fields.One2many("registro.obra", "tipoobraetapa")
 
 
 class tipoLocalidad(models.Model):
 	_name = "registro.tipolocalidad"
 
-	name = fields.Char(string="Tipo localidad", required=True)
+	name = fields.Char(string="Tipo localidad", )
 	tipolocalidad = fields.One2many("registro.obra", "tipolocalidad")
 
 
 class unidadMedida(models.Model):
 	_name = "registro.unidadm"
 
-	name = fields.Char(string="Unidad medida", required=True)
+	name = fields.Char(string="Unidad medida", )
 	unidadm = fields.One2many("registro.obra", "metaProyectoUnidad")
 	unidadm1 = fields.One2many("registro.obra", "metaEjercicioUnidad")
 
@@ -50,7 +50,7 @@ class registro_obra(models.Model):
 	_name = "registro.obra"
 	_inherit = 'res.partner'
 
-	shape_name = fields.Char(string='Name')
+	shape_name = fields.Char(string='Shape Name')
 	shape_area = fields.Float(string='Area')
 	shape_radius = fields.Float(string='Radius')
 	shape_description = fields.Text(string='Description')
@@ -63,15 +63,16 @@ class registro_obra(models.Model):
 	name = fields.Char(string="Número de obra")
 	ejercicio = fields.Many2one("registro.ejercicio", string="Ejercicio", required=True)
 	grupoObra = fields.Boolean(string="Grupo de obra")
-	origen = fields.Many2one('generales.origenes_obra', 'name', required=True)
+	origen = fields.Many2one('generales.origenes_obra', 'origen', required=True)
 	monto = fields.Float(string="Monto", required=True)
 	descripcion = fields.Text(string="Descripción", required=True)
 	problematica = fields.Text(string="Problemática", required=True)
-	unidadadminsol = fields.Many2one('registro.unidadadminsol', string="Unidad administrativa solicitante", required=True)
-	tipoObra = fields.Many2one('generales.tipo_obra', 'name', required=True)
+	unidadadminsol = fields.Many2one('registro.unidadadminsol', string="Unidad administrativa solicitante",
+									 required=True)
+	tipoObra = fields.Many2one('generales.tipo_obra', 'tipo_obra', required=True)
 	tipoproyecto = fields.Many2one("registro.tipoproyecto", string="Tipo de proyecto", required=True)
 	tipoobraetapa = fields.Many2one("registro.tipoobraetapa", string="Tipo de obra etapa", required=True)
-	estado = fields.Many2one('generales.estado', 'name')
+	estado = fields.Many2one('generales.estado', 'estado')
 	municipio = fields.Many2one('generales.municipios', 'municipio_delegacion', required=True)
 	ubicacion = fields.Text(string="Ubicación")
 	localidad = fields.Text(string="Localidad")
@@ -81,9 +82,11 @@ class registro_obra(models.Model):
 	longitud = fields.Char(string="Longitud")
 	beneficiados = fields.Char(string="Beneficiados", required=True)
 	metaFisicaProyecto = fields.Char(string="Meta física Proyecto", required=True)
-	metaProyectoUnidad = fields.Many2one("registro.unidadm" ,string="Meta Proyecto Unidad", required=True)
+	# metaProyectoUnidad = fields.Many2one("registro.unidadm" ,string="Meta Proyecto Unidad", )
+	metaProyectoUnidad = fields.Char(string="Meta Proyecto Unidad", required=True)
 	metaEjercicio = fields.Char(string="Meta ejercicio", required=True)
-	metaEjercicioUnidad = fields.Many2one("registro.unidadm", string="Meta ejercicio unidad", required=True)
+	# metaEjercicioUnidad = fields.Many2one("registro.unidadm", string="Meta ejercicio unidad", )
+	metaEjercicioUnidad = fields.Char(string="Meta ejercicio unidad", required=True)
 	justificacionTecnica = fields.Text(string="Justificación técnica", required=True)
 	justificacionSocial = fields.Text(string="Justificación social", required=True)
 	proyecto_ejecutivo = fields.Integer(compute='contar')
@@ -91,6 +94,10 @@ class registro_obra(models.Model):
 	programada = fields.Integer(compute='contar2')
 	# estate = fields.Selection([('planeada', 'Planeada'),('programada', 'Programada'),], default='planeada')
 	estado_obra = fields.Char(compute="contar_programada")
+
+	@api.multi
+	def _compute_commercial_partner(self):
+		return "hola"
 
 	@api.multi
 	def decode_shape_paths(self):
@@ -109,28 +116,6 @@ class registro_obra(models.Model):
 			self.estado_obra = 'Programada'
 		elif count == 0 and count2 > 0:
 			self.estado_obra = 'Planeada'
-		#self.estado_obra = "Count 1 "+ str(count) + " Count2 :"+ str(count2)
-
-#	@api.one
-#	def nombre(self):
-#		self.name = self.name
-#
-#	@api.multi
-#	def programada_progressbar_respuesta(self):
-#		context = {
-#		'default_name': self.id
-#		}
-#		for rec in self:
-#			rec.write({
-#				'estado_obra': 'programada'
-#				})
-#		return {
-#		'type': 'ir.actions.act_window',
-#		'name': 'Programar obra',
-#		'res_model': 'registro.programarobra',
-#		'view_mode': 'form,tree',
-#		'target': 'new',
-#		}
 
 	@api.one
 	def contar(self):
@@ -199,11 +184,11 @@ class ProgramarObra(models.Model):
 	imagen3 = fields.Binary(string="Imagen tres")
 	imagen4 = fields.Binary(string="Imagen cuatro")
 	estate2 = fields.Selection([('activo', 'Activo'),('cancelado', 'Cancelado'),], default='activo')
-	tipo = fields.Char(related="name.tipoObra.name")
+	tipo = fields.Char(related="name.tipoObra.tipo_obra")
 
 	descripcion = fields.Text(related="name.descripcion")
 
-	estado = fields.Char(related="name.estado.name")
+	estado = fields.Char(related="name.estado.estado")
 	municipio = fields.Char(related="name.municipio.municipio_delegacion")
 	ubicacion = fields.Text(related="name.ubicacion")
 	monto = fields.Float(related="name.monto")

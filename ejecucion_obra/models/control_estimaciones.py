@@ -1,4 +1,6 @@
 from odoo import models, fields, api
+from datetime import date
+from datetime import datetime
 
 
 class Estimaciones(models.Model):
@@ -78,7 +80,61 @@ class Estimaciones(models.Model):
     municipio_contrato = fields.Many2one(string="", related="obra.municipio", )
     tipobra_contrato = fields.Many2one(string="", related="obra.obra.name.tipoObra", )
     contratista_contrato = fields.Many2one(string="", related="obra.contratista", )
+    programa = fields.Many2one(string="", related="obra.programaInversion", )
     subdirector_contrato = fields.Char(string="", compute="BuscarDirector")
+    # DATOS Y CAMPOS CALCULADOS PARA REPORTE DE RETENCION
+    fecha_inicio_programa = fields.Date(compute="B_fi_programa")
+    fecha_termino_programa = fields.Date(compute="B_ff_programa")
+    dias_transcurridos = fields.Integer(compute="DiasTrans")
+    # MONTO PROGRAMADO PARA ESTA ESTIMACION
+    monto_programado_est = fields.Float(compute="MontoProgramadoESt")
+
+    # NOTA VERIFICAR M_ESTIMADO, DIAS IGUALES NO RETORNA EL VALOR COMPLETO DEL MONTO
+    @api.multi
+    def MontoProgramadoESt(self):
+        f_estimacion_inicio = self.fecha_inicio_estimacion
+        f_estimacion_termino = self.fecha_termino_estimacion
+        b_programa = self.env['programa.programa_obra'].search([('obra.id', '=', self.obra.id)])
+        acum = 0
+        m_estimado = 0
+        for i in b_programa.programa_contratos:
+            fechatermino = i.fecha_termino
+            if f_estimacion_termino > fechatermino:
+                acum = acum + i.monto
+            elif f_estimacion_termino.month == fechatermino.month:
+                # DIAS
+                date_format = "%Y-%m-%d"
+                f1 = datetime.strptime(str(f_estimacion_inicio), date_format)
+                f2 = datetime.strptime(str(f_estimacion_termino), date_format)
+                r = f2 - f1
+                dias = r.days
+                # print('dias'+str(dias))
+                ultimo_monto = i.monto
+                monto_final = (ultimo_monto / dias)
+                m_estimado = m_estimado + (ultimo_monto - monto_final)
+            else:
+                print('xd')
+        self.monto_programado_est = acum + m_estimado
+
+    @api.one
+    def DiasTrans(self):
+        fe1 = self.fecha_inicio_programa
+        fe2 = self.fecha_termino_programa
+        date_format = "%Y-%m-%d"
+        f1 = datetime.strptime(str(fe1), date_format)
+        f2 = datetime.strptime(str(fe2), date_format)
+        r = f2 - f1
+        self.dias_transcurridos = r.days
+
+    @api.one
+    def B_fi_programa(self):
+        b_fecha = self.env['programa.programa_obra'].search([('obra.id', '=', self.obra.id)])
+        self.fecha_inicio_programa = str(b_fecha.fecha_inicio_programa)
+
+    @api.one
+    def B_ff_programa(self):
+        b_fecha = self.env['programa.programa_obra'].search([('obra.id', '=', self.obra.id)])
+        self.fecha_termino_programa = str(b_fecha.fecha_termino_programa)
 
     # METODO BUSCAR DIRECTOR DE OBRAS CONFIGURACION
     @api.one

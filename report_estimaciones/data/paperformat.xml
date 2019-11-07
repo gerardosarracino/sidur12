@@ -16,9 +16,5 @@
             <field name="header_spacing">15</field>
             <field name="dpi">90</field>
         </record>
-
-        <record id="report_invoice_test.estimacion_report_test" model="ir.actions.report">
-            <field name="paperformat_id" ref="report_invoice_test.paperformat_estimacion" />
-        </record>
     </data>
 </odoo>

@@ -21,6 +21,8 @@
                                     <!-- por mientras para activar metodos -->
                                     <field name="p_id" invisible="1"/>
                                     <field name="obra"/>
+                                    <field name="monto_programado_est"/>
+
 
                                     <br/>
                                     <field name="tipo_estimacion" widget="radio"/>

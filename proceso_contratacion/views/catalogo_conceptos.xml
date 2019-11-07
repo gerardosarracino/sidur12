@@ -99,7 +99,7 @@
 
                       <button name="%(catalogo_conceptos_cambios_action)d" type="action"
                               string="Historial de Cambios" class="oe_highlight" icon="fa-pencil-square-o"
-                      context="{'search_default_obra': obra}" attrs="{'invisible': [('conceptos_partidas', '=', [])]}"/>
+                      context="{'search_default_obra': active_id}" attrs="{'invisible': [('conceptos_partidas', '=', [])]}"/>
                   </group>
 
                       <group>

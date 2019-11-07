@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "report invoice test",
+    'name': "report estimaciones",
 
     'summary': """
-       report invoice test""",
+       report estimaciones""",
 
     'description': """
-        bienvenido a report invoice test
+        bienvenido a report report_estimaciones
     """,
 
     'author': "Biblioteca inc.",
@@ -27,7 +27,9 @@
         'report/control_estimaciones_report.xml',
         'report/reporte_control_est.xml',
         'report/relacion_conceptos_report.xml',
-        'report/reporte_relacion_conceptos.xml'
+        'report/reporte_relacion_conceptos.xml',
+        'report/reporte_penas_convencionales.xml',
+        'report/penas_convencionales_report.xml'
     ],
     # only loaded in demonstration mode
    'installable': True,

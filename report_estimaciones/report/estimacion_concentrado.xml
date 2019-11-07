@@ -2,12 +2,12 @@
 <odoo>
     <data>
         <report
-            id="estimacion_report_relacion_con"
+            id="estimacion_report_concentrado"
             model="control.estimaciones"
-            string="Relación de Conceptos"
+            string="Estimación Concentrado"
             report_type="qweb-pdf"
             paperformat="paperformat_estimacion"
-            name="report_invoice_test.report_conceptos"
+            name="report_estimaciones.report_conceptos"
         />
     </data>
 </odoo>

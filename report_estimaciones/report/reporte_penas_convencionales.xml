@@ -2,14 +2,12 @@
 <odoo>
     <data>
         <report
-            id="estimacion_report_test"
+            id="estimacion_report_penas"
             model="control.estimaciones"
-            string="Control de Estimaciones"
+            string="Penas Convencionales"
             report_type="qweb-pdf"
             paperformat="paperformat_estimacion"
-            name="report_invoice_test.report_estimaciones"
+            name="report_estimaciones.report_penas_con"
         />
-
-
     </data>
 </odoo>

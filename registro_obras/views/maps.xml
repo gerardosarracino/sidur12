@@ -2,7 +2,7 @@
 <odoo>
     <data>
 
-<!-- View -->
+<!--View-->
     <record id="view_res_partner_map" model="ir.ui.view">
         <field name="name">view.res.partner.map</field>
         <field name="model">registro.obra</field>
@@ -101,7 +101,7 @@
         </field>
     </record>
 
-    <!-- Action -->
+
     <record id="action_partner_map" model="ir.actions.act_window">
         <field name="type">ir.actions.act_window</field>
         <field name="name">MAPAS</field>

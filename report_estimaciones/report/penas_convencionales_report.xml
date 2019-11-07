@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="report_penas_con" >
+            <t t-call="web.html_container">
+                 <t t-foreach="docs" t-as="o">
+                     <t t-call="web.external_layout">
+
+                         <t t-set="foo" t-value=" '     '.replace(' ',u'\xa0').encode('utf-8') "/>
+                            <t t-esc="foo"/>
+                         <t t-set="foo" t-value=" '     '.replace(' ',u'\xa0').encode('utf-8') "/>
+                            <t t-esc="foo"/>
+
+                          <div class="page text-center">
+                               <h2>GOBIERNO DEL ESTADO DE SONORA</h2>
+                               <h4>PENAS CONVENCIONALES</h4>
+                          </div>
+
+                            <t t-set="foo" t-value=" '     '.replace(' ',u'\xa0').encode('utf-8') "/>
+                            <t t-esc="foo"/>
+
+                            <hr/>
+
+                         <div>
+                             <table class="table table-sm table-bordered">
+                                 <tbody>
+                                    <tr>
+                                        <td align="center" colspan="2">
+                                            <p>CONTRATO:    <span t-field="o.obra"/></p>
+                                            <p>CONTRATISTA:    <span t-field="o.contratista_contrato"/></p>
+                                        </td>
+
+                                        <td align="center" >
+                                            <p >PROGRAMA:    <span t-field="o.programa"/></p>
+                                            <p>ESTIMACIÓN:    <span t-field="o.idobra"/></p>
+                                            <p>PERIODO DEL:    <span t-field="o.fechainicio_contrato"/></p>
+                                            <p>FORMULADA EL:    <span t-field="o.fecha_contrato"/></p>
+
+                                        </td>
+                                    </tr>
+                                </tbody>
+                             </table>
+                         </div>
+
+                         <t t-set="foo" t-value=" '     '.replace(' ',u'\xa0').encode('utf-8') "/>
+                            <t t-esc="foo"/>
+
+                         <t t-set="foo" t-value=" '     '.replace(' ',u'\xa0').encode('utf-8') "/>
+                            <t t-esc="foo"/>
+
+                          <div class="text-center">
+                             <table class="table table-sm table-bordered">
+                                 <thead>
+                                     <tr>
+                                         <th class="table-active" colspan="9">DATOS DE CONTRATACIÓN</th>
+                                     </tr>
+                                 </thead>
+                                 <tbody>
+                                     <tr>
+                                         <th class="table-active">CONTRATO</th>
+                                         <th class="table-active">DE LA FECHA</th>
+                                         <th class="table-active">IMPORTE TOTAL SIN I.V.A</th>
+                                         <th class="table-active">ANTICIPO SIN I.V.A</th>
+                                         <th class="table-active">FECHA INICIO DEL PROGRAMA</th>
+                                         <th class="table-active">FECHA TERMINO DEL PROGRAMA</th>
+                                     </tr>
+                                    <tr class="table-active">
+                                        <td><p class="m-0" t-field="o.numero_contrato"/></td>
+                                        <td><p t-field="o.fecha_contrato"/></td>
+                                        <td><p t-field="o.estimacion_facturado"/></td>
+                                        <td><p t-field="o.anticipo_contrato"/></td>
+                                        <td><p>23/03/2019</p></td>
+                                        <td><p>19/08/2019</p></td>
+                                    </tr>
+                                </tbody>
+                             </table>
+
+                              <t t-set="foo" t-value=" '     '.replace(' ',u'\xa0').encode('utf-8') "/>
+                            <t t-esc="foo"/>
+
+                              <table class="table table-sm table-bordered">
+                                 <thead>
+                                     <tr>
+                                         <th colspan="4" class="table-active">ESTIMACIÓN DENTRO DE PROGRAMA</th>
+                                     </tr>
+                                 </thead>
+                                 <tbody>
+                                     <tr>
+                                        <td>
+                                            <p>MONTO PROGRAMADO PARA ESTA ESTIMACION</p>
+                                            <p>MONTO EJECUTADO REAL PARA ESTA ESTIMACION</p>
+                                            <p>MONTO DIARIO PROGRAMADO</p>
+                                            <p>DIAS EJECUTADOS REALES CON RELACION AL MONTO DIARIO PROGRAMADO</p>
+                                            <p>DIAS DE DESFASAMIENTO</p>
+                                            <p>MONTO DE ATRASO</p>
+                                            <p>PORCENTAJE DE RETENCION</p>
+                                            <p>TOTAL DE LA RETENCION HASTA ESTA ESTIMACION</p>
+                                            <p>RETENIDO ANTERIORMENTE</p>
+                                            <p>RETENCION NETA A APLICAR EN ESTA ESTIMACION</p>
+                                            <p>DEVOLUCION A EFECTUAR EN ESTA ESTIMACION</p>
+                                        </td>
+                                        <td>
+                                            <p>8,295,014.57</p>
+                                            <p>8,197,829.43</p>
+                                            <p>8,295,014.57</p>
+                                            <p>8,197,829.43</p>
+                                            <p>	150(Días)</p>
+                                            <p>1.76(Días)</p>
+                                            <p>0.2% DIARIO</p>
+                                            <p>97,328.18</p>
+                                            <p>2,462.31</p>
+                                            <p>0.00</p>
+                                            <p>2,119.71</p>
+                                        </td>
+                                        <td>
+                                            <p>	150(Días)</p>
+                                            <p>8,197,829.43</p>
+                                            <p>/ 150(Días)</p>
+                                            <p>/ 55,300.10</p>
+                                            <p>	- 148.24(Días)</p>
+                                            <p>	* 55,300.10</p>
+                                            <p>-</p>
+                                            <p>* 0.35200%</p>
+                                            <p>-</p>
+                                            <p>-</p>
+                                            <p>-</p>
+                                        </td>
+                                        <td>
+                                            <p>	-</p>
+                                            <p>-</p>
+                                            <p>55,300.10</p>
+                                            <p>148.24(Días)</p>
+                                            <p>1.76(Días)</p>
+                                            <p>97,328.1</p>
+                                            <p>-</p>
+                                            <p>342.60</p>
+                                            <p>-</p>
+                                            <p>-</p>
+                                            <p>-</p>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                             </table>
+
+                              <table class="table table-sm table-bordered">
+                                 <thead>
+                                     <tr>
+                                         <th class="table-active">FIN DE PROGRAMA</th>
+                                         <th class="table-active">FUERA DE PROGRAMA</th>
+                                     </tr>
+                                 </thead>
+                                  <tbody>
+                                      <tr>
+                                       <td>Sanción por incumplimiento de plazo:</td>
+                                       <td>.</td>
+                                      </tr>
+                                  </tbody>
+                             </table>
+
+                              <table class="table table-sm table-bordered">
+                                  <tbody>
+                                      <tr>
+                                       <td><b>CONTRATISTA</b>
+                                       <p>ING. GERMAN MARTINEZ SAUCEDO	</p>
+                                       <p>GERMAN MARTINEZ SAUCEDO	</p>
+                                       </td>
+                                       <td>
+                                           <p>DÃMASO JESUS CRUZ BORBÃN</p>
+                                           <p>SUPERVISOR DE OBRA</p>
+                                       </td>
+                                      </tr>
+                                  </tbody>
+                             </table>
+                         </div>
+
+                     </t>
+                 </t>
+            </t>
+        </template>
+    </data>
+</odoo>
