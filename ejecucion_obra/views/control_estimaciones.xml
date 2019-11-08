@@ -7,23 +7,25 @@
         <field name="arch" type="xml">
             <form string="">
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button string="Total Conceptos Estimados" name="imprimir_accion" type="object" class="oe_highlight"
+                        icon="fa-book"/>
+                    </div>
                     <div>
                         <h1>
                             <field name="ide_estimacion" readonly="1" force_save="1"/>
-
                         </h1>
                     </div>
                     <notebook>
                         <page string="Datos Generales De La Estimación">
+
                             <group string="Datos Generales De La Estimación" colspan="1" col="2">
                                 <group>
                                     <field name="estimacion_ids" readonly="1" force_save="1" invisible="1"/>
                                     <!-- por mientras para activar metodos -->
                                     <field name="p_id" invisible="1"/>
                                     <field name="obra"/>
-                                    <field name="monto_programado_est"/>
-
-
+                                    <!-- field name="monto_programado_est"/ -->
                                     <br/>
                                     <field name="tipo_estimacion" widget="radio"/>
                                 </group>

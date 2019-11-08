@@ -89,6 +89,22 @@ class Estimaciones(models.Model):
     # MONTO PROGRAMADO PARA ESTA ESTIMACION
     monto_programado_est = fields.Float(compute="MontoProgramadoESt")
 
+    _url = fields.Char(compute="_calc_url", string="Vista de impresión")
+
+
+    @api.one
+    def _calc_url(self):
+        original_url = "/registro_obras/registro_obras/?id="
+        self._url = original_url + str(self.id)
+
+    @api.multi
+    def imprimir_accion(self):
+        return {
+            "type": "ir.actions.act_url",
+            "url": self._url,
+            "target": "new",
+        }
+
     # NOTA VERIFICAR M_ESTIMADO, DIAS IGUALES NO RETORNA EL VALOR COMPLETO DEL MONTO
     @api.multi
     def MontoProgramadoESt(self):
@@ -104,14 +120,19 @@ class Estimaciones(models.Model):
             elif f_estimacion_termino.month == fechatermino.month:
                 # DIAS
                 date_format = "%Y-%m-%d"
-                f1 = datetime.strptime(str(f_estimacion_inicio), date_format)
-                f2 = datetime.strptime(str(f_estimacion_termino), date_format)
-                r = f2 - f1
-                dias = r.days
-                # print('dias'+str(dias))
-                ultimo_monto = i.monto
-                monto_final = (ultimo_monto / dias)
-                m_estimado = m_estimado + (ultimo_monto - monto_final)
+                if f_estimacion_inicio == f_estimacion_termino:
+                    ultimo_monto = i.monto
+                    monto_final = ultimo_monto
+                    m_estimado = m_estimado + (ultimo_monto - monto_final)
+                else:
+                    f1 = datetime.strptime(str(f_estimacion_inicio), date_format)
+                    f2 = datetime.strptime(str(f_estimacion_termino), date_format)
+                    r = f2 - f1
+                    dias = r.days
+                    # print('dias'+str(dias))
+                    ultimo_monto = i.monto
+                    monto_final = (ultimo_monto / dias)
+                    m_estimado = m_estimado + (ultimo_monto - monto_final)
             else:
                 print('xd')
         self.monto_programado_est = acum + m_estimado

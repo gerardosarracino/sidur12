@@ -29,7 +29,9 @@
         'report/relacion_conceptos_report.xml',
         'report/reporte_relacion_conceptos.xml',
         'report/reporte_penas_convencionales.xml',
-        'report/penas_convencionales_report.xml'
+        'report/penas_convencionales_report.xml',
+        'report/estimacion_concentrado_report.xml',
+        'report/estimacion_concentrado.xml',
     ],
     # only loaded in demonstration mode
    'installable': True,

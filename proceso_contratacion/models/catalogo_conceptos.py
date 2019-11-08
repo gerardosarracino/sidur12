@@ -14,10 +14,10 @@ class conceptos_partidas(models.Model):
     # prueba
     obra = fields.Many2one('partidas.partidas', string='Obra:', )
 
-    categoria = fields.Many2one('proceso.categoria')
-    concepto = fields.Many2one('proceso.concepto')
-    grupo = fields.Many2one('proceso.grupo')
-    medida = fields.Many2one('proceso.medida')
+    categoria = fields.Char()
+    concepto = fields.Text()
+    grupo = fields.Char()
+    medida = fields.Char()
     precio_unitario = fields.Float()
     cantidad = fields.Integer()
 
