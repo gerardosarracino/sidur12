@@ -28,21 +28,23 @@
                              <table class="table table-sm table-bordered">
                                  <tbody>
                                     <tr>
-                                        <td colspan="2" rowspan="2" style="width:33%">
+                                        <td colspan="2" rowspan="2" style="width:50%">
                                             <p>LOCALIDAD:    <span t-field="o.municipio_contrato"/></p>
                                             <p>CONTRATO:    <span t-field="o.obra"/></p>
                                             <p>CONTRATISTA:    <span t-field="o.contratista_contrato"/></p>
                                         </td>
 
-                                        <td style="width:33%" class="noborders">
+                                        <td style="width:25%" class="noborders">
                                             <p>PROGRAMA:    <span t-field="o.programa"/></p>
 
-                                            <p>PERIODO DEL:    <span t-field="o.fechainicio_contrato"/> AL
-                                            <span t-field="o.fecha_termino_estimacion"/></p>
+                                            <p>PERIODO DEL:    <span t-field="o.fechainicio_contrato"/> </p>
 
                                         </td>
-                                        <td style="width:33%" class="noborders">
+                                        <td style="width:25%" class="noborders">
                                             <p>ESTIMACIÓN:    <span t-field="o.idobra"/></p>
+                                            <br/>
+                                            <p>AL
+                                            <span t-field="o.fecha_termino_estimacion"/></p>
                                         </td>
                                     </tr>
 
@@ -70,19 +72,43 @@
                              <table class="table table-sm table-bordered">
                                  <thead>
                                      <tr>
-                                         <th class="table-active">HOJA DE DETALLE</th>
-                                         <th class="table-active">TIPO DE TRABAJO</th>
-                                         <th class="table-active">IMPORTE</th>
-                                         <th class="table-active">OBSERVACIONES</th>
+                                         <th class="table-active" style="width:15%">HOJA DE DETALLE</th>
+                                         <th class="table-active" style="width:32%">TIPO DE TRABAJO</th>
+                                         <th class="table-active" style="width:20%">IMPORTE</th>
+                                         <th class="table-active" style="width:32%">OBSERVACIONES</th>
                                      </tr>
                                  </thead>
                                  <tbody>
-                                    <tr class="table-active">
-                                        <td><p class="m-0" t-field="o.numero_contrato"/></td>
-                                        <td><p t-field="o.fecha_contrato"/></td>
-                                        <td><p t-field="o.estimacion_facturado"/></td>
-                                        <td><p t-field="o.anticipo_contrato"/></td>
+                                     <t t-set="i" t-value="1"/>
+
+                                    <tr t-foreach="o.conceptos_partidas" t-as="l">
+                                        <td class="text-left" >
+                                            <span t-esc="i"/>
+                                        </td> <t t-set="i" t-value="i+1"/>
+
+                                        <td class="text-left" >
+                                            <span t-field="l.nivel"/>
+                                        </td>
+
+                                        <td class="text-right" >
+                                            <span t-field="l.importe_ejecutado"/>
+                                        </td>
+                                        <td class="text-left" >
+                                            <span t-field="l.descripcion"/>
+                                        </td>
                                     </tr>
+                                     <tr>
+                                         <td></td>
+                                         <td></td>
+                                         <td></td>
+                                         <td></td>
+                                     </tr>
+                                     <tr>
+                                         <td></td>
+                                         <td class="text-left">SUMA</td>
+                                         <td class="text-right"><span t-field="o.estimado"/></td>
+                                         <td></td>
+                                     </tr>
                                 </tbody>
                              </table>
                         </div>

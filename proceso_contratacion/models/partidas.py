@@ -85,6 +85,7 @@ class PartidasAdjudicacion(models.Model):
 class Partidas(models.Model):
     _name = 'partidas.partidas'
     _rec_name = "numero_contrato"
+
     # CONTRATO AL QUE PERTENECE LA PARTIDA
     numero_contrato = fields.Many2one(comodel_name="proceso.elaboracion_contrato", string="Numero de Contrato",
                                       compute="nombrePartida")

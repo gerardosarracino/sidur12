@@ -5,21 +5,32 @@ from odoo import api, fields, models
 
 class conceptos_partidas(models.Model):
     _name = "proceso.conceptos_part"
+    _rec_name = 'name'
 
-    name = fields.Char()
+
+    # clave
+    name = fields.Many2one('catalogo.categoria', 'Nivel Padre')
+    descripcion = fields.Text('Nivel', )
+    # name = fields.Char()
+
     sequence = fields.Integer()
     display_type = fields.Selection([
         ('line_section', "Section"),
         ('line_note', "Note")], default=False, help="")
+
+    clave_linea = fields.Char('Clave', required=True)
+
     # prueba
     obra = fields.Many2one('partidas.partidas', string='Obra:', )
 
     categoria = fields.Char()
-    concepto = fields.Text()
-    grupo = fields.Char()
-    medida = fields.Char()
-    precio_unitario = fields.Float()
-    cantidad = fields.Integer()
+    concepto = fields.Text(required=True)
+
+    nivel = fields.Many2one('catalogo.categoria', 'Nivel', required=True)
+
+    medida = fields.Char(required=True)
+    precio_unitario = fields.Float(required=True)
+    cantidad = fields.Integer(required=True)
 
     # MODIFICACIONES
     fecha_modificacion = fields.Date('Fecha de la Modificación')

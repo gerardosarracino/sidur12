@@ -25,7 +25,7 @@
                                     <!-- por mientras para activar metodos -->
                                     <field name="p_id" invisible="1"/>
                                     <field name="obra"/>
-                                    <!-- field name="monto_programado_est"/ -->
+                                    <field name="monto_programado_est"/>
                                     <br/>
                                     <field name="tipo_estimacion" widget="radio"/>
                                 </group>
@@ -116,19 +116,12 @@
 
                             <field name="conceptos_partidas" string="" widget="section_and_note_one2many">
                                     <tree editable="bottom" delete="false" create="false" force_save="1">
-                                        <control>
-                                            <create string="Agregar Sección" context="{'default_display_type': 'line_section'}"/>
-                                            <create string="Add a note" context="{'default_display_type': 'line_note'}"/>
-                                            <create string="Agregar Nivel"/>
-                                        </control>
-                                        <field name="name" widget="section_and_note_Text" string="Sección" readonly="1" force_save="1"/>
-                                        <field name="sequence" type="handle" readonly="1" force_save="1" invisible="1"/>
-                                        <field name="display_type" readonly="1" force_save="1" invisible="1"/>
-                                        <field name="categoria" string="Clave" readonly="1" force_save="1"/>
-                                        <field name="grupo" readonly="1" force_save="1"/>
-                                        <field name="concepto" readonly="1" force_save="1"/>
-                                        <field name="medida" readonly="1" force_save="1"/>
-                                        <field name="precio_unitario" widget="monetary" readonly="1" force_save="1"/>
+                                        <field name="nivel" />
+                                <field name="clave_linea"/>
+                                        <field name="concepto"/>
+                                        <field name="medida"/>
+                                        <field name="cantidad" attrs="{'invisible':[('cantidad','=',0)]}"/>
+                                        <field name="precio_unitario" attrs="{'invisible':[('precio_unitario','=',0.0)]}"/>
 
                                         <field name="cantidad" readonly="1" force_save="1" />
                                         <field name="est_ant" />
@@ -370,20 +363,26 @@
                         readonly="1">
                             <tree>
                                 <control>
-                                    <create string="Agregar Sección" context="{'default_display_type': 'line_section'}"/>
-                                    <create string="Add a note" context="{'default_display_type': 'line_note'}"/>
-                                    <create string="Agregar Nivel"/>
+                                    <create string="Nivel Padre"
+                                            context="{'form_view_ref': 'proceso_contratacion.categoria_seccion_form'}"/>
+
+                                    <create string="Agregar Linea"
+                                            context="{'form_view_ref': 'proceso_contratacion.categoria_form_linea'}"/>
+
                                 </control>
-                                <field name="name" string="Sección" widget="section_and_note_Text"/>
-                                <field name="sequence" type="handle" invisible="1"/>
-                                <field name="display_type" invisible="1" />
-                                <field name="categoria" />
+                                <!-- field name="name" widget="section_and_note_text" force_save="1" string="Clave"
+                                context="{'form_view_ref': 'proceso_contratacion.categoria_seccion_form'}"/-->
+                                <field name="nivel" />
+                                <field name="clave_linea"/>
+                                <!-- <field name="sequence" type="handle" readonly="1" force_save="1" invisible="1"/>
+                                <field name="display_type" readonly="1" force_save="1" invisible="1"/> -->
+
+
                                 <field name="concepto"/>
-                                <field name="grupo"/>
                                 <field name="medida"/>
-                                <field name="precio_unitario" />
-                                <field name="cantidad"/>
-                                <field name="importe" sum="importe" />
+                                <field name="cantidad" attrs="{'invisible':[('cantidad','=',0)]}"/>
+                                <field name="precio_unitario" attrs="{'invisible':[('precio_unitario','=',0.0)]}"/>
+                                <field name="importe" sum="importe" attrs="{'invisible':[('importe','=',0.0)]}"/>
                             </tree>
                         </field>
                                 <group class="oe_subtotal_footer">

@@ -291,14 +291,15 @@ class Estimaciones(models.Model):
         })
         for conceptos in adirecta_id.conceptos_partidas:
             self.update({
-                'conceptos_partidas': [[0, 0, {'name': conceptos.name, 'sequence': conceptos.sequence,
-                                               'display_type': conceptos.display_type,
-                                               'categoria': conceptos.categoria, 'concepto': conceptos.concepto,
-                                               'grupo': conceptos.grupo,
+                'conceptos_partidas': [[0, 0, {'nivel': conceptos.nivel,
+                                               'clave_linea': conceptos.clave_linea, 'concepto': conceptos.concepto,
                                                'medida': conceptos.medida,
                                                'precio_unitario': conceptos.precio_unitario,
                                                'cantidad': conceptos.cantidad}]]
             })
+
+    ''' 'sequence': conceptos.sequence,
+                                               'display_type': conceptos.display_type,'''
 
     @api.one
     def Estimacion(self):

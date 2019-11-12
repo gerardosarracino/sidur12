@@ -52,6 +52,91 @@
     </record>
 
 
+      <record id="categoria_seccion_form" model="ir.ui.view">
+          <field name="name">categorias</field>
+          <field name="model">proceso.conceptos_part</field>
+          <field name="arch" type="xml">
+              <form string="">
+                  <sheet>
+                      <group>
+                        <field name="descripcion" required="1"/>
+                        <field name="name" string="Nivel Padre"/>
+                      </group>
+                  </sheet>
+              </form>
+          </field>
+      </record>
+
+      <record id="categoria_nivel_form" model="ir.ui.view">
+          <field name="name">nivel</field>
+          <field name="model">catalogo.categoria</field>
+          <field name="arch" type="xml">
+              <form string="">
+                  <sheet>
+                      <group>
+                        <field name="name"/>
+                        <field name="parent_id"/>
+                      </group>
+                  </sheet>
+              </form>
+          </field>
+      </record>
+
+      <record id="categoria_form_linea" model="ir.ui.view">
+          <field name="name">categoria</field>
+          <field name="model">proceso.conceptos_part</field>
+          <field name="arch" type="xml">
+              <form string="">
+                  <sheet>
+                      <group colspan="2" col="4">
+                          <field name="id"/>
+                        <field name="nivel" required="1"
+                        context="{'form_view_ref': 'proceso_contratacion.categoria_nivel_form'}"/>  <!-- domain="[('id', '=', id)]" -->
+                        <field name="clave_linea" string="Clave"/>
+                      </group>
+                      <group>
+                        <field name="concepto" required="1"/>
+                      </group>
+                       <group colspan="2" col="4">
+                        <field name="medida" required="1"/>
+                        <field name="cantidad" required="1"/>
+                        <field name="precio_unitario" widget="monetary" required="1"/>
+                      </group>
+                      <group class="oe_subtotal_footer">
+                        <field name="importe" class="oe_subtotal_footer_separator" string="IMPORTE"/>
+                      </group>
+                  </sheet>
+              </form>
+          </field>
+      </record>
+
+      <record id="categoria_vista" model="ir.ui.view">
+          <field name="name">categoria vista</field>
+          <field name="model">proceso.conceptos_part</field>
+          <field name="arch" type="xml">
+              <form string="">
+                  <sheet>
+                      <group colspan="2" col="4">
+                        <field name="clave_linea" string="Clave Linea"/>
+                        <field name="nivel" /> <!-- domain="[('nivel', '=', parent.id)]" -->
+                      </group>
+                      <group>
+                        <field name="concepto"/>
+                      </group>
+                       <group colspan="2" col="4">
+                        <field name="medida"/>
+                        <field name="cantidad"/>
+                        <field name="precio_unitario" widget="monetary"/>
+                      </group>
+                      <group class="oe_subtotal_footer">
+                        <field name="importe" class="oe_subtotal_footer_separator" string="IMPORTE"/>
+                      </group>
+                  </sheet>
+              </form>
+          </field>
+      </record>
+
+
     <!-- FORMULARIOS Y TREE DE LAS PARTIDAS CON SUS CATALOGOS -->
       <record id="conceptos_contratados_partidas_form" model="ir.ui.view">
           <field name="name">conceptos contratados form</field>
@@ -108,36 +193,47 @@
                             <field name="total_catalogo"/>
                             <field name="diferencia"  class="o_light_label"/>
                         </group>
-                        <field name="conceptos_partidas" widget="section_and_note_one2many" string="# Concepto de partidas">
-                            <tree editable="bottom">
+
+                        <field name="conceptos_partidas" string="# Concepto de partidas" widget="section_and_note_one2many"
+                               context="{'form_view_ref': 'proceso_contratacion.categoria_vista',
+                               'default_partida_id': active_id}">
+                            <tree> <!-- editable="bottom" decoration-info="name,'==',True" -->
                                 <control>
-                                    <create string="Agregar Sección" context="{'default_display_type': 'line_section'}"/>
-                                    <create string="Agregar Nivel" context="{'default_name': '-'}"/>
+                                    <create string="Nivel Padre"
+                                            context="{'form_view_ref': 'proceso_contratacion.categoria_seccion_form'}"/>
+
+                                    <create string="Agregar Linea"
+                                            context="{'form_view_ref': 'proceso_contratacion.categoria_form_linea'}"/>
+
                                 </control>
-                                <field name="name" widget="section_and_note_Text" string="Sección"/>
-                                <field name="sequence" type="handle" invisible="1"/>
-                                <field name="display_type" invisible="1" />
-                                <field name="categoria" string="Clave"/>
-                                <field name="grupo" />
+                                <!-- field name="name" widget="section_and_note_text" force_save="1" string="Clave"
+                                context="{'form_view_ref': 'proceso_contratacion.categoria_seccion_form'}"/-->
+                                <field name="nivel" />
+                                <field name="clave_linea"/>
+                                <!-- <field name="sequence" type="handle" readonly="1" force_save="1" invisible="1"/>
+                                <field name="display_type" readonly="1" force_save="1" invisible="1"/> -->
+
+
                                 <field name="concepto"/>
                                 <field name="medida"/>
-                                <field name="cantidad"/>
-                                <field name="precio_unitario" widget="monetary"/>
-                                <field name="importe" sum="importe" widget="monetary"/>
+                                <field name="cantidad" attrs="{'invisible':[('cantidad','=',0)]}"/>
+                                <field name="precio_unitario" attrs="{'invisible':[('precio_unitario','=',0.0)]}"/>
+                                <field name="importe" sum="importe" attrs="{'invisible':[('importe','=',0.0)]}"/>
                             </tree>
                         </field>
+
                           <group class="oe_subtotal_footer">
                                         <h6 style="position:relative;
                                                       display: inline-block;
-                                                         left: -89px;
+                                                         left: -130px;
                                                           top: -50px;
                                                   white-space: nowrap;"> TOTAL:  </h6>
                                 </group>
 
-                        <group class="oe_edit_only">
+                        <!-- group class="oe_edit_only">
                           <field name="tipo" string="Tipo" class="oe_inline" attrs="{'invisible': [('conceptos_partidas', '=', [])]}"/>
                           <field name="justificacion" string="Justificación" attrs="{'invisible': [('conceptos_partidas', '=', [])]}"/>
-                        </group>
+                        </group -->
 
                     </group>
 
