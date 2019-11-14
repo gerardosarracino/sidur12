@@ -5,29 +5,20 @@ from odoo import api, fields, models
 
 class conceptos_partidas(models.Model):
     _name = "proceso.conceptos_part"
-    _rec_name = 'name'
+    _rec_name = 'descripcion'
 
-
+    # verifica si la categoria tiene padre, auxiliar para decorador de tree view
+    related_categoria_padre = fields.Many2one('catalogo.categoria', related="categoria.parent_id")
     # clave
-    name = fields.Many2one('catalogo.categoria', 'Nivel Padre')
-    descripcion = fields.Text('Nivel', )
-    # name = fields.Char()
+    categoria = fields.Many2one('catalogo.categoria', 'Categoria', required=True)
 
-    sequence = fields.Integer()
-    display_type = fields.Selection([
-        ('line_section', "Section"),
-        ('line_note', "Note")], default=False, help="")
+    descripcion = fields.Text('Descripción', required=True)
+
+    name = fields.Many2one('catalogo.categoria', 'Categoria Padre')
 
     clave_linea = fields.Char('Clave', required=True)
 
-    # prueba
-    obra = fields.Many2one('partidas.partidas', string='Obra:', )
-
-    categoria = fields.Char()
     concepto = fields.Text(required=True)
-
-    nivel = fields.Many2one('catalogo.categoria', 'Nivel', required=True)
-
     medida = fields.Char(required=True)
     precio_unitario = fields.Float(required=True)
     cantidad = fields.Integer(required=True)
@@ -46,6 +37,8 @@ class conceptos_partidas(models.Model):
     importe_ejecutado = fields.Float(string="Importe",  required=False, compute="importeEjec")
 
     importe = fields.Float(compute="sumaCantidad")
+
+    id_partida = fields.Many2one(comodel_name="partidas.partidas", string="Numero de partida", readonly=True, store=True)
 
     @api.depends('cantidad', 'estimacion')
     def sumaEst(self):

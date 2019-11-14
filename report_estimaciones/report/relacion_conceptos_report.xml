@@ -72,13 +72,10 @@
                                  <tbody>
                                      <tr t-foreach="o.conceptos_partidas" t-as="l">
                                        <td>
-                                             <span t-field="l.name"/>
+                                             <span t-field="l.nivel"/>
                                        </td>
                                          <td>
-                                             <span t-field="l.categoria"/>
-                                       </td>
-                                         <td>
-                                             <span t-field="l.grupo"/>
+                                             <span t-field="l.clave_linea"/>
                                        </td>
                                          <td>
                                              <span t-field="l.concepto"/>

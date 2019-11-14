@@ -1,6 +1,25 @@
 <odoo>
   <data>
 
+        <record id="conceptos_search" model="ir.ui.view">
+         <field name="name">concepto search</field>
+         <field name="model">proceso.conceptos_part</field>
+          <field name="arch" type="xml">
+              <search string="">
+                <field name="id_partida" />
+                <field name="name" />
+                <field name="descripcion" />
+                <field name="categoria" />
+                <field name="clave_linea"/>
+                <field name="concepto"/>
+                <field name="medida"/>
+                <field name="cantidad" />
+                <field name="precio_unitario" />
+                <field name="importe"/>
+          </search>
+         </field>
+      </record>
+
       <record id="catalogo_conceptos_cambios_form" model="ir.ui.view">
           <field name="name">Historial de Cambios de Catalogo</field>
           <field name="model">proceso.conceptos_modificados</field>
@@ -51,16 +70,17 @@
             (0, 0, {'view_mode': 'form', 'view_id': ref('catalogo_conceptos_cambios_form')})]"/>
     </record>
 
-
       <record id="categoria_seccion_form" model="ir.ui.view">
-          <field name="name">categorias</field>
-          <field name="model">proceso.conceptos_part</field>
+          <field name="name">Categorias</field>
+          <field name="model">catalogo.categoria</field>
           <field name="arch" type="xml">
               <form string="">
                   <sheet>
                       <group>
-                        <field name="descripcion" required="1"/>
-                        <field name="name" string="Nivel Padre"/>
+                          <field name="id_partida" class="oe_inline" force_save="1"/>
+                        <field name="name"/>
+                        <field name="descripcion"/>
+                        <field name="parent_id"/>
                       </group>
                   </sheet>
               </form>
@@ -74,8 +94,10 @@
               <form string="">
                   <sheet>
                       <group>
-                        <field name="name"/>
-                        <field name="parent_id"/>
+                        <field name="id_partida" class="oe_inline" force_save="1"/>
+                        <field name="name" class="oe_inline"/>
+                        <field name="descripcion"/>
+                        <field name="parent_id" class="oe_inline"/>
                       </group>
                   </sheet>
               </form>
@@ -88,11 +110,14 @@
           <field name="arch" type="xml">
               <form string="">
                   <sheet>
+                      <group>
+                          <field name="id_partida" force_save="1"/>
+                      </group>
                       <group colspan="2" col="4">
-                          <field name="id"/>
-                        <field name="nivel" required="1"
-                        context="{'form_view_ref': 'proceso_contratacion.categoria_nivel_form'}"/>  <!-- domain="[('id', '=', id)]" -->
-                        <field name="clave_linea" string="Clave"/>
+                        <field name="categoria" required="1"
+                        context="{'form_view_ref': 'proceso_contratacion.categoria_nivel_form'}"
+                               domain="[('id_partida.id', '=', parent.id)]"/>  <!-- domain="[('id', '=', id)]" -->
+                        <field name="clave_linea"/>
                       </group>
                       <group>
                         <field name="concepto" required="1"/>
@@ -116,9 +141,12 @@
           <field name="arch" type="xml">
               <form string="">
                   <sheet>
+                      <group>
+                          <field name="id_partida" force_save="1"/>
+                      </group>
                       <group colspan="2" col="4">
                         <field name="clave_linea" string="Clave Linea"/>
-                        <field name="nivel" /> <!-- domain="[('nivel', '=', parent.id)]" -->
+                        <field name="categoria" /> <!-- domain="[('nivel', '=', parent.id)]" -->
                       </group>
                       <group>
                         <field name="concepto"/>
@@ -179,12 +207,19 @@
                         </group>
                      <hr/>
 
-                  <group colspan="2" col="5">
+                  <group colspan="2" col="6">
                       <h2 colspan="2" align="left"> Catálogo de Niveles/Conceptos del Contrato: <field name="numero_contrato" nolabel="1"/></h2>
 
+                      <button name="CategoriasForm" type="object"
+                              string="Agregar Categorias" class="oe_highlight" icon="fa-pencil-square-o"
+                              context="{'default_id_partida': active_id}"/>
+
                       <button name="%(catalogo_conceptos_cambios_action)d" type="action"
-                              string="Historial de Cambios" class="oe_highlight" icon="fa-pencil-square-o"
+                              string="Historial de Cambios" class="oe_highlight" icon="fa-archive"
                       context="{'search_default_obra': active_id}" attrs="{'invisible': [('conceptos_partidas', '=', [])]}"/>
+
+                      <button string="Ver Conceptos" type="action" name="%(conceptos_tree_action)d" class="oe_highlight" context="{
+                       'search_default_id_partida': active_id}" icon="fa-book"/>
                   </group>
 
                       <group>
@@ -196,24 +231,16 @@
 
                         <field name="conceptos_partidas" string="# Concepto de partidas" widget="section_and_note_one2many"
                                context="{'form_view_ref': 'proceso_contratacion.categoria_vista',
-                               'default_partida_id': active_id}">
-                            <tree> <!-- editable="bottom" decoration-info="name,'==',True" -->
+                               'default_id_partida': active_id}">
+                            <tree decoration-info="related_categoria_padre == False"> <!-- editable="bottom" decoration-info="name,'==',True" -->
                                 <control>
-                                    <create string="Nivel Padre"
-                                            context="{'form_view_ref': 'proceso_contratacion.categoria_seccion_form'}"/>
-
-                                    <create string="Agregar Linea"
+                                    <create string="Agregar Concepto"
                                             context="{'form_view_ref': 'proceso_contratacion.categoria_form_linea'}"/>
-
                                 </control>
-                                <!-- field name="name" widget="section_and_note_text" force_save="1" string="Clave"
-                                context="{'form_view_ref': 'proceso_contratacion.categoria_seccion_form'}"/-->
-                                <field name="nivel" />
+                                <field name="related_categoria_padre" invisible="1"/> <!-- field auxiliar para decorador -->
+                                <field name="id_partida" invisible="1" force_save="1"/>
+                                <field name="categoria" />
                                 <field name="clave_linea"/>
-                                <!-- <field name="sequence" type="handle" readonly="1" force_save="1" invisible="1"/>
-                                <field name="display_type" readonly="1" force_save="1" invisible="1"/> -->
-
-
                                 <field name="concepto"/>
                                 <field name="medida"/>
                                 <field name="cantidad" attrs="{'invisible':[('cantidad','=',0)]}"/>
@@ -318,6 +345,57 @@
         </field>
     </record>
 
+      <record id="conceptos_form" model="ir.ui.view">
+          <field name="name">concepto form</field>
+          <field name="model">proceso.conceptos_part</field>
+          <field name="arch" type="xml">
+              <form string="">
+                  <sheet>
+                      <group>
+                          <field name="id_partida" />
+                          <field name="name" />
+                            <field name="descripcion" />
+                            <field name="categoria" />
+                            <field name="clave_linea"/>
+                            <field name="concepto"/>
+                            <field name="medida"/>
+                            <field name="cantidad" />
+                            <field name="precio_unitario" />
+                            <field name="importe"/>
+                      </group>
+                  </sheet>
+              </form>
+          </field>
+      </record>
+
+      <record id="conceptos_tree" model="ir.ui.view">
+    <field name="name">conceptos tree</field>
+    <field name="model">proceso.conceptos_part</field>
+    <field name="arch" type="xml">
+        <tree string="">
+            <field name="id_partida" />
+            <field name="categoria" />
+            <field name="clave_linea"/>
+            <field name="concepto"/>
+            <field name="medida"/>
+            <field name="cantidad" />
+            <field name="precio_unitario" />
+            <field name="importe"/>
+        </tree>
+    </field>
+</record>
+
+      <!-- ACCIONES VENTANA CONCEPTOS CONTRATADOS -->
+    <record model="ir.actions.act_window" id="conceptos_tree_action">
+      <field name="name">Conceptos</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">proceso.conceptos_part</field>
+      <field name="view_ids" eval="[(5, 0, 0),
+    (0, 0, {'view_mode': 'tree', 'view_id': ref('conceptos_tree')}),
+    (0, 0, {'view_mode': 'form', 'view_id': ref('conceptos_form')})]"/>
+      <field name="view_mode">form</field>
+    </record>
+
   <!-- ACCIONES VENTANA CONCEPTOS CONTRATADOS -->
     <record model="ir.actions.act_window" id="proc_contratacion_concepto_contratados_action_window">
       <field name="name">Conceptos de Contratados</field>
@@ -332,6 +410,9 @@
     <!-- MENUS CONCEPTOS CONTRATADOS-->
       <menuitem name="Conceptos Contratados" id="proc_contratacion_conceptos_contratados"
                 parent="proc_contratacion_menu_root" action="proc_contratacion_concepto_contratados_action_window" sequence="6"/>
+
+      <!-- menuitem name="Conceptos" id="conceptos_contratados"
+                parent="proc_contratacion_menu_root" action="conceptos_tree_action" sequence="7"/ -->
 
 </data>
 </odoo>

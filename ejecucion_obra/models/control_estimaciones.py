@@ -1,4 +1,4 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, exceptions
 from datetime import date
 from datetime import datetime
 
@@ -28,10 +28,10 @@ class Estimaciones(models.Model):
     # estimacions_id = fields.Char(compute="estimacionId", store=True)
     numero_estimacion = fields.Char(string="Número de Estimación:")
 
-    fecha_inicio_estimacion = fields.Date(string="Del:", required=False, )
-    fecha_termino_estimacion = fields.Date(string="Al:", required=False, )
-    fecha_presentacion = fields.Date(string="Fecha de presentación:", required=False, )
-    fecha_revision = fields.Date(string="Fecha revisión Residente:", required=False, )
+    fecha_inicio_estimacion = fields.Date(string="Del:", required=True, )
+    fecha_termino_estimacion = fields.Date(string="Al:", required=True, )
+    fecha_presentacion = fields.Date(string="Fecha de presentación:", required=True, )
+    fecha_revision = fields.Date(string="Fecha revisión Residente:", required=True, )
 
     radio_aplica = [(
         '1', "Estimación Finiquito"), ('2', "Amortizar Total Anticipo	")]
@@ -88,9 +88,40 @@ class Estimaciones(models.Model):
     dias_transcurridos = fields.Integer(compute="DiasTrans")
     # MONTO PROGRAMADO PARA ESTA ESTIMACION
     monto_programado_est = fields.Float(compute="MontoProgramadoESt")
+    porcentaje_est = fields.Float(compute="MontoProgramadoESt")
 
     _url = fields.Char(compute="_calc_url", string="Vista de impresión")
 
+    xd = fields.Float(compute="computeSeccion")
+
+    @api.multi
+    @api.onchange('fecha_termino_estimacion', 'fecha_inicio_estimacion')
+    def VerifFechaEst(self):
+        if str(self.fecha_termino_estimacion) < str(self.fecha_inicio_estimacion):
+            raise exceptions.Warning('No se puede seleccionar una Fecha anterior a la actual, '
+                                     'por favor seleccione una fecha actual o posterior')
+        else:
+            return False
+
+    @api.multi
+    @api.onchange('fecha_presentacion', 'fecha_revision')
+    def VerifFechaEst2(self):
+        if str(self.fecha_revision) < str(self.fecha_presentacion):
+            raise exceptions.Warning('No se puede seleccionar una Fecha anterior a la actual, '
+                                     'por favor seleccione una fecha actual o posterior')
+        else:
+            return False
+
+    @api.multi
+    def computeSeccion(self):
+        for i in self.conceptos_partidas:
+            # print(i.nivel.complete_name)
+            # print(i.nivel.parent_id.name)
+            if i.categoria.name is i.categoria.parent_id.name:
+                self.xd = 1
+            else:
+                self.xd = 1
+        self.xd = 1
 
     @api.one
     def _calc_url(self):
@@ -112,9 +143,9 @@ class Estimaciones(models.Model):
         f_estimacion_termino = self.fecha_termino_estimacion
         b_programa = self.env['programa.programa_obra'].search([('obra.id', '=', self.obra.id)])
         acum = 0
-        m_estimado = 0
         for i in b_programa.programa_contratos:
             fechatermino = i.fecha_termino
+            fechainicio = i.fecha_inicio
             if f_estimacion_termino > fechatermino:
                 acum = acum + i.monto
             elif f_estimacion_termino.month == fechatermino.month:
@@ -122,20 +153,26 @@ class Estimaciones(models.Model):
                 date_format = "%Y-%m-%d"
                 if f_estimacion_inicio == f_estimacion_termino:
                     ultimo_monto = i.monto
-                    monto_final = ultimo_monto
-                    m_estimado = m_estimado + (ultimo_monto - monto_final)
+                    m_estimado = ultimo_monto + acum
+                    self.monto_programado_est = m_estimado
                 else:
                     f1 = datetime.strptime(str(f_estimacion_inicio), date_format)
-                    f2 = datetime.strptime(str(f_estimacion_termino), date_format)
-                    r = f2 - f1
+                    f2 = datetime.strptime(str(fechainicio), date_format)
+                    r = f1 - f2
                     dias = r.days
-                    # print('dias'+str(dias))
+                    f3 = datetime.strptime(str(fechainicio), date_format)
+                    f4 = datetime.strptime(str(fechatermino), date_format)
+                    r2 = f4 - f3
+                    total_dias_periodo = r2.days
                     ultimo_monto = i.monto
-                    monto_final = (ultimo_monto / dias)
-                    m_estimado = m_estimado + (ultimo_monto - monto_final)
+                    monto_final = (ultimo_monto / total_dias_periodo) * dias
+                    m_estimado = monto_final + acum
+                    por = ultimo_monto + acum
+                    self.monto_programado_est = m_estimado
+                    self.porcentaje_est = (m_estimado / por) * 100
             else:
                 print('xd')
-        self.monto_programado_est = acum + m_estimado
+        # self.monto_programado_est = m_estimado
 
     @api.one
     def DiasTrans(self):
@@ -282,7 +319,7 @@ class Estimaciones(models.Model):
             })
 
     # METODO PARA INSERTAR CONCEPTOS CONTRATADOS     ---------------VERIFICAR COMO CORRER EL METODO AL ENTRAR
-    @api.multi
+    '''@api.multi
     @api.onchange('p_id')  # if these fields are changed, call method
     def conceptosEjecutados(self):
         adirecta_id = self.env['partidas.partidas'].browse(self.obra.id)
@@ -291,15 +328,13 @@ class Estimaciones(models.Model):
         })
         for conceptos in adirecta_id.conceptos_partidas:
             self.update({
-                'conceptos_partidas': [[0, 0, {'nivel': conceptos.nivel,
+                'conceptos_partidas': [[0, 0, {'categoria': conceptos.categoria,
                                                'clave_linea': conceptos.clave_linea, 'concepto': conceptos.concepto,
                                                'medida': conceptos.medida,
                                                'precio_unitario': conceptos.precio_unitario,
                                                'cantidad': conceptos.cantidad}]]
-            })
+            })'''
 
-    ''' 'sequence': conceptos.sequence,
-                                               'display_type': conceptos.display_type,'''
 
     @api.one
     def Estimacion(self):

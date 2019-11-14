@@ -8,9 +8,12 @@ class CatalogoNivel(models.Model):
     _parent_store = True
     _rec_name = 'complete_name'
 
-    name = fields.Char('Nivel', index=True, required=True, translate=True)
+    id_partida = fields.Many2one(comodel_name="partidas.partidas", string="Numero de partida", readonly=True,
+                                 store=True)
 
-    parent_id = fields.Many2one('catalogo.categoria', 'Nivel Padre', index=True, ondelete='cascade')
+    name = fields.Char('Categoria', index=True, required=True, translate=True)
+    descripcion = fields.Text('Descripción', required=True)
+    parent_id = fields.Many2one('catalogo.categoria', 'Categoria Padre', index=True, ondelete='cascade')
     parent_path = fields.Char(index=True, readonly=True)
     child_id = fields.One2many('catalogo.categoria', 'parent_id', 'Child Categories', readonly=True)
     complete_name = fields.Char('Complete Name', compute='_compute_complete_name', store=True, readonly=True)

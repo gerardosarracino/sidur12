@@ -79,10 +79,12 @@
                                      </tr>
                                  </thead>
                                  <tbody>
-                                     <t t-set="i" t-value="1"/>
-
+                                    <t t-set="i" t-value="1"/>
                                     <tr t-foreach="o.conceptos_partidas" t-as="l">
+                                        <!-- CONDICION DE SECCIONES -->
+                                        <t t-if="not l.nivel.parent_id">
                                         <td class="text-left" >
+                                            <!-- CONTADOR -->
                                             <span t-esc="i"/>
                                         </td> <t t-set="i" t-value="i+1"/>
 
@@ -93,16 +95,19 @@
                                         <td class="text-right" >
                                             <span t-field="l.importe_ejecutado"/>
                                         </td>
+
                                         <td class="text-left" >
                                             <span t-field="l.descripcion"/>
-                                        </td>
+                                        </td></t>
                                     </tr>
+
                                      <tr>
                                          <td></td>
                                          <td></td>
                                          <td></td>
                                          <td></td>
                                      </tr>
+
                                      <tr>
                                          <td></td>
                                          <td class="text-left">SUMA</td>

@@ -240,6 +240,18 @@ class Partidas(models.Model):
     b_iva = fields.Float(string="IVA DESDE CONFIGURACION", compute="BuscarIva")
 
     @api.multi
+    def CategoriasForm(self):
+        view = self.env.ref('proceso_contratacion.categoria_seccion_form')
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Categorias',
+            'res_model': 'catalogo.categoria',
+            'view_mode': 'form',
+            'target': 'new',
+            'view_id': view.id,
+        }
+
+    @api.multi
     def write(self, values):
         if self.fecha_anticipos and self.fecha_fianza and self.afianzadora and self.numero_fianza and \
                 self.anticipo_material:

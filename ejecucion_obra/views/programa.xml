@@ -56,7 +56,7 @@
                 <sheet>
                     <group>
                        <field name="obra" string="Partida:"/>
-                       <field name="obraid" string="Partida:"/>
+                       <field name="obraid" string="Partida:" invisible="1"/>
                    </group>
                    <group>
                        <group colspan="1" col="4">

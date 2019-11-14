@@ -1,5 +1,25 @@
 <odoo>
   <data>
+
+      <record id="conceptos_search_est" model="ir.ui.view">
+         <field name="name">concepto search</field>
+         <field name="model">proceso.conceptos_part</field>
+          <field name="arch" type="xml">
+              <search string="">
+                <field name="id_partida" />
+                <field name="name" />
+                <field name="descripcion" />
+                <field name="categoria" />
+                <field name="clave_linea"/>
+                <field name="concepto"/>
+                <field name="medida"/>
+                <field name="cantidad" />
+                <field name="precio_unitario" />
+                <field name="importe"/>
+          </search>
+         </field>
+      </record>
+
     <!-- ESTIMACIONES FORM -->
   <record id="control_estimaciones_estimaciones_form" model="ir.ui.view">
         <field name="name">control de estimaciones form</field>
@@ -25,7 +45,12 @@
                                     <!-- por mientras para activar metodos -->
                                     <field name="p_id" invisible="1"/>
                                     <field name="obra"/>
+                                    <field name="xd" invisible="1"/>
+
+                                    <br/>
                                     <field name="monto_programado_est"/>
+                                    <field name="porcentaje_est"/>
+
                                     <br/>
                                     <field name="tipo_estimacion" widget="radio"/>
                                 </group>
@@ -109,15 +134,12 @@
 
                         <page string="Conceptos Ejecutados En El Periodo">
                             <group string="Conceptos Ejecutados En El Periodo">
-                                <field name="numero_estimacion" attrs="{'readonly': [('tipo_estimacion','!=', '2')]}"/>
-                                <field name="numero_contrato" invisible="1"/>
-                                <!-- AUXILIAR DE CONEXION HACIA CONTRATO -->
                             </group>
 
-                            <field name="conceptos_partidas" string="" widget="section_and_note_one2many">
+                            <!--field name="conceptos_partidas" string="" widget="section_and_note_one2many">
                                     <tree editable="bottom" delete="false" create="false" force_save="1">
-                                        <field name="nivel" />
-                                <field name="clave_linea"/>
+                                        <field name="categoria" />
+                                        <field name="clave_linea"/>
                                         <field name="concepto"/>
                                         <field name="medida"/>
                                         <field name="cantidad" attrs="{'invisible':[('cantidad','=',0)]}"/>
@@ -130,7 +152,28 @@
                                         <field name="importe_ejecutado" sum="Importe Ejecutado"/>
 
                                     </tree>
+                                </field 'form_view_ref': 'proceso_contratacion.conceptos_tree',  -->
+
+                            <field name="conceptos_partidas" string="" domain="[('id_partida.id', '=', obra)]">
+                                    <tree editable="bottom">
+                                        <control>
+                                            <create string="Agregar Conceptos"
+                                                    />
+                                        </control>
+                                        <field name="id_partida" invisible="1"/>
+                                        <field name="categoria" readonly="1" />
+                                        <field name="clave_linea" readonly="1"/>
+                                        <field name="concepto" readonly="1"/>
+                                        <field name="medida" readonly="1"/>
+                                        <field name="cantidad" readonly="1" attrs="{'invisible':[('cantidad','=',0)]}"/>
+                                        <field name="precio_unitario" readonly="1" attrs="{'invisible':[('precio_unitario','=',0.0)]}"/>
+                                        <field name="cantidad" readonly="1" force_save="1" />
+                                        <field name="est_ant" />
+                                        <field name="estimacion" force_save="1"/>
+                                        <field name="importe_ejecutado" sum="Importe Ejecutado"/>
+                                    </tree>
                                 </field>
+
                             <field name="total_conceptos" readonly="1" invisible="1"/>
                         </page>
                     </notebook>
@@ -372,7 +415,7 @@
                                 </control>
                                 <!-- field name="name" widget="section_and_note_text" force_save="1" string="Clave"
                                 context="{'form_view_ref': 'proceso_contratacion.categoria_seccion_form'}"/-->
-                                <field name="nivel" />
+                                <field name="categoria" />
                                 <field name="clave_linea"/>
                                 <!-- <field name="sequence" type="handle" readonly="1" force_save="1" invisible="1"/>
                                 <field name="display_type" readonly="1" force_save="1" invisible="1"/> -->

@@ -26,11 +26,13 @@ class ProgramaObra(models.Model):
 
     @api.multi
     def write(self, values):
-        if len(values['tipo']) == 0:
-            raise exceptions.Warning('2')
+        if not self.tipo:
+            raise exceptions.Warning('Haz realizado una modificación al programa!!!,'
+                                     ' Porfavor rellene el formulario de cambios completamente')
 
-        if values['razon'] is False:
-            raise exceptions.Warning('2')
+        if self.razon is []:
+            raise exceptions.Warning('Haz realizado una modificación al programa!!!,'
+                                     ' Porfavor rellene el formulario de cambios completamente')
 
         version = self.env['programa.programa_version']
         id_programa = self.id
