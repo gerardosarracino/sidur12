@@ -89,6 +89,8 @@ class Estimaciones(models.Model):
     # MONTO PROGRAMADO PARA ESTA ESTIMACION
     monto_programado_est = fields.Float(compute="MontoProgramadoESt")
     porcentaje_est = fields.Float(compute="MontoProgramadoESt")
+    reduccion = fields.Float(compute="MontoProgramadoESt", string='Reduccion')
+    acum = fields.Float(compute="MontoProgramadoESt", string='Acum')
 
     _url = fields.Char(compute="_calc_url", string="Vista de impresión")
 
@@ -109,6 +111,22 @@ class Estimaciones(models.Model):
         if str(self.fecha_revision) < str(self.fecha_presentacion):
             raise exceptions.Warning('No se puede seleccionar una Fecha anterior a la actual, '
                                      'por favor seleccione una fecha actual o posterior')
+        else:
+            return False
+
+    @api.multi
+    @api.onchange('fecha_inicio_estimacion', 'fecha_termino_estimacion')
+    def VerifFechaEst3(self):
+        f_estimacion_inicio = self.fecha_inicio_estimacion
+        f_estimacion_termino = self.fecha_termino_estimacion
+        date_format = "%Y-%m-%d"
+        f1 = datetime.strptime(str(f_estimacion_inicio), date_format)
+        f2 = datetime.strptime(str(f_estimacion_termino), date_format)
+        r = f2 - f1
+        dias = r.days
+        print(dias)
+        if dias > 31:
+            raise exceptions.Warning('Los dias entre cada fecha exceden los 31 dias!!')
         else:
             return False
 
@@ -143,36 +161,60 @@ class Estimaciones(models.Model):
         f_estimacion_termino = self.fecha_termino_estimacion
         b_programa = self.env['programa.programa_obra'].search([('obra.id', '=', self.obra.id)])
         acum = 0
+        fecha_inicio_programa = b_programa.fecha_inicio_programa
+        fecha_inicio_termino = b_programa.fecha_termino_programa
         for i in b_programa.programa_contratos:
             fechatermino = i.fecha_termino
-            fechainicio = i.fecha_inicio
-            if f_estimacion_termino > fechatermino:
+            # fechainicio = i.fecha_inicio
+            date_format = "%Y-%m-%d"
+            datem = datetime(fechatermino.year, fechatermino.month, 1)
+            datem2 = datetime(f_estimacion_termino.year, f_estimacion_termino.month, 1)
+            if f_estimacion_inicio == f_estimacion_termino:
                 acum = acum + i.monto
-            elif f_estimacion_termino.month == fechatermino.month:
-                # DIAS
-                date_format = "%Y-%m-%d"
-                if f_estimacion_inicio == f_estimacion_termino:
-                    ultimo_monto = i.monto
-                    m_estimado = ultimo_monto + acum
-                    self.monto_programado_est = m_estimado
-                else:
+                m_estimado = acum
+                self.monto_programado_est = m_estimado
+            elif f_estimacion_inicio.month is not f_estimacion_termino.month:
+                if fechatermino.month == f_estimacion_termino.month:
+                    acum = acum + i.monto
                     f1 = datetime.strptime(str(f_estimacion_inicio), date_format)
-                    f2 = datetime.strptime(str(fechainicio), date_format)
-                    r = f1 - f2
+                    f2 = datetime.strptime(str(f_estimacion_termino), date_format)
+                    r = f2 - f1
                     dias = r.days
-                    f3 = datetime.strptime(str(fechainicio), date_format)
-                    f4 = datetime.strptime(str(fechatermino), date_format)
+                    f3 = datetime.strptime(str(fecha_inicio_programa), date_format)
+                    f4 = datetime.strptime(str(fecha_inicio_termino), date_format)
                     r2 = f4 - f3
                     total_dias_periodo = r2.days
                     ultimo_monto = i.monto
                     monto_final = (ultimo_monto / total_dias_periodo) * dias
-                    m_estimado = monto_final + acum
+                    m_estimado = acum - monto_final
                     por = ultimo_monto + acum
+                    self.acum = acum
                     self.monto_programado_est = m_estimado
+                    self.reduccion = monto_final
                     self.porcentaje_est = (m_estimado / por) * 100
-            else:
-                print('xd')
-        # self.monto_programado_est = m_estimado
+                else:
+                    acum = acum + i.monto
+            elif datem <= datem2:
+                acum = acum + i.monto
+                f1 = datetime.strptime(str(f_estimacion_inicio), date_format)
+                f2 = datetime.strptime(str(f_estimacion_termino), date_format)
+                r = f2 - f1
+                dias = r.days
+                f3 = datetime.strptime(str(fecha_inicio_programa), date_format)
+                f4 = datetime.strptime(str(fecha_inicio_termino), date_format)
+                r2 = f4 - f3
+                total_dias_periodo = r2.days
+                ultimo_monto = i.monto
+                monto_final = (ultimo_monto / total_dias_periodo) * dias
+                m_estimado = acum - monto_final
+                por = acum
+                print(por)
+                self.acum = acum
+                self.monto_programado_est = m_estimado
+                self.reduccion = monto_final
+                self.porcentaje_est = (m_estimado / por) * 100
+            elif f_estimacion_inicio != f_estimacion_termino:
+                print('LA FECHA SOBREPASO')
 
     @api.one
     def DiasTrans(self):

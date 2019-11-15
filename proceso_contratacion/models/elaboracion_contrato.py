@@ -334,7 +334,7 @@ class Fianza(models.Model):
     select_tipo_fianza = [('1', 'Cumplimiento'), ('2', 'Calidad/Vicios Ocultos'), ('3', 'Responsabilidad Civil'),
                           ('4', 'Ninguno')]
     tipo_fianza = fields.Selection(select_tipo_fianza, string="Tipo Fianza", default="4", required=True)
-    numero_fianza_fianzas = fields.Integer(string="Numero Fianza", required=True)
+    numero_fianza_fianzas = fields.Char(string="Numero Fianza", required=True)
     monto = fields.Float(string="Monto", required=True)
     fecha_fianza_fianzas = fields.Date(string="Fecha Fianza", required=True)
     afianzadora_fianzas = fields.Char(string="Afianzadora", required=True)

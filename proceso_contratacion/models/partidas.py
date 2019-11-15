@@ -130,7 +130,7 @@ class Partidas(models.Model):
     anticipo_a = fields.Integer(string="Anticipo", compute="anticipo_inicio")
     iva_anticipo = fields.Float(string="I.V.A", compute="anticipo_iva")
     total_anticipo = fields.Float(string="Total Anticipo", compute="anticipo_total")
-    numero_fianza = fields.Integer(string="# Fianza", )
+    numero_fianza = fields.Char(string="# Fianza", )
     afianzadora = fields.Char(string="Afianzadora", )
     fecha_fianza = fields.Date(string="Fecha Fianza", )
     anticipada = fields.Boolean(string="Anticipada", compute="anticipada_Sel")

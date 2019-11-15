@@ -21,7 +21,7 @@ class conceptos_partidas(models.Model):
     concepto = fields.Text(required=True)
     medida = fields.Char(required=True)
     precio_unitario = fields.Float(required=True)
-    cantidad = fields.Integer(required=True)
+    cantidad = fields.Float(required=True)
 
     # MODIFICACIONES
     fecha_modificacion = fields.Date('Fecha de la Modificación')

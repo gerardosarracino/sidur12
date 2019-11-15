@@ -80,7 +80,7 @@
                           <field name="id_partida" class="oe_inline" force_save="1"/>
                         <field name="name"/>
                         <field name="descripcion"/>
-                        <field name="parent_id"/>
+                        <field name="parent_id" domain="[('id_partida.id', '=', id_partida)]" widget='selection'/>
                       </group>
                   </sheet>
               </form>
@@ -97,7 +97,7 @@
                         <field name="id_partida" class="oe_inline" force_save="1"/>
                         <field name="name" class="oe_inline"/>
                         <field name="descripcion"/>
-                        <field name="parent_id" class="oe_inline"/>
+                        <field name="parent_id" domain="[('id_partida.id', '=', id_partida)]" widget='selection'/>
                       </group>
                   </sheet>
               </form>
@@ -114,10 +114,12 @@
                           <field name="id_partida" force_save="1"/>
                       </group>
                       <group colspan="2" col="4">
+
                         <field name="categoria" required="1"
-                        context="{'form_view_ref': 'proceso_contratacion.categoria_nivel_form'}"
-                               domain="[('id_partida.id', '=', parent.id)]"/>  <!-- domain="[('id', '=', id)]" -->
+                        context="{'form_view_ref': 'proceso_contratacion.categoria_nivel_form', 'default_id_partida': id_partida}"
+                        domain="[('id_partida.id', '=', id_partida)]"/>  <!-- domain="[('id', '=', id)]" -->
                         <field name="clave_linea"/>
+
                       </group>
                       <group>
                         <field name="concepto" required="1"/>
@@ -146,7 +148,8 @@
                       </group>
                       <group colspan="2" col="4">
                         <field name="clave_linea" string="Clave Linea"/>
-                        <field name="categoria" /> <!-- domain="[('nivel', '=', parent.id)]" -->
+
+                        <field name="categoria" domain="[('id_partida.id', '=', id_partida)]" /> <!-- domain="[('nivel', '=', parent.id)]" -->
                       </group>
                       <group>
                         <field name="concepto"/>
@@ -239,7 +242,7 @@
                                 </control>
                                 <field name="related_categoria_padre" invisible="1"/> <!-- field auxiliar para decorador -->
                                 <field name="id_partida" invisible="1" force_save="1"/>
-                                <field name="categoria" />
+                                <field name="categoria" context="{'default_id_partida': active_id}"/>
                                 <field name="clave_linea"/>
                                 <field name="concepto"/>
                                 <field name="medida"/>
