@@ -16,12 +16,13 @@ class conceptos_partidas(models.Model):
 
     name = fields.Many2one('catalogo.categoria', 'Categoria Padre')
 
-    clave_linea = fields.Char('Clave', required=True)
+    clave_linea = fields.Char('Clave', required=True, store=True)
 
-    concepto = fields.Text(required=True)
-    medida = fields.Char(required=True)
-    precio_unitario = fields.Float(required=True)
-    cantidad = fields.Float(required=True)
+    concepto = fields.Text(required=True, store=True)
+    medida = fields.Char(required=True, store=True)
+
+    precio_unitario = fields.Float(required=True, store=True)
+    cantidad = fields.Float(required=True, store=True)
 
     # MODIFICACIONES
     fecha_modificacion = fields.Date('Fecha de la Modificación')
@@ -32,7 +33,7 @@ class conceptos_partidas(models.Model):
     est_ant = fields.Integer(string="Est. Ant",  required=False, compute="sumaEst")
     pendiente = fields.Integer(string="Pendiente",  required=False, compute="Pendiente")
 
-    estimacion = fields.Integer(string="Estimacion",  required=False, )
+    estimacion = fields.Float(string="Estimacion",  required=False, )
 
     importe_ejecutado = fields.Float(string="Importe",  required=False, compute="importeEjec")
 
@@ -40,6 +41,7 @@ class conceptos_partidas(models.Model):
 
     id_partida = fields.Many2one(comodel_name="partidas.partidas", string="Numero de partida", readonly=True, store=True)
 
+    @api.one
     @api.depends('cantidad', 'estimacion')
     def sumaEst(self):
         for rec in self:
@@ -48,6 +50,7 @@ class conceptos_partidas(models.Model):
             })
 
     # VER COMO PROGRAMAREMOS EL ESTIMADO ANTERIOR DE OTRA ESTIMACION DE LA MISMA PROCEDENCIA
+    @api.one
     @api.depends('cantidad', 'estimacion')
     def Pendiente(self):
         for rec in self:
@@ -55,6 +58,7 @@ class conceptos_partidas(models.Model):
                 'pendiente': rec.cantidad - rec.estimacion
             })
 
+    @api.one
     @api.depends('precio_unitario', 'estimacion')
     def importeEjec(self):
         for rec in self:
@@ -62,6 +66,7 @@ class conceptos_partidas(models.Model):
                 'importe_ejecutado': rec.estimacion * rec.precio_unitario
             })
 
+    @api.one
     @api.depends('precio_unitario', 'cantidad')
     def sumaCantidad(self):
         for rec in self:

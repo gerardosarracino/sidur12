@@ -149,6 +149,8 @@
                        'search_default_contrato': active_id,
                        'default_contrato': active_id
                        }" attrs="{'invisible': [('contar_finiquito', '=', 0)]}" icon="fa-clock-o"/>
+
+                    <button string="Descargar documento" type="object" name="imprimir_accion" class="oe_highlight"  icon="fa-file"/>
                 </div>
 
             <notebook >
@@ -160,6 +162,7 @@
                          <!-- ADJUDICACION -->
                         <field name="adjudicacion" attrs="{'invisible': [('obra', '!=', False)]}"
                                domain="[('contratado','&lt;','1')]" /> <!-- domain="[('contratado','=','True')]" -->
+
                      </group>
 
                      <group colspan="1" col="4">
@@ -179,9 +182,9 @@
                          <tree create="false" editable="bottom" delete="false">
                             <field name="obra" readonly="1" force_save="1"/>
                             <field name="programaInversion" readonly="1" force_save="1"/>
-                            <field name="monto_partida" sum="Monto" widget="monetary" />
+                            <field name="monto_partida" sum="Monto" widget="monetary" force_save="1"/>
                             <field name="iva_partida" readonly="True" sum="I.V.A" widget="monetary"/>
-                            <field name="total_partida" readonly="True" sum="Total" widget="monetary"/>
+                            <field name="total_partida" readonly="True" sum="Total" widget="monetary" force_save="1"/>
                             <field name="numero_contrato" invisible="1"/>
                             <field name="nombre_partida" invisible="1"/>
                             <field name="nueva_partida" invisible="1"/>

@@ -45,14 +45,7 @@
                                     <!-- por mientras para activar metodos -->
                                     <field name="p_id" invisible="1"/>
                                     <field name="obra"/>
-                                    <field name="reduccion"/>
-                                    <field name="acum"/>
                                     <field name="xd" invisible="1"/>
-
-                                    <br/>
-                                    <field name="monto_programado_est"/>
-                                    <field name="porcentaje_est"/>
-
                                     <br/>
                                     <field name="tipo_estimacion" widget="radio"/>
                                 </group>
@@ -138,25 +131,29 @@
                             <group string="Conceptos Ejecutados En El Periodo">
                             </group>
 
-                            <!--field name="conceptos_partidas" string="" widget="section_and_note_one2many">
+                            <field name="conceptos_partidas" string="" widget="section_and_note_one2many">
                                     <tree editable="bottom" delete="false" create="false" force_save="1">
-                                        <field name="categoria" />
-                                        <field name="clave_linea"/>
-                                        <field name="concepto"/>
-                                        <field name="medida"/>
-                                        <field name="cantidad" attrs="{'invisible':[('cantidad','=',0)]}"/>
-                                        <field name="precio_unitario" attrs="{'invisible':[('precio_unitario','=',0.0)]}"/>
+                                        <field name="id_partida" invisible="1" force_save="1"/>
+                                        <field name="categoria" readonly="1" invisible="1" force_save="1"/>
+                                        <field name="clave_linea" readonly="1" string="Clave" force_save="1"/>
+                                        <field name="concepto" readonly="1" string="Concepto" force_save="1"/>
+                                        <field name="medida" readonly="1" string="U.M" force_save="1"/>
+                                        <field name="precio_unitario" readonly="1" attrs="{'invisible':[('precio_unitario','=',0.0)]}"
+                                        force_save="1"/>
+                                        <field name="cantidad" readonly="1" attrs="{'invisible':[('cantidad','=',0)]}"
+                                        string="Contratada" force_save="1"/>
 
-                                        <field name="cantidad" readonly="1" force_save="1" />
                                         <field name="est_ant" />
+                                        <field name="pendiente" />
                                         <field name="estimacion" force_save="1"/>
-
                                         <field name="importe_ejecutado" sum="Importe Ejecutado"/>
 
                                     </tree>
-                                </field 'form_view_ref': 'proceso_contratacion.conceptos_tree',  -->
+                                </field>
 
-                            <field name="conceptos_partidas" string="" domain="[('id_partida.id', '=', obra)]">
+                           <!--'form_view_ref': 'proceso_contratacion.conceptos_tree',  -->
+
+                            <!-- field name="conceptos_partidas" string="" domain="[('id_partida.id', '=', obra)]">
                                     <tree editable="bottom">
                                         <control>
                                             <create string="Agregar Conceptos"
@@ -176,7 +173,7 @@
                                         <field name="estimacion" force_save="1"/>
                                         <field name="importe_ejecutado" sum="Importe Ejecutado"/>
                                     </tree>
-                                </field>
+                                </field -->
 
                             <field name="total_conceptos" readonly="1" invisible="1"/>
                         </page>

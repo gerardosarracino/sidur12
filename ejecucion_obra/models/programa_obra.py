@@ -19,7 +19,7 @@ class ProgramaObra(models.Model):
 
     razon = fields.Text(string="Versión:", required=False, default="")
 
-    total_partida = fields.Float(string="Total", related="obra.total_partida")
+    total_partida = fields.Float(string="Total", related="obra.total_catalogo")
 
     select_tipo = [('1', 'Monto'), ('2', 'Plazo'), ('3', 'Ambos')]
     tipo = fields.Selection(select_tipo, string="Tipo:")

@@ -1,5 +1,57 @@
 <odoo>
   <data>
+            <record id="conceptos_form" model="ir.ui.view">
+          <field name="name">concepto form</field>
+          <field name="model">proceso.conceptos_part</field>
+          <field name="arch" type="xml">
+              <form string="">
+                  <sheet>
+                      <group>
+                            <field name="id_partida" />
+                            <field name="name" />
+                            <field name="descripcion" />
+                            <field name="categoria" />
+                            <field name="clave_linea"/>
+                            <field name="concepto"/>
+                            <field name="medida"/>
+                            <field name="cantidad" />
+                            <field name="precio_unitario" />
+                            <field name="importe"/>
+                      </group>
+                  </sheet>
+              </form>
+          </field>
+      </record>
+
+      <record id="conceptos_tree" model="ir.ui.view">
+    <field name="name">conceptos tree</field>
+    <field name="model">proceso.conceptos_part</field>
+    <field name="arch" type="xml">
+        <tree string="">
+            <field name="id_partida" />
+            <field name="categoria" />
+            <field name="clave_linea"/>
+            <field name="concepto"/>
+            <field name="medida"/>
+            <field name="cantidad" />
+            <field name="precio_unitario" />
+            <field name="importe"/>
+        </tree>
+    </field>
+</record>
+
+      
+                 <!-- ACCIONES VENTANA CONCEPTOS CONTRATADOS -->
+    <record model="ir.actions.act_window" id="conceptos_tree_action">
+      <field name="name">Conceptos</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">proceso.conceptos_part</field>
+      <field name="view_ids" eval="[(5, 0, 0),
+    (0, 0, {'view_mode': 'tree', 'view_id': ref('conceptos_tree')}),
+    (0, 0, {'view_mode': 'form', 'view_id': ref('conceptos_form')})]"/>
+      <field name="view_mode">form</field>
+    </record>
+
 
         <record id="conceptos_search" model="ir.ui.view">
          <field name="name">concepto search</field>
@@ -173,7 +225,7 @@
           <field name="name">conceptos contratados form</field>
           <field name="model">partidas.partidas</field>
           <field name="arch" type="xml">
-              <form string="">
+              <form string="" create="false">
                   <sheet>
                       <group string="Nombre de la Obra:">
                             <field name="obra" nolabel="1" readonly="1"/>
@@ -227,7 +279,7 @@
 
                       <group>
                         <group colspan="2" col="6">
-                            <field name="total_partida" />
+                            <field name="monto_sin_iva"/>
                             <field name="total_catalogo"/>
                             <field name="diferencia"  class="o_light_label"/>
                         </group>
@@ -348,56 +400,8 @@
         </field>
     </record>
 
-      <record id="conceptos_form" model="ir.ui.view">
-          <field name="name">concepto form</field>
-          <field name="model">proceso.conceptos_part</field>
-          <field name="arch" type="xml">
-              <form string="">
-                  <sheet>
-                      <group>
-                          <field name="id_partida" />
-                          <field name="name" />
-                            <field name="descripcion" />
-                            <field name="categoria" />
-                            <field name="clave_linea"/>
-                            <field name="concepto"/>
-                            <field name="medida"/>
-                            <field name="cantidad" />
-                            <field name="precio_unitario" />
-                            <field name="importe"/>
-                      </group>
-                  </sheet>
-              </form>
-          </field>
-      </record>
 
-      <record id="conceptos_tree" model="ir.ui.view">
-    <field name="name">conceptos tree</field>
-    <field name="model">proceso.conceptos_part</field>
-    <field name="arch" type="xml">
-        <tree string="">
-            <field name="id_partida" />
-            <field name="categoria" />
-            <field name="clave_linea"/>
-            <field name="concepto"/>
-            <field name="medida"/>
-            <field name="cantidad" />
-            <field name="precio_unitario" />
-            <field name="importe"/>
-        </tree>
-    </field>
-</record>
 
-      <!-- ACCIONES VENTANA CONCEPTOS CONTRATADOS -->
-    <record model="ir.actions.act_window" id="conceptos_tree_action">
-      <field name="name">Conceptos</field>
-      <field name="type">ir.actions.act_window</field>
-      <field name="res_model">proceso.conceptos_part</field>
-      <field name="view_ids" eval="[(5, 0, 0),
-    (0, 0, {'view_mode': 'tree', 'view_id': ref('conceptos_tree')}),
-    (0, 0, {'view_mode': 'form', 'view_id': ref('conceptos_form')})]"/>
-      <field name="view_mode">form</field>
-    </record>
 
   <!-- ACCIONES VENTANA CONCEPTOS CONTRATADOS -->
     <record model="ir.actions.act_window" id="proc_contratacion_concepto_contratados_action_window">

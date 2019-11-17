@@ -103,6 +103,7 @@ class Partidas(models.Model):
     monto_partida = fields.Float(string="Monto", )
     iva_partida = fields.Float(string="Iva", compute="iva", store=True)
     total_partida = fields.Float(string="Total", compute="SumaContrato")
+    monto_sin_iva = fields.Float(string="Total", compute="SumaContrato")
 
     # SUMA DE LAS PARTIDAS
     total_contrato = fields.Float(related="numero_contrato.impcontra")
@@ -175,8 +176,7 @@ class Partidas(models.Model):
     # RESIDENCIA
     residente_obra = fields.Many2one(
         comodel_name='res.users',
-        string='Residente obra:',
-        default=lambda self: self.env.user.id, )
+        string='Residente obra:')
     supervision_externa = fields.Many2one('proceso.elaboracion_contrato', string="Supervisión externa:")
     director_obras = fields.Char('Director de obras:')
     puesto_director_obras = fields.Text('Puesto director de obras:')
@@ -460,7 +460,8 @@ class Partidas(models.Model):
     def SumaContrato(self):
         for rec in self:
             rec.update({
-                'total_partida': (rec.monto_partida * self.b_iva) + rec.monto_partida
+                'total_partida': (rec.monto_partida * self.b_iva) + rec.monto_partida,
+                'monto_sin_iva': rec.monto_partida
             })
 
     # CALCULAR EL IVA TOTAL

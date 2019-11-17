@@ -82,7 +82,7 @@ class Licitacion(models.Model):
 
 
 class Participante(models.Model):
-    _name = "proceso.participante"
+    _name = 'proceso.participante'
 
     licitacion_id = fields.Char(compute="nombre", store=True)
     numerolicitacion = fields.Many2one('proceso.licitacion', string='Numero Licitación:',

@@ -82,14 +82,14 @@
                                     <t t-set="i" t-value="1"/>
                                     <tr t-foreach="o.conceptos_partidas" t-as="l">
                                         <!-- CONDICION DE SECCIONES -->
-                                        <t t-if="not l.nivel.parent_id">
+                                        <t t-if="not l.categoria.parent_id">
                                         <td class="text-left" >
                                             <!-- CONTADOR -->
                                             <span t-esc="i"/>
                                         </td> <t t-set="i" t-value="i+1"/>
 
                                         <td class="text-left" >
-                                            <span t-field="l.nivel"/>
+                                            <span t-field="l.categoria"/>
                                         </td>
 
                                         <td class="text-right" >

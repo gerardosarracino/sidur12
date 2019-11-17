@@ -40,16 +40,12 @@
                                     <tr>
                                         <td colspan="5" rowspan="2"></td>
                                         <td><strong>ESTIMACIÓN No.</strong></td>
-                                        <td><strong>POR OBRA EFECTUADA EN EL PERIODO DE:</strong>
-                                            </td>
+                                        <td><strong>POR OBRA EFECTUADA EN EL PERIODO DE:</strong></td>
                                     </tr>
                                     <tr>
-                                        <td><span t-field="o.idobra"/>
-                                            </td>
-                                        <td><span t-field="o.fecha_inicio_estimacion"/>
-                                         <strong>AL</strong>
-                                         <span t-field="o.fecha_termino_estimacion"/>
-                                            </td>
+                                        <td><p><span t-field="o.idobra"/></p></td>
+                                        <td><p><span t-field="o.fecha_inicio_estimacion"/> <strong> AL </strong>
+                                            <span t-field="o.fecha_termino_estimacion"/></p></td>
                                     </tr>
                                 </tbody>
 

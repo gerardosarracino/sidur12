@@ -1,6 +1,7 @@
 from odoo import models, fields, api, exceptions
 from datetime import date
 from datetime import datetime
+import calendar
 
 
 class Estimaciones(models.Model):
@@ -87,10 +88,22 @@ class Estimaciones(models.Model):
     fecha_termino_programa = fields.Date(compute="B_ff_programa")
     dias_transcurridos = fields.Integer(compute="DiasTrans")
     # MONTO PROGRAMADO PARA ESTA ESTIMACION
-    monto_programado_est = fields.Float(compute="MontoProgramadoESt")
+    monto_programado_est = fields.Float(compute="MontoProgramadoESt", digits=(12,2))
     porcentaje_est = fields.Float(compute="MontoProgramadoESt")
-    reduccion = fields.Float(compute="MontoProgramadoESt", string='Reduccion')
+    # reduccion = fields.Float(compute="MontoProgramadoESt", string='Reduccion')
     acum = fields.Float(compute="MontoProgramadoESt", string='Acum')
+    diasdif = fields.Integer(compute="MontoProgramadoESt", string='Dias de diferencia')
+
+    dias_desfasamiento = fields.Integer(compute="MontoProgramadoESt", string='DIAS DE DESFASAMIENTO')
+    monto_atraso = fields.Float(compute="MontoProgramadoESt", string='MONTO DE ATRASO', digits=(12,2))
+
+    diasperiodo = fields.Float(compute="MontoProgramadoESt", string='Dia total del periodo')
+    montodiario_programado = fields.Float(compute="MontoProgramadoESt", string='MONTO DIARIO PROGRAMADO', digits=(12,2))
+    diasrealesrelacion = fields.Float(compute="MontoProgramadoESt", string='DIAS EJECUTADOS REALCES CON RELACION'
+                                                                           ' AL MONTO DIARIO PROGRAMADO', digits=(12,2))
+    select = [('1', 'Diario'), ('2', 'Mensual'), ('3', 'Ninguno')]
+    periodicidadretencion = fields.Selection(select, string="Periodicidad Retención", related="obra.numero_contrato.periodicidadretencion")
+    retencion = fields.Float(string="% Retención", related="obra.numero_contrato.retencion")
 
     _url = fields.Char(compute="_calc_url", string="Vista de impresión")
 
@@ -99,7 +112,7 @@ class Estimaciones(models.Model):
     @api.multi
     @api.onchange('fecha_termino_estimacion', 'fecha_inicio_estimacion')
     def VerifFechaEst(self):
-        if str(self.fecha_termino_estimacion) < str(self.fecha_inicio_estimacion):
+        if str(self.fecha_inicio_estimacion) > str(self.fecha_termino_estimacion):
             raise exceptions.Warning('No se puede seleccionar una Fecha anterior a la actual, '
                                      'por favor seleccione una fecha actual o posterior')
         else:
@@ -114,21 +127,19 @@ class Estimaciones(models.Model):
         else:
             return False
 
-    @api.multi
-    @api.onchange('fecha_inicio_estimacion', 'fecha_termino_estimacion')
+    '''@api.multi
+    @api.onchange('fecha_termino_estimacion', 'fecha_inicio_estimacion')
     def VerifFechaEst3(self):
-        f_estimacion_inicio = self.fecha_inicio_estimacion
-        f_estimacion_termino = self.fecha_termino_estimacion
         date_format = "%Y-%m-%d"
-        f1 = datetime.strptime(str(f_estimacion_inicio), date_format)
-        f2 = datetime.strptime(str(f_estimacion_termino), date_format)
+        f1 = datetime.strptime(str(self.fecha_inicio_estimacion), date_format)
+        f2 = datetime.strptime(str(self.fecha_termino_estimacion), date_format)
         r = f2 - f1
         dias = r.days
         print(dias)
         if dias > 31:
             raise exceptions.Warning('Los dias entre cada fecha exceden los 31 dias!!')
         else:
-            return False
+            return False'''
 
     @api.multi
     def computeSeccion(self):
@@ -163,9 +174,9 @@ class Estimaciones(models.Model):
         acum = 0
         fecha_inicio_programa = b_programa.fecha_inicio_programa
         fecha_inicio_termino = b_programa.fecha_termino_programa
+        monto_contrato = b_programa.total_partida
         for i in b_programa.programa_contratos:
             fechatermino = i.fecha_termino
-            # fechainicio = i.fecha_inicio
             date_format = "%Y-%m-%d"
             datem = datetime(fechatermino.year, fechatermino.month, 1)
             datem2 = datetime(f_estimacion_termino.year, f_estimacion_termino.month, 1)
@@ -176,7 +187,7 @@ class Estimaciones(models.Model):
             elif f_estimacion_inicio.month is not f_estimacion_termino.month:
                 if fechatermino.month == f_estimacion_termino.month:
                     acum = acum + i.monto
-                    f1 = datetime.strptime(str(f_estimacion_inicio), date_format)
+                    f1 = datetime.strptime(str(fecha_inicio_programa), date_format)
                     f2 = datetime.strptime(str(f_estimacion_termino), date_format)
                     r = f2 - f1
                     dias = r.days
@@ -184,19 +195,39 @@ class Estimaciones(models.Model):
                     f4 = datetime.strptime(str(fecha_inicio_termino), date_format)
                     r2 = f4 - f3
                     total_dias_periodo = r2.days
+                    # ---------------------
+                    diasest = calendar.monthrange(f_estimacion_termino.year, f_estimacion_termino.month)[1]
+                    f7 = datetime.strptime(str(f_estimacion_termino.replace(day=1)), date_format)
+                    f8 = datetime.strptime(str(f_estimacion_termino), date_format)
+                    r4 = f8 - f7
+                    diastransest = r4.days
+                    # -------------------------
                     ultimo_monto = i.monto
                     monto_final = (ultimo_monto / total_dias_periodo) * dias
-                    m_estimado = acum - monto_final
-                    por = ultimo_monto + acum
+                    x1 = acum - ultimo_monto
+                    x2 = i.monto / diasest
+                    m_estimado = x1 + x2 * (diastransest + 1)
+                    # MONTO EJECUTADO REAL PARA ESTA ESTIMACION
                     self.acum = acum
+                    # MONTO PROGRAMADO PARA ESTA ESTIMACION
                     self.monto_programado_est = m_estimado
-                    self.reduccion = monto_final
-                    self.porcentaje_est = (m_estimado / por) * 100
+
+                    # self.reduccion = monto_final
+                    # DIAS DE DIFERENCIA ENTRE EST
+                    self.diasdif = dias
+                    # TOTAL DIAS PERIODO PROGRAMA
+                    self.diasperiodo = total_dias_periodo
+                    # MONTO DIARIO PROGRAMADO
+                    self.montodiario_programado = m_estimado / diasest
+                    # DIAS EJECUTADOS REALES CON RELACION AL MONTO DIARIO PROGRAMADO
+                    self.diasrealesrelacion = m_estimado / monto_final
+                    # PORCENTAJE ESTIMADO
+                    self.porcentaje_est = (m_estimado / monto_contrato) * 100
                 else:
                     acum = acum + i.monto
             elif datem <= datem2:
                 acum = acum + i.monto
-                f1 = datetime.strptime(str(f_estimacion_inicio), date_format)
+                f1 = datetime.strptime(str(fecha_inicio_programa), date_format)
                 f2 = datetime.strptime(str(f_estimacion_termino), date_format)
                 r = f2 - f1
                 dias = r.days
@@ -204,15 +235,37 @@ class Estimaciones(models.Model):
                 f4 = datetime.strptime(str(fecha_inicio_termino), date_format)
                 r2 = f4 - f3
                 total_dias_periodo = r2.days
+                # ---------------------
+                diasest = calendar.monthrange(f_estimacion_termino.year, f_estimacion_termino.month)[1]
+                f7 = datetime.strptime(str(f_estimacion_termino.replace(day=1)), date_format)
+                f8 = datetime.strptime(str(f_estimacion_inicio), date_format)
+                r4 = f8 - f7
+                diastransest = r4.days
+                # -------------------------
                 ultimo_monto = i.monto
                 monto_final = (ultimo_monto / total_dias_periodo) * dias
-                m_estimado = acum - monto_final
-                por = acum
-                print(por)
+                x1 = acum - ultimo_monto
+                x2 = i.monto / diasest
+                m_estimado = x1 + x2 * (diastransest + 1)
+                # MONTO EJECUTADO REAL PARA ESTA ESTIMACION
                 self.acum = acum
+                # MONTO PROGRAMADO PARA ESTA ESTIMACION
                 self.monto_programado_est = m_estimado
-                self.reduccion = monto_final
-                self.porcentaje_est = (m_estimado / por) * 100
+                # self.reduccion = monto_final
+                # DIAS DE DIFERENCIA ENTRE EST
+                self.diasdif = dias + 1
+                # TOTAL DIAS PERIODO PROGRAMA
+                self.diasperiodo = total_dias_periodo
+                # MONTO DIARIO PROGRAMADO
+                self.montodiario_programado = m_estimado / diasest
+                # DIAS EJECUTADOS REALES CON RELACION AL MONTO DIARIO PROGRAMADO
+                self.diasrealesrelacion = self.estimado / self.montodiario_programado
+                # DIAS DE DESFASAMIENTO
+                self.dias_desfasamiento = dias - self.diasrealesrelacion
+                # MONTO DE ATRASO
+                self.monto_atraso = self.dias_desfasamiento * self.montodiario_programado
+                # PORCENTAJE ESTIMADO
+                self.porcentaje_est = (m_estimado / monto_contrato) * 100
             elif f_estimacion_inicio != f_estimacion_termino:
                 print('LA FECHA SOBREPASO')
 
@@ -361,7 +414,7 @@ class Estimaciones(models.Model):
             })
 
     # METODO PARA INSERTAR CONCEPTOS CONTRATADOS     ---------------VERIFICAR COMO CORRER EL METODO AL ENTRAR
-    '''@api.multi
+    @api.multi
     @api.onchange('p_id')  # if these fields are changed, call method
     def conceptosEjecutados(self):
         adirecta_id = self.env['partidas.partidas'].browse(self.obra.id)
@@ -370,12 +423,12 @@ class Estimaciones(models.Model):
         })
         for conceptos in adirecta_id.conceptos_partidas:
             self.update({
-                'conceptos_partidas': [[0, 0, {'categoria': conceptos.categoria,
+                'conceptos_partidas': [[0, 0, {'id_partida': conceptos.id_partida, 'categoria': conceptos.categoria,
                                                'clave_linea': conceptos.clave_linea, 'concepto': conceptos.concepto,
                                                'medida': conceptos.medida,
                                                'precio_unitario': conceptos.precio_unitario,
                                                'cantidad': conceptos.cantidad}]]
-            })'''
+            })
 
 
     @api.one

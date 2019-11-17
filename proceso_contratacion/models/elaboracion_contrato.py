@@ -31,7 +31,8 @@ class ElaboracionContratos(models.Model):
     name = fields.Text(string="Descripción/Meta", required=True)
 
     descripciontrabajos = fields.Text(string="Descripción trabajos:", required=True)
-    unidadresponsableejecucion = fields.Many2one('proceso.unidad_responsable', string="Unidad responsable de su ejecución", required=True)
+    unidadresponsableejecucion = fields.Many2one('proceso.unidad_responsable', string="Unidad responsable de su "
+                                                                                      "ejecución", required=True)
     supervisionexterna = fields.Text(string="Supervisión externa")
     supervisionexterna1 = fields.Many2one('proceso.elaboracion_contrato', string="Supervisión externa:")
     contratista = fields.Many2one('contratista.contratista', related="adjudicacion.contratista")
@@ -62,6 +63,16 @@ class ElaboracionContratos(models.Model):
         b_adj = self.env['proceso.adjudicacion_directa'].browse(values['adjudicacion'])
         b_adj.write({'contratado': 1})
         return super(ElaboracionContratos, self).create(values)
+
+    # CONTEXT DESCARGAR ARCHIVO
+    @api.multi
+    def imprimir_accion(self):
+        original_url = "http://sidur.galartec.com/documento/" + str(self.id)
+        return {
+            "type": "ir.actions.act_url",
+            "url": original_url,
+            "target": "new",
+        }
 
     '''@api.multi
     def write(self, values):
