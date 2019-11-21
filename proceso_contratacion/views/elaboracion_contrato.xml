@@ -40,8 +40,11 @@
           <field name="arch" type="xml">
             <form create="false" delete="false" edit="false">
                 <sheet>
+                    <field name="enlace" invisible="1"/>
                     <group colspan="2" col="4" class="oe_read_only" string="Partida">
                         <field name="obra"/>
+
+
                         <field name="programaInversion"/>
                         <field name="monto_partida" sum="Monto" widget="monetary" />
                         <field name="iva_partida" readonly="True" sum="I.V.A" widget="monetary"/>
@@ -73,8 +76,7 @@
                     </group>
 
                     <group colspan="1" col="4">
-                        <field name="numero_fianza" class="oe_inline" attrs="{'readonly':[('anticipada', '=' , True)]}" required="True"
-                        widget="integer"/>
+                        <field name="numero_fianza" class="oe_inline" attrs="{'readonly':[('anticipada', '=' , True)]}" required="True"/>
                         <field name="afianzadora" attrs="{'readonly':[('anticipada', '=' , True)]}" required="True"/>
                         <field name="fecha_fianza" attrs="{'readonly':[('anticipada', '=' , True)]}" required="True"/>
                     </group>
@@ -138,6 +140,13 @@
       <field name="model">proceso.elaboracion_contrato</field>
       <field name="arch" type="xml">
         <form>
+            <header>
+              <button string="Cancelar" type="object" name="borrador_progressbar" attrs="{'invisible': [('estatus_contrato', '=', 'borrador')]}"/>
+              <button string="Confirmar" type="object" name="confirmado_progressbar" class="oe_highlight" attrs="{'invisible': ['|',('estatus_contrato','=','confirmado'),('estatus_contrato','=','validado')]}"/>
+              <button string="Validar" type="object" name="validado_progressbar" class="oe_highlight"  attrs="{'invisible': ['|',('estatus_contrato','!=','confirmado'),('estatus_contrato','=','validado')]}"/>
+              <field name="estatus_contrato" widget="statusbar"/>
+          </header>
+
           <sheet>
               <div class="oe_button_box oe_read_only" name="button_box">
                  <!-- FINIQUITAR CONTRATO ANTICIPADAMENTE BUTTONS -->
@@ -156,13 +165,14 @@
             <notebook >
                 <page string="Datos Generales" icon="fa-bitbucket">
                      <group string="Contrato Datos Generales"  >
-                         <!-- LICITACION -->
-                        <field name="obra" string="Seleccionar Licitación"  attrs="{'invisible':
-                        [('adjudicacion', '!=', False)]}" />
-                         <!-- ADJUDICACION -->
-                        <field name="adjudicacion" attrs="{'invisible': [('obra', '!=', False)]}"
-                               domain="[('contratado','&lt;','1')]" /> <!-- domain="[('contratado','=','True')]" -->
+                         <field name="tipo_contrato" widget="radio"/>
+                     </group>
 
+                    <group>
+                        <field name="obra" string="Seleccionar Licitación" attrs="{'invisible': [('tipo_contrato','!=', '1')]}"/>
+
+                         <field name="adjudicacion" attrs="{'invisible': [('tipo_contrato','!=', '2')]}"
+                               domain="[('contratado','&lt;','1')]" string="Seleccionar Adjudicación"/>
                      </group>
 
                      <group colspan="1" col="4">

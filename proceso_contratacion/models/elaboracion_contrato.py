@@ -8,6 +8,9 @@ class ElaboracionContratos(models.Model):
     _name = "proceso.elaboracion_contrato"
     _rec_name = 'contrato'
 
+    radio_adj_lic = [('1', "Licitación"), ('2', "Adjudicación")]
+    tipo_contrato = fields.Selection(radio_adj_lic, string="Tipo de Contrato:")
+
     contrato_partida_licitacion = fields.Many2many('partidas.partidas', ondelete="cascade")
     contrato_partida_adjudicacion = fields.Many2many('partidas.partidas', ondelete="cascade")
 
@@ -38,8 +41,8 @@ class ElaboracionContratos(models.Model):
     contratista = fields.Many2one('contratista.contratista', related="adjudicacion.contratista")
     fechainicio = fields.Date(string="Fecha de Inicio", required=True)
     fechatermino = fields.Date(string="Fecha de Termino", required=True)
-    select = [('1', 'Diario'), ('2', 'Mensual'), ('3', 'Ninguno')]
-    periodicidadretencion = fields.Selection(select, string="Periodicidad Retención", required=True, default="3")
+    periodicidadretencion = fields.Selection([('diario', 'Diario'),('mensual','Mensual'),('ninguno','Ninguno')],
+                                             string="Periodicidad Retención", required=True, default='Ninguno')
     retencion = fields.Float(string="% Retención")
     # Fianzas
     fianzas = fields.Many2many('proceso.fianza', string="Fianzas:")
@@ -56,6 +59,22 @@ class ElaboracionContratos(models.Model):
     saldo = fields.Float(string="Saldo:", compute="saldo_total")
     # IMPORTE DEL CONTRATO LICITACION Y ADJUDICACION
     impcontra = fields.Float(string="Importe:", compute="importeT")
+
+    estatus_contrato = fields.Selection(
+        [('borrador', 'Borrador'), ('confirmado', 'Confirmado'), ('validado', 'Validado'), ],
+        default='borrador')
+
+    @api.one
+    def borrador_progressbar(self):
+        self.write({'estatus_contrato': 'borrador', })
+
+    @api.one
+    def confirmado_progressbar(self):
+        self.write({'estatus_contrato': 'confirmado'})
+
+    @api.one
+    def validado_progressbar(self):
+        self.write({'estatus_contrato': 'validado'})
 
     @api.model
     def create(self, values):
@@ -349,80 +368,6 @@ class Fianza(models.Model):
     monto = fields.Float(string="Monto", required=True)
     fecha_fianza_fianzas = fields.Date(string="Fecha Fianza", required=True)
     afianzadora_fianzas = fields.Char(string="Afianzadora", required=True)
-
-
-class ConveniosModificados(models.Model):
-    _name = "proceso.convenios_modificado"
-
-    contrato_id = fields.Char(compute="nombre", store=True)
-    contrato = fields.Many2one('proceso.elaboracion_contrato', string='Numero Contrato:', readonly=True)
-
-    fecha_convenios = fields.Date(string="Fecha:")
-    name_convenios = fields.Many2one(string="obra partida", related="contrato.contrato_partida_adjudicacion.obra")
-    referencia = fields.Char(string="Referencia:")
-    observaciones = fields.Text(string="Observaciones:")
-    fecha_dictamen = fields.Date(string="Fecha Dictamen:")
-
-    # RADIO BUTTON
-    radio = [(
-        '1', "Plazo"), ('2', "Objeto"), ('3', "Monto"), ('4', "Monto/Plazo"), ]
-    tipo_convenio = fields.Selection(radio, string="Tipo de Convenio:")
-
-    # CONDICION PLAZO
-    plazo_fecha_inicio = fields.Date(string="Fecha Inicio:")
-    plazo_fecha_termino = fields.Date(string="Fecha Termino:")
-    # CONDICION OBJETO
-    objeto_nuevo_objeto = fields.Text(string="Objeto:")
-    # CONDICION MONTO
-    select_monto = [(
-        '1', "Ampliación:"), ('2', "Reducción:")]
-    tipo_monto = fields.Selection(select_monto, string="Monto:")
-    monto_importe = fields.Float(string="Importe:")
-
-    monto_iva = fields.Float(string="I.V.A:", compute="BuscarIva")
-
-    monto_total = fields.Float(string="Total:", compute="sumaMonto")
-    # CONDICION MONTO PLAZO
-    monto_plazo_fecha_inicio = fields.Date(string="Fecha Inicio:")
-    monto_plazo_fecha_termino = fields.Date(string="Fecha Termino:")
-    select_monto_plazo = [(
-        '1', "Ampliación:"), ('2', "Reducción:")]
-    tipo_monto_plazo = fields.Selection(select_monto_plazo, string="Monto:")
-    monto_plazo_importe = fields.Float(string="Importe:")
-
-    monto_plazo_iva = fields.Float(string="I.V.A:", compute="BuscarIva")
-
-    monto_plazo_total = fields.Float(string="Total:", compute="sumaMontoPlazo")
-    # TERMINA CONDICIONES RADIO BUTTON
-
-    convenio_fecha_fianza = fields.Date(string="Fecha Fianza:")
-    convenio_numero_fianza = fields.Integer(string="Numero Fianza:")
-    convenio_afianzadora = fields.Char(string="Afianzadora:")
-    convenio_monto_afianzadora = fields.Integer(string="Afianzadora:")
-
-    # METODO BUSCAR IVA EN CONFIGURACION
-    @api.one
-    def BuscarIva(self):
-        iva = self.env['ir.config_parameter'].sudo().get_param('generales.iva')
-        return iva
-
-    @api.one
-    def nombre(self):
-        self.contrato_id = self.id
-
-    @api.depends('monto_importe', 'monto_iva')
-    def sumaMonto(self):
-        for rec in self:
-            rec.update({
-                'monto_total': (rec.monto_importe * rec.monto_iva) + rec.monto_importe
-            })
-
-    @api.depends('monto_plazo_importe', 'monto_plazo_iva')
-    def sumaMontoPlazo(self):
-        for rec in self:
-            rec.update({
-                'monto_plazo_total': (rec.monto_plazo_importe * rec.monto_plazo_iva) + rec.monto_plazo_importe
-            })
 
 
 class FiniquitarContratoAnticipadamente(models.Model):

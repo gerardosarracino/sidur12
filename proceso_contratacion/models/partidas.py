@@ -86,7 +86,10 @@ class Partidas(models.Model):
     _name = 'partidas.partidas'
     _rec_name = "numero_contrato"
 
-    # CONTRATO AL QUE PERTENECE LA PARTIDA
+    # one2many
+    enlace = fields.One2many(comodel_name="proceso.elaboracion_contrato", inverse_name="contrato_partida_adjudicacion",
+                             string="Enlace", required=False, )
+
     numero_contrato = fields.Many2one(comodel_name="proceso.elaboracion_contrato", string="Numero de Contrato",
                                       compute="nombrePartida")
 
@@ -237,6 +240,7 @@ class Partidas(models.Model):
     # RESTRICCION DEL PROGRAMA, SI NO HAY PROGRAMA NO PERMITE REGISTRAR UNA ESTIMACION
     verif_programa = fields.Boolean(string="", compute="programa_verif")
 
+    # VALOR DEL IVA TRAIDO DESDE CONFIGURACION
     b_iva = fields.Float(string="IVA DESDE CONFIGURACION", compute="BuscarIva")
 
     @api.multi
@@ -272,9 +276,13 @@ class Partidas(models.Model):
     # METODO PARA INGRESAR A RECURSOS BOTON
     @api.multi
     def programas(self):
+        # VISTA OBJETIVO
         view = self.env.ref('ejecucion_obra.vista_form_programa')
+        # CONTADOR SI YA FUE CREADO
         count = self.env['programa.programa_obra'].search_count([('obra.id', '=', self.id)])
+        # BUSCAR VISTA
         search = self.env['programa.programa_obra'].search([('obra.id', '=', self.id)])
+        # SI YA FUE CREADA LA VISTA, ABRIR LA VISTA YA CREADA
         if count == 1:
             return {
                 'type': 'ir.actions.act_window',
@@ -285,6 +293,7 @@ class Partidas(models.Model):
                 'view_id': view.id,
                 'res_id': search.id,
             }
+        # NO A SIDO CREADA LA VISTA, CREARLA
         else:
             return {
                 'type': 'ir.actions.act_window',
@@ -396,9 +405,7 @@ class Partidas(models.Model):
     # METODO PARA INSERTAR EL NUMERO DEL CONTRATO DENTRO DE LA PARTIDA PARA HACER CONEXION
     @api.one
     def nombrePartida(self):
-        self.numero_contrato = self.env['proceso.elaboracion_contrato'].search(
-            [('contrato', '=', self.nombre_partida)]).id
-        self.nueva_partida = self.nombre_partida
+        self.numero_contrato = self.enlace.id
 
     # METODO DE CONTAR REGISTROS DE FINIQUITOS PARA ABRIR VISTA EN MODO NEW O TREE VIEW
     @api.one
@@ -438,7 +445,7 @@ class Partidas(models.Model):
     # JFernandez metodo para contar el numero de convenios que tiene cada obra
     @api.one
     def contar_covenios(self):
-        count = self.env['proceso.convenios_modificado'].search_count([('referencia', '=', self.id)])
+        count = self.env['proceso.convenios_modificado'].search_count([('contrato.id', '=', self.id)])
         self.count_convenios_modif = count
 
     # METODO PARA ASIGNAR EL TOTAL DEL CONTRATO
@@ -447,11 +454,12 @@ class Partidas(models.Model):
         self.total = self.total_partida
 
     # METODO CALCULAR DIFERENCIA ENTRE PARTIDA Y CONCEPTOS
+    @api.one
     @api.depends('total_partida', 'total_catalogo')
     def Diferencia(self):
         for rec in self:
             rec.update({
-                'diferencia': self.total_partida - self.total_catalogo
+                'diferencia': self.monto_sin_iva - self.total_catalogo
             })
 
     # METODO CALCULAR TOTAL PARTIDA UNICA
@@ -474,7 +482,8 @@ class Partidas(models.Model):
             })
 
     # METODO PARA SUMAR LOS IMPORTES DE LOS CONCEPTOS
-    @api.onchange('conceptos_partidas')
+    @api.one
+    @api.depends('conceptos_partidas')
     def SumaImporte(self):
         suma = 0
         for i in self.conceptos_partidas:

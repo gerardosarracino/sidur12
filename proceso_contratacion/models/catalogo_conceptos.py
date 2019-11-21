@@ -12,7 +12,7 @@ class conceptos_partidas(models.Model):
     # clave
     categoria = fields.Many2one('catalogo.categoria', 'Categoria', required=True)
 
-    descripcion = fields.Text('Descripción', required=True)
+    descripcion = fields.Text('Descripción')
 
     name = fields.Many2one('catalogo.categoria', 'Categoria Padre')
 

@@ -18,29 +18,50 @@ class ProgramaObra(models.Model):
     programa_contratos = fields.Many2many('proceso.programa', string="Agregar Periodo:")
 
     razon = fields.Text(string="Versión:", required=False, default="")
+    # MONTO DE LA PARTIDA
+    monto_sinconvenio = fields.Float(string="Total Contrato sin Convenio", compute="BmontoContrato")
+    # TOTAL DEL PROGRAMA CON O SIN CONVENIO
+    total_partida = fields.Float(string="Total", compute="TotalPrograma") # related="obra.total_catalogo"
 
-    total_partida = fields.Float(string="Total", related="obra.total_catalogo")
+    select_tipo = [('Monto', 'Monto'), ('2', 'Plazo'), ('3', 'Ambos')]
+    tipo = fields.Selection(select_tipo, string="Tipo:", store=True)
+    # VERIFICAR SI EXISTE CONVENIO MODIFICATORIO
+    count_convenio = fields.Integer(compute="TotalPrograma")
 
-    select_tipo = [('1', 'Monto'), ('2', 'Plazo'), ('3', 'Ambos')]
-    tipo = fields.Selection(select_tipo, string="Tipo:")
+    estatus_programa = fields.Selection(
+        [('borrador', 'Borrador'), ('confirmado', 'Confirmado'), ('validado', 'Validado'), ],
+        default='borrador')
 
-    @api.multi
+    @api.one
+    def borrador_progressbar(self):
+        self.write({'estatus_programa': 'borrador', })
+
+    @api.one
+    def confirmado_progressbar(self):
+        self.write({'estatus_programa': 'confirmado'})
+
+    @api.one
+    def validado_progressbar(self):
+        self.write({'estatus_programa': 'validado'})
+
+    '''@api.multi
     def write(self, values):
         if not self.tipo:
+            raise exceptions.Warning('Haz realizado una modificación al programa!!!,')
+        elif not self.razon:
             raise exceptions.Warning('Haz realizado una modificación al programa!!!,'
-                                     ' Porfavor rellene el formulario de cambios completamente')
-
-        if self.razon is []:
-            raise exceptions.Warning('Haz realizado una modificación al programa!!!,'
-                                     ' Porfavor rellene el formulario de cambios completamente')
-
+                                     ' Porfavor escriba la razon del cambio.')
+                 if self.restante_programa == 0:
+            print('si')
+        else:
+            raise exceptions.Warning('el monto!!!,')
         version = self.env['programa.programa_version']
         id_programa = self.id
         datos = {'comentario': values['razon'], 'programa': id_programa, 'tipo': values['tipo']}
         nueva_version = version.create(datos)
         values['razon'] = ""
         values['tipo'] = ""
-        return super(ProgramaObra, self).write(values)
+        return super(ProgramaObra, self).write(values)'''
 
     @api.one
     def partidaEnlace(self):
@@ -49,6 +70,27 @@ class ProgramaObra(models.Model):
     @api.one
     def partidaEnlaceId(self):
         self.obra_id2 = self.obraid
+
+    @api.one
+    @api.depends('obra')
+    def BmontoContrato(self):
+        b_partida = self.env['partidas.partidas'].search([('id', '=', self.obra.id)])
+        self.monto_sinconvenio = b_partida.monto_sin_iva
+
+    @api.one
+    def TotalPrograma(self):
+        count_convenio = self.env['proceso.convenios_modificado'].search_count([('contrato.id', '=', self.obra.id)])
+        self.count_convenio = count_convenio
+        importe_convenio = self.env['proceso.convenios_modificado'].search([('contrato.id', '=', self.obra.id)])
+        b_partida = self.env['partidas.partidas'].search([('id', '=', self.obra.id)])
+        print(b_partida.monto_sin_iva)
+        if count_convenio >= 1:
+            for i in importe_convenio:
+                print(i.monto_importe)
+                print('hola')
+                self.total_partida = i.monto_importe
+        else:
+            self.total_partida = self.monto_sinconvenio
 
     @api.multi
     @api.onchange('programa_contratos')
@@ -68,6 +110,7 @@ class ProgramaObra(models.Model):
             self.fecha_termino_programa = str(resultado)
 
     @api.one
+    @api.depends('monto_programa_aux')
     def DiferenciaPrograma(self):
         self.restante_programa = self.total_partida - self.monto_programa_aux
 

@@ -40,7 +40,7 @@
     </field>
 </record>
 
-      
+
                  <!-- ACCIONES VENTANA CONCEPTOS CONTRATADOS -->
     <record model="ir.actions.act_window" id="conceptos_tree_action">
       <field name="name">Conceptos</field>
@@ -279,9 +279,25 @@
 
                       <group>
                         <group colspan="2" col="6">
-                            <field name="monto_sin_iva"/>
-                            <field name="total_catalogo"/>
-                            <field name="diferencia"  class="o_light_label"/>
+                            <group>
+                                <field name="monto_sin_iva"/>
+                            </group>
+
+                            <!-- DIFERENTE AL TOTAL ROJO -->
+                            <group attrs="{'invisible': [('diferencia','>', 0)]}">
+                                    <field name="total_catalogo" style="color: #2D8E0B"/>
+                            </group>
+
+                            <!-- IGUAL AL TOTAL VERDE -->
+
+                            <group attrs="{'invisible': [('diferencia','=', 0)]}">
+                                <field name="total_catalogo" style="color: #E21313"/>
+                            </group>
+                            <group>
+                                <field name="diferencia"  class="o_light_label"/>
+                            </group>
+
+
                         </group>
 
                         <field name="conceptos_partidas" string="# Concepto de partidas" widget="section_and_note_one2many"
@@ -373,7 +389,7 @@
       <field name="name">proceso.elaboracion_contrato.tree3</field>
       <field name="model">partidas.partidas</field>
       <field name="arch" type="xml">
-        <tree create="false">
+        <tree create="false" decoration-success="total_catalogo == monto_sin_iva" decoration-danger="total_catalogo != monto_sin_iva">
             <field name="fecha" string="Fecha"/>
             <field name="numero_contrato" string="# Contrato"/>
             <field name="objeto" string="Objeto"/>
@@ -381,7 +397,8 @@
             <field name="monto_partida" string="Importe Contrato"/>
             <field name="a_fis" />
             <field name="a_fin" />
-            <field name="total" string="Importe Catalogo"/> <!-- total_contrato error singleton -->
+            <field name="total_catalogo" string="Importe Catalogo"/>
+            <field name="monto_sin_iva" invisible="1"/>
         </tree>
       </field>
     </record>

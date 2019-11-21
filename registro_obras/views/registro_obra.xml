@@ -226,6 +226,12 @@
       <field name="model">registro.obra</field>
       <field name="arch" type="xml">
         <form>
+          <header>
+              <button string="Cancelar" type="object" name="borrador_progressbar" attrs="{'invisible': [('estatus_obra', '=', 'borrador')]}"/>
+              <button string="Confirmar" type="object" name="confirmado_progressbar" class="oe_highlight" attrs="{'invisible': ['|',('estatus_obra','=','confirmado'),('estatus_obra','=','validado')]}"/>
+              <button string="Validar" type="object" name="validado_progressbar" class="oe_highlight"  attrs="{'invisible': ['|',('estatus_obra','!=','confirmado'),('estatus_obra','=','validado')]}"/>
+              <field name="estatus_obra" widget="statusbar"/>
+          </header>
         <!--header>
           <button string="Cancelar" type="object" name="borrador_progressbar_respuesta" attrs="{'invisible': [('estado_obra', '=', 'planeada')]}"/>
           <button string="Programar Obra" type="action" name="%(registro_obras.programarobra_action)d" class="oe_highlight" context="{

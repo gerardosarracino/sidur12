@@ -42,6 +42,22 @@ class AdjudicacionDirecta(models.Model):
     recurso_otros = fields.Float(string="Otros")
     total_recurso = fields.Float(string="Total", compute='sumaRecursos')
 
+    estatus_adjudicacion = fields.Selection(
+        [('borrador', 'Borrador'), ('confirmado', 'Confirmado'), ('validado', 'Validado'), ],
+        default='borrador')
+
+    @api.one
+    def borrador_progressbar(self):
+        self.write({'estatus_adjudicacion': 'borrador', })
+
+    @api.one
+    def confirmado_progressbar(self):
+        self.write({'estatus_adjudicacion': 'confirmado'})
+
+    @api.one
+    def validado_progressbar(self):
+        self.write({'estatus_adjudicacion': 'validado'})
+
     @api.multi
     @api.onchange('programas_inversion_adjudicacion')
     def BorrarTabla(self):

@@ -104,10 +104,10 @@
                                         </td>
                                         <td class="text-left">
                                             <p t-field="o.monto_programado_est"/>
-                                            <p t-field="o.estimado"/>
+                                            <p t-field="o.montoreal"/>
                                             <p t-field="o.monto_programado_est"/>
-                                            <p t-field="o.estimado"/>
-                                            <p> <span t-field="o.diasdif"/> (Días)</p>
+                                            <p t-field="o.montoreal"/>
+                                            <p> <span t-field="o.dias_transcurridos"/> (Días)</p>
                                             <p><span t-field="o.dias_desfasamiento"/> (Días)</p>
                                             <p><span t-field="o.retencion"/>% <span t-field="o.periodicidadretencion"/></p>
                                             <p>97,328.18</p>
@@ -116,9 +116,9 @@
                                             <p>2,119.71</p>
                                         </td>
                                         <td class="text-left">
-                                            <p> <span t-field="o.diasdif"/>(Días)</p>
+                                            <p> <span t-field="o.dias_transcurridos"/>(Días)</p>
                                             <p>-</p>
-                                            <p>/ <span t-field="o.diasdif"/> (Días) <span style="width:50%">=</span></p>
+                                            <p>/ <span t-field="o.dias_transcurridos"/> (Días) <span style="width:50%">=</span></p>
                                             <p>/  <span t-field="o.montodiario_programado"/> </p>
                                             <p> - <span t-field="o.diasrealesrelacion"/> (Días)</p>
                                             <p>	* <span t-field="o.montodiario_programado"/> </p>

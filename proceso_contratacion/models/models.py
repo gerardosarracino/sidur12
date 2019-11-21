@@ -57,6 +57,29 @@ class Licitacion(models.Model):
 
     variable_count = fields.Integer(compute='contar')
 
+    estatus_licitacion = fields.Selection(
+        [('borrador', 'Borrador'), ('confirmado', 'Confirmado'), ('validado', 'Validado'), ],
+        default='borrador')
+
+    @api.one
+    def borrador_progressbar(self):
+        self.write({'estatus_licitacion': 'borrador', })
+
+    @api.one
+    def confirmado_progressbar(self):
+        self.write({'estatus_licitacion': 'confirmado'})
+
+    @api.one
+    def validado_progressbar(self):
+        self.write({'estatus_licitacion': 'validado'})
+
+    @api.multi
+    @api.onchange('programas_inversion_adjudicacion')
+    def BorrarTabla(self):
+        self.update({
+            'programar_obra_adjudicacion': [[5]]
+        })
+
     # METODO CONTADOR DE PARTICIPANTES
     @api.one
     def contar(self):

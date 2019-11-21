@@ -12,8 +12,8 @@
                         <field name="fecha" readonly="1"/>
                     </group>
                     <group>
-                        <field name="tipo" widget="selection" class="oe_inline"/>
-                        <field name="comentario" string="Comentario:"/>
+                        <field name="tipo" widget="radio" class="oe_inline" force_save="1"/>
+                        <field name="comentario" string="Comentario:" force_save="1"/>
                     </group>
 
 
@@ -53,8 +53,15 @@
         <field name="context">17</field>
         <field name="arch" type="xml">
             <form>
+              <header>
+                  <button string="Cancelar" type="object" name="borrador_progressbar" attrs="{'invisible': [('estatus_programa', '=', 'borrador')]}"/>
+                  <button string="Confirmar" type="object" name="confirmado_progressbar" class="oe_highlight" attrs="{'invisible': ['|',('estatus_programa','=','confirmado'),('estatus_programa','=','validado')]}"/>
+                  <button string="Validar" type="object" name="validado_progressbar" class="oe_highlight"  attrs="{'invisible': ['|',('estatus_programa','!=','confirmado'),('estatus_programa','=','validado')]}"/>
+                  <field name="estatus_programa" widget="statusbar"/>
+              </header>
                 <sheet>
                     <group>
+                       <field name="count_convenio" invisible="1"/>
                        <field name="obra" string="Partida:"/>
                        <field name="obraid" string="Partida:" invisible="1"/>
                    </group>
@@ -62,7 +69,11 @@
                        <group colspan="1" col="4">
                           <field name="fecha_inicio_programa" readonly="1"/>
                           <field name="fecha_termino_programa" readonly="1"/>
+
                           <field name="total_partida" readonly="True" widget="monetary"/>
+                           <p attrs="{'invisible': [('count_convenio','&lt;=', '1')]}" style="color: #EE8121;">
+                              Con Convenio Modificatorio*</p>
+
                           <field name="restante_programa" readonly="1"/>
                        </group>
                            <field name="programa_contratos" widget='one2many'>
@@ -77,8 +88,11 @@
                            </field>
                     </group>
                     <group class="oe_edit_only">
-                        <field name="tipo" widget="selection" class="oe_inline" attrs="{'invisible': [('programa_contratos', '=', [])]}"/>
-                        <field name="razon" string="Modificación" attrs="{'invisible': [('programa_contratos', '=', [])]}"/>
+                        <field name="tipo" widget="radio" class="oe_inline" attrs="{'invisible': [('programa_contratos', '=', [])]}"
+                        force_save="1"/>
+                        <field name="razon" string="Modificación" attrs="{'invisible': [('programa_contratos', '=', [])]}"
+                        force_save="1"/>
+                        <field name="count_convenio" invisible="1"/>
                     </group>
 
                 </sheet>

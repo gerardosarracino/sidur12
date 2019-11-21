@@ -50,6 +50,7 @@ class registro_obra(models.Model):
 	_name = "registro.obra"
 	_inherit = 'res.partner'
 
+	# MAP DRAW
 	shape_name = fields.Char(string='Shape Name')
 	shape_area = fields.Float(string='Area')
 	shape_radius = fields.Float(string='Radius')
@@ -94,6 +95,20 @@ class registro_obra(models.Model):
 	programada = fields.Integer(compute='contar2')
 	# estate = fields.Selection([('planeada', 'Planeada'),('programada', 'Programada'),], default='planeada')
 	estado_obra = fields.Char(compute="contar_programada")
+
+	estatus_obra = fields.Selection([('borrador', 'Borrador'), ('confirmado', 'Confirmado'), ('validado', 'Validado'), ],
+								default='borrador')
+	@api.one
+	def borrador_progressbar(self):
+		self.write({'estatus_obra': 'borrador', })
+
+	@api.one
+	def confirmado_progressbar(self):
+		self.write({'estatus_obra': 'confirmado'})
+
+	@api.one
+	def validado_progressbar(self):
+		self.write({'estatus_obra': 'validado'})
 
 	@api.multi
 	def _compute_commercial_partner(self):

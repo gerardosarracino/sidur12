@@ -29,8 +29,8 @@ class Estimaciones(models.Model):
     # estimacions_id = fields.Char(compute="estimacionId", store=True)
     numero_estimacion = fields.Char(string="Número de Estimación:")
 
-    fecha_inicio_estimacion = fields.Date(string="Del:", required=True, )
-    fecha_termino_estimacion = fields.Date(string="Al:", required=True, )
+    fecha_inicio_estimacion = fields.Date(string="Del:", required=True, default=fields.Date.today())
+    fecha_termino_estimacion = fields.Date(string="Al:", required=True, default=fields.Date.today())
     fecha_presentacion = fields.Date(string="Fecha de presentación:", required=True, )
     fecha_revision = fields.Date(string="Fecha revisión Residente:", required=True, )
 
@@ -86,20 +86,24 @@ class Estimaciones(models.Model):
     # DATOS Y CAMPOS CALCULADOS PARA REPORTE DE RETENCION
     fecha_inicio_programa = fields.Date(compute="B_fi_programa")
     fecha_termino_programa = fields.Date(compute="B_ff_programa")
+
     dias_transcurridos = fields.Integer(compute="DiasTrans")
+
     # MONTO PROGRAMADO PARA ESTA ESTIMACION
-    monto_programado_est = fields.Float(compute="MontoProgramadoESt", digits=(12,2))
-    porcentaje_est = fields.Float(compute="MontoProgramadoESt")
+    monto_programado_est = fields.Float(compute="PenasConvencionales", digits=(12,2))
+    porcentaje_est = fields.Float(compute="PenasConvencionales")
     # reduccion = fields.Float(compute="MontoProgramadoESt", string='Reduccion')
-    acum = fields.Float(compute="MontoProgramadoESt", string='Acum')
-    diasdif = fields.Integer(compute="MontoProgramadoESt", string='Dias de diferencia')
 
-    dias_desfasamiento = fields.Integer(compute="MontoProgramadoESt", string='DIAS DE DESFASAMIENTO')
-    monto_atraso = fields.Float(compute="MontoProgramadoESt", string='MONTO DE ATRASO', digits=(12,2))
+    montoreal = fields.Float(compute="MontoRealEst", string='MONTO EJECUTADO REAL PARA ESTA ESTIMACION')
 
-    diasperiodo = fields.Float(compute="MontoProgramadoESt", string='Dia total del periodo')
-    montodiario_programado = fields.Float(compute="MontoProgramadoESt", string='MONTO DIARIO PROGRAMADO', digits=(12,2))
-    diasrealesrelacion = fields.Float(compute="MontoProgramadoESt", string='DIAS EJECUTADOS REALCES CON RELACION'
+    diasdif = fields.Integer(compute="PenasConvencionales", string='Dias de diferencia')
+
+    dias_desfasamiento = fields.Integer(compute="PenasConvencionales", string='DIAS DE DESFASAMIENTO')
+    monto_atraso = fields.Float(compute="PenasConvencionales", string='MONTO DE ATRASO', digits=(12,2))
+
+    diasperiodo = fields.Float(compute="PenasConvencionales", string='Dia total del periodo')
+    montodiario_programado = fields.Float(compute="PenasConvencionales", string='MONTO DIARIO PROGRAMADO', digits=(12,2))
+    diasrealesrelacion = fields.Float(compute="PenasConvencionales", string='DIAS EJECUTADOS REALCES CON RELACION'
                                                                            ' AL MONTO DIARIO PROGRAMADO', digits=(12,2))
     select = [('1', 'Diario'), ('2', 'Mensual'), ('3', 'Ninguno')]
     periodicidadretencion = fields.Selection(select, string="Periodicidad Retención", related="obra.numero_contrato.periodicidadretencion")
@@ -110,6 +114,52 @@ class Estimaciones(models.Model):
     xd = fields.Float(compute="computeSeccion")
 
     @api.multi
+    def OrdenesPago(self):
+        # VISTA OBJETIVO
+        view = self.env.ref('ejecucion_obra.orden_cambio_form')
+        # CONTADOR SI YA FUE CREADO
+        count = self.env['control.ordenes_cambio'].search_count([('vinculo_estimaciones.id', '=', self.id)])
+        print(count)
+        # BUSCAR VISTA
+        search = self.env['control.ordenes_cambio'].search([('vinculo_estimaciones.id', '=', self.id)])
+        print(search)
+        # SI YA FUE CREADA LA VISTA, ABRIR LA VISTA YA CREADA
+        if count == 1:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': 'Ordenes de Cambio',
+                'res_model': 'control.ordenes_cambio',
+                'view_mode': 'form',
+                'target': 'new',
+                'view_id': view.id,
+                'res_id': search.id,
+            }
+        # NO A SIDO CREADA LA VISTA, CREARLA
+        else:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': 'Ordenes de Cambio',
+                'res_model': 'control.ordenes_cambio',
+                'view_mode': 'form',
+                'target': 'new',
+                'view_id': view.id,
+            }
+
+    # MONTO REAL PARA ESTA ESTIMACION
+    @api.one
+    def MontoRealEst(self):
+        b_est = self.env['control.estimaciones'].search([('obra.id', '=', self.obra.id)])
+        acum = 0
+        for i in b_est:
+            if i.idobra <= self.idobra:
+                acum = acum + i.estimado
+                print(acum)
+                self.montoreal = acum
+            else:
+                print('se paso de numero estimacion')
+
+    # METODOS DE RESTRICCIONES DE FECHAS
+    '''@api.multi
     @api.onchange('fecha_termino_estimacion', 'fecha_inicio_estimacion')
     def VerifFechaEst(self):
         if str(self.fecha_inicio_estimacion) > str(self.fecha_termino_estimacion):
@@ -127,20 +177,19 @@ class Estimaciones(models.Model):
         else:
             return False
 
-    '''@api.multi
+    @api.multi
     @api.onchange('fecha_termino_estimacion', 'fecha_inicio_estimacion')
-    def VerifFechaEst3(self):
-        date_format = "%Y-%m-%d"
-        f1 = datetime.strptime(str(self.fecha_inicio_estimacion), date_format)
-        f2 = datetime.strptime(str(self.fecha_termino_estimacion), date_format)
+    def ExcepcionFechaESt(self):
+        f1 = datetime.strptime(str(self.fecha_inicio_estimacion), "%Y-%m-%d")
+        f2 = datetime.strptime(str(self.fecha_termino_estimacion), "%Y-%m-%d")
         r = f2 - f1
         dias = r.days
-        print(dias)
         if dias > 31:
             raise exceptions.Warning('Los dias entre cada fecha exceden los 31 dias!!')
         else:
-            return False'''
+            print('si')'''
 
+    # METODO DE PRUEBA PARA UN REPORTE
     @api.multi
     def computeSeccion(self):
         for i in self.conceptos_partidas:
@@ -152,6 +201,7 @@ class Estimaciones(models.Model):
                 self.xd = 1
         self.xd = 1
 
+    # TOTAL DE CONCEPTOS EJECUTADOS EXCEL
     @api.one
     def _calc_url(self):
         original_url = "/registro_obras/registro_obras/?id="
@@ -165,9 +215,9 @@ class Estimaciones(models.Model):
             "target": "new",
         }
 
-    # NOTA VERIFICAR M_ESTIMADO, DIAS IGUALES NO RETORNA EL VALOR COMPLETO DEL MONTO
+    # METODO PARA CALCULOS DE REPORTE DE PENAS CONVENCIONALES
     @api.multi
-    def MontoProgramadoESt(self):
+    def PenasConvencionales(self):
         f_estimacion_inicio = self.fecha_inicio_estimacion
         f_estimacion_termino = self.fecha_termino_estimacion
         b_programa = self.env['programa.programa_obra'].search([('obra.id', '=', self.obra.id)])
@@ -203,24 +253,24 @@ class Estimaciones(models.Model):
                     diastransest = r4.days
                     # -------------------------
                     ultimo_monto = i.monto
-                    monto_final = (ultimo_monto / total_dias_periodo) * dias
                     x1 = acum - ultimo_monto
                     x2 = i.monto / diasest
                     m_estimado = x1 + x2 * (diastransest + 1)
-                    # MONTO EJECUTADO REAL PARA ESTA ESTIMACION
-                    self.acum = acum
                     # MONTO PROGRAMADO PARA ESTA ESTIMACION
                     self.monto_programado_est = m_estimado
-
                     # self.reduccion = monto_final
                     # DIAS DE DIFERENCIA ENTRE EST
-                    self.diasdif = dias
+                    self.diasdif = dias + 1
                     # TOTAL DIAS PERIODO PROGRAMA
                     self.diasperiodo = total_dias_periodo
                     # MONTO DIARIO PROGRAMADO
-                    self.montodiario_programado = m_estimado / diasest
+                    self.montodiario_programado = self.monto_programado_est / self.dias_transcurridos
                     # DIAS EJECUTADOS REALES CON RELACION AL MONTO DIARIO PROGRAMADO
-                    self.diasrealesrelacion = m_estimado / monto_final
+                    self.diasrealesrelacion = self.estimado / self.montodiario_programado
+                    # DIAS DE DESFASAMIENTO
+                    self.dias_desfasamiento = self.diasrealesrelacion - self.dias_transcurridos
+                    # MONTO DE ATRASO
+                    self.monto_atraso = self.dias_desfasamiento * self.montodiario_programado
                     # PORCENTAJE ESTIMADO
                     self.porcentaje_est = (m_estimado / monto_contrato) * 100
                 else:
@@ -243,12 +293,9 @@ class Estimaciones(models.Model):
                 diastransest = r4.days
                 # -------------------------
                 ultimo_monto = i.monto
-                monto_final = (ultimo_monto / total_dias_periodo) * dias
                 x1 = acum - ultimo_monto
                 x2 = i.monto / diasest
                 m_estimado = x1 + x2 * (diastransest + 1)
-                # MONTO EJECUTADO REAL PARA ESTA ESTIMACION
-                self.acum = acum
                 # MONTO PROGRAMADO PARA ESTA ESTIMACION
                 self.monto_programado_est = m_estimado
                 # self.reduccion = monto_final
@@ -257,11 +304,11 @@ class Estimaciones(models.Model):
                 # TOTAL DIAS PERIODO PROGRAMA
                 self.diasperiodo = total_dias_periodo
                 # MONTO DIARIO PROGRAMADO
-                self.montodiario_programado = m_estimado / diasest
+                self.montodiario_programado = self.monto_programado_est / self.dias_transcurridos
                 # DIAS EJECUTADOS REALES CON RELACION AL MONTO DIARIO PROGRAMADO
                 self.diasrealesrelacion = self.estimado / self.montodiario_programado
                 # DIAS DE DESFASAMIENTO
-                self.dias_desfasamiento = dias - self.diasrealesrelacion
+                self.dias_desfasamiento = self.diasrealesrelacion - self.dias_transcurridos
                 # MONTO DE ATRASO
                 self.monto_atraso = self.dias_desfasamiento * self.montodiario_programado
                 # PORCENTAJE ESTIMADO
@@ -269,21 +316,24 @@ class Estimaciones(models.Model):
             elif f_estimacion_inicio != f_estimacion_termino:
                 print('LA FECHA SOBREPASO')
 
+    # DIAS TRANSCURRIDOS DESDE INICIO DE PROGRAMA HASTA TERMINO DE ESTIMACION
     @api.one
     def DiasTrans(self):
         fe1 = self.fecha_inicio_programa
-        fe2 = self.fecha_termino_programa
+        fe2 = self.fecha_termino_estimacion
         date_format = "%Y-%m-%d"
         f1 = datetime.strptime(str(fe1), date_format)
         f2 = datetime.strptime(str(fe2), date_format)
         r = f2 - f1
-        self.dias_transcurridos = r.days
+        self.dias_transcurridos = r.days + 1
 
+    # FECHA INICIO PROGRAMA
     @api.one
     def B_fi_programa(self):
         b_fecha = self.env['programa.programa_obra'].search([('obra.id', '=', self.obra.id)])
         self.fecha_inicio_programa = str(b_fecha.fecha_inicio_programa)
 
+    # FECHA TERMINO PROGRAMA
     @api.one
     def B_ff_programa(self):
         b_fecha = self.env['programa.programa_obra'].search([('obra.id', '=', self.obra.id)])
@@ -296,6 +346,7 @@ class Estimaciones(models.Model):
         print(b_director)
         self.subdirector_contrato = b_director
 
+    # ID DE LA ESTIMACION
     @api.one
     def estid(self):
         numero = 100000 + self.id
@@ -313,6 +364,7 @@ class Estimaciones(models.Model):
         iva = self.env['ir.config_parameter'].sudo().get_param('generales.iva')
         self.b_iva = iva
 
+    # NUMERO ESTIMACION
     @api.model
     def create(self, values):
         num = int(values['estimacion_ids'])
@@ -338,7 +390,7 @@ class Estimaciones(models.Model):
 
     # METODO PARA JALAR DATOS DE LAS DEDUCCIONES DEL CONTRATO
     @api.multi
-    @api.onchange('p_id')  # if these fields are changed, call method
+    @api.onchange('conceptos_partidas')  # if these fields are changed, call method
     def deduccion(self):
         adirecta_id = self.env['proceso.elaboracion_contrato'].browse(self.numero_contrato.id)
         self.update({
@@ -446,3 +498,18 @@ class Deducciones(models.Model):
     name = fields.Char()
     porcentaje = fields.Float()
     valor = fields.Float()
+
+
+class Ordenes_Cambio(models.Model):
+    _name = 'control.ordenes_cambio'
+    _rec_name = 'vinculo_estimaciones'
+
+    vinculo_estimaciones = fields.Many2one('control.estimaciones', string='Estimación id', store=True)
+    fecha = fields.Date(string='Fecha')
+    # total_estimado = fields.Float(related='vinculo_estimaciones.estimado', string='Total estimación')
+    cuentas_bancos = fields.Many2one('control.cuentasbancos')
+
+
+class CuentasBanco(models.Model):
+    _name = 'control.cuentasbancos'
+    name = fields.Char()

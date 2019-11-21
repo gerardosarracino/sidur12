@@ -47,7 +47,16 @@
       <field name="model">proceso.adjudicacion_directa</field>
       <field name="arch" type="xml">
         <form>
+            <header>
+              <button string="Cancelar" type="object" name="borrador_progressbar" attrs="{'invisible': [('estatus_adjudicacion', '=', 'borrador')]}"/>
+              <button string="Confirmar" type="object" name="confirmado_progressbar" class="oe_highlight" attrs="{'invisible': ['|',('estatus_adjudicacion','=','confirmado'),('estatus_adjudicacion','=','validado')]}"/>
+              <button string="Validar" type="object" name="validado_progressbar" class="oe_highlight"  attrs="{'invisible': ['|',('estatus_adjudicacion','!=','confirmado'),('estatus_adjudicacion','=','validado')]}"/>
+              <field name="estatus_adjudicacion" widget="statusbar"/>
+          </header>
+
           <sheet>
+
+
                 <!-- BOTON HACIA RECURSOS -->
           <div class="oe_button_box oe_read_only" name="button_box">
                 <button name="recursos" type="object" string="Recursos Específicos" class="oe_highlight" icon="fa-pencil-square-o"/>
@@ -56,7 +65,7 @@
           <group string="Agregar nueva adjudicación directa" >
                 <!-- PROGRAMAS DE INVERSION -->
                 <field name="programas_inversion_adjudicacion" string="Programa de inversión"/>
-                <field name="contratado" force_save="1" invisible="1"/>
+                <field name="contratado" force_save="1" />
           </group>
 
           <group>

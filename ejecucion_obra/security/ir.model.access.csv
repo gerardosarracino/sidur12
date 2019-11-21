@@ -4,3 +4,5 @@ access_control_deducciones,control.deducciones,model_control_deducciones,,1,1,1,
 access_programa_programa_obra,programa.programa_obra,model_programa_programa_obra,,1,1,1,1
 access_programa_tabla,programa.tabla,model_programa_tabla,,1,1,1,1
 access_programa_programa_version,programa.programa_version,model_programa_programa_version,,1,1,1,1
+access_control_ordenes_cambio,control.ordenes_cambio,model_control_ordenes_cambio,,1,1,1,1
+access_control_cuentasbancos,control.cuentasbancos,model_control_cuentasbancos,,1,1,1,1

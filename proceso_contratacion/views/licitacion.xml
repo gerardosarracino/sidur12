@@ -225,6 +225,13 @@
       <field name="model">proceso.licitacion</field>
       <field name="arch" type="xml">
         <form>
+            <header>
+              <button string="Cancelar" type="object" name="borrador_progressbar" attrs="{'invisible': [('estatus_licitacion', '=', 'borrador')]}"/>
+              <button string="Confirmar" type="object" name="confirmado_progressbar" class="oe_highlight" attrs="{'invisible': ['|',('estatus_licitacion','=','confirmado'),('estatus_licitacion','=','validado')]}"/>
+              <button string="Validar" type="object" name="validado_progressbar" class="oe_highlight"  attrs="{'invisible': ['|',('estatus_licitacion','!=','confirmado'),('estatus_licitacion','=','validado')]}"/>
+              <field name="estatus_licitacion" widget="statusbar"/>
+          </header>
+
           <sheet>
             <div class="oe_button_box oe_read_only" name="button_box">
               <button type="action" icon="fa-clipboard" string="Convocatoria / Bases"></button>

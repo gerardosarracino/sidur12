@@ -1,6 +1,44 @@
 <odoo>
   <data>
 
+<record model="ir.actions.act_window" id="orden_cambio_action">
+        <field name="name">Ordenes de cambio</field>
+        <field name="res_model">control.ordenes_cambio</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_mode">tree,form</field>
+        <field name="target">current</field>
+    </record>
+
+      <record id="ordenes_tree" model="ir.ui.view">
+          <field name="name">tree ordenes</field>
+          <field name="model">control.ordenes_cambio</field>
+          <field name="arch" type="xml">
+              <tree string="">
+                  <field name="vinculo_estimaciones"/>
+              </tree>
+          </field>
+      </record>
+
+   <record model="ir.ui.view" id="orden_cambio_form">
+          <field name="name">Orden de cambio</field>
+          <field name="model">control.ordenes_cambio</field>
+          <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div>
+                        <h1>
+                            <field name="vinculo_estimaciones"/>
+                        </h1>
+                    </div>
+                    <group>
+                         <field name="fecha" class="oe_inline"/>
+                         <field name="cuentas_bancos"/>
+                    </group>
+                </sheet>
+            </form>
+          </field>
+        </record>
+
       <record id="conceptos_search_est" model="ir.ui.view">
          <field name="name">concepto search</field>
          <field name="model">proceso.conceptos_part</field>
@@ -27,15 +65,20 @@
         <field name="arch" type="xml">
             <form string="">
                 <sheet>
+
                     <div class="oe_button_box" name="button_box">
                         <button string="Total Conceptos Estimados" name="imprimir_accion" type="object" class="oe_highlight"
                         icon="fa-book"/>
+
+                    <button string="Orden de pago" name="OrdenesPago" type="object" class="oe_highlight"
+                            context="{'default_vinculo_estimaciones.id': active_id}" icon="fa-file-text"/>
                     </div>
                     <div>
                         <h1>
                             <field name="ide_estimacion" readonly="1" force_save="1"/>
                         </h1>
                     </div>
+
                     <notebook>
                         <page string="Datos Generales De La Estimación">
 
@@ -295,8 +338,8 @@
 
                    <group string="Nombre de la Obra:" colspan="2" col="4">
                         <field name="obra" nolabel="1" readonly="1"/>
-                         <p attrs="{'invisible': [('verif_programa', '=', True)]}" align="right" style="color: #DE0C0C">No hay Programa Para La Estimación*</p>
-
+                         <p attrs="{'invisible': [('verif_programa', '=', True)]}"
+                            align="right" style="color: #DE0C0C">No hay Programa Para La Estimación*</p>
                    </group>
                             <hr/>
                         <group colspan="2" col="5" context="{'default_ejercicio': obra.id}">
