@@ -284,7 +284,7 @@
                             </group>
 
                             <!-- DIFERENTE AL TOTAL ROJO -->
-                            <group attrs="{'invisible': [('diferencia','>', 0)]}">
+                            <group attrs="{'invisible': [('diferencia','!=', 0)]}">
                                     <field name="total_catalogo" style="color: #2D8E0B"/>
                             </group>
 

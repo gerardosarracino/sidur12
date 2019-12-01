@@ -4,7 +4,7 @@
         <record id="paperformat_estimacion" model="report.paperformat">
             <field name="name">Invoice A4 Test</field>
             <field name="default" eval="True"/>
-            <field name="format">B3</field>
+            <field name="format">A2</field>
             <field name="page_height">0</field>
             <field name="page_width">0</field>
             <field name="orientation">Landscape</field>

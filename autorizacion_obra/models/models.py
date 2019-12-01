@@ -4,12 +4,15 @@ from datetime import datetime
 
 class AutorizacionDeObra(models.Model):
     _name = 'autorizacion_obra.oficios_de_autorizacion'
+    _rec_name = 'name'
 
-    name = fields.Char(string='Número de oficio', required=True)
-    fecha_actual = fields.Date(string='Fecha',default=fields.Date.today(), required=True)
-    fecha_de_recibido = fields.Date(string='Fecha de recibido', required=True)
-    fecha_de_vencimiento = fields.Date(string='Fecha de vencimiento', required=True)
-    importe = fields.Float(string='Importe', required=True)
+    id_sideop = fields.Integer('id sideop')
+
+    name = fields.Char(string='Número de oficio', )
+    fecha_actual = fields.Date(string='Fecha',default=fields.Date.today(), )
+    fecha_de_recibido = fields.Date(string='Fecha de recibido', )
+    fecha_de_vencimiento = fields.Date(string='Fecha de vencimiento', )
+    importe = fields.Float(string='Importe', )
     anexo_tec = fields.Integer(compute='contar')
     total_at = fields.Float(compute='suma_total_anexos')
     anexos = fields.One2many('autorizacion_obra.anexo_tecnico', 'name')
@@ -41,16 +44,21 @@ class AutorizacionDeObra(models.Model):
 
 class AnexoTecnico(models.Model):
     _name = 'autorizacion_obra.anexo_tecnico'
-    _rec_name = 'id'
+    _rec_name = 'name'
 
-    name = fields.Many2one('autorizacion_obra.oficios_de_autorizacion', readonly=True, ondelete="cascade")
+    id_anexo_sideop = fields.Integer('id anexo sideop')
+    id_partida_sideop = fields.Integer('id partida sideop')
+    id_oficio_sideop = fields.Integer('id oficio sideop')
+    id_oficio_sideop2 = fields.Many2one('autorizacion_obra.oficios_de_autorizacion', string='id oficio sideop')
+
+    name = fields.Many2one('autorizacion_obra.oficios_de_autorizacion', ondelete="cascade")
 
     # PROGRAMA DE INVERSION AUXILIAR
     # p_inv = fields.Many2one('generales.programas_inversion', related="concepto.programaInversion")
 
-    claveobra = fields.Char(string='Clave de obra', required=True)
-    clave_presupuestal = fields.Char(string='Clave presupuestal', required=True)
-    concepto = fields.Many2one('registro.programarobra', required=True)
+    claveobra = fields.Char(string='Clave de obra', )
+    clave_presupuestal = fields.Char(string='Clave presupuestal', )
+    concepto = fields.Many2one('registro.programarobra', )
     federal = fields.Float(string='Federal')
     estatal = fields.Float(string='Estatal')
     municipal = fields.Float(string='Municipal')
@@ -111,8 +119,8 @@ class CancelacionRecursos(models.Model):
     _name = 'autorizacion_obra.cancelarrecurso'
 
     name = fields.Many2one('autorizacion_obra.anexo_tecnico', 'id', readonly=True, ondelete="cascade")
-    nooficio = fields.Char(string="No. Oficio", required=True)
-    fecha = fields.Date(string="Fecha", required=True)
+    nooficio = fields.Char(string="No. Oficio", )
+    fecha = fields.Date(string="Fecha", )
     federalc = fields.Float(string='Federal')
     estatalc = fields.Float(string='Estatal')
     municipalc = fields.Float(string='Municipal')

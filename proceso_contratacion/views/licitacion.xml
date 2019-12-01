@@ -290,6 +290,7 @@
                         <control>
                              <create string="Agregar Partida"/>
                         </control>
+                            <field name="recursos" string="Listado de obras por licitar"/>
                             <field name="obra" domain="[('programaInversion', '=', parent.programa_inversion_licitacion)]"/>
                             <field name="programaInversion" invisible="1" force_save="1"/>
                             <field name="monto_partida" sum="Monto" widget="monetary"/>

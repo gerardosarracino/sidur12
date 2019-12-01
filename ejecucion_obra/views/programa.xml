@@ -63,6 +63,7 @@
                     <group>
                        <field name="count_convenio" invisible="1"/>
                        <field name="obra" string="Partida:"/>
+                       <field name="total_programa" string="Total programa:" force_save="1"/>
                        <field name="obraid" string="Partida:" invisible="1"/>
                    </group>
                    <group>

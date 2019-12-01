@@ -8,6 +8,9 @@ class ElaboracionContratos(models.Model):
     _name = "proceso.elaboracion_contrato"
     _rec_name = 'contrato'
 
+    num_contrato_sideop = fields.Char('numero contrato sideop')
+    id_sideop_partida = fields.Integer('ID SIDEOP part')
+
     radio_adj_lic = [('1', "Licitación"), ('2', "Adjudicación")]
     tipo_contrato = fields.Selection(radio_adj_lic, string="Tipo de Contrato:")
 
@@ -28,21 +31,21 @@ class ElaboracionContratos(models.Model):
     contar_finiquito = fields.Integer(compute='contar', string="PRUEBA")
     # CONTAR REGISTROS DE CONVENIO
     contar_convenio = fields.Integer(compute='contar2', string="PRUEBA")
-    fecha = fields.Date(string="Fecha", required=True, default=fields.Date.today())
+    fecha = fields.Date(string="Fecha",  default=fields.Date.today())
 
-    contrato = fields.Char(string="Contrato", required=True)
-    name = fields.Text(string="Descripción/Meta", required=True)
+    contrato = fields.Char(string="Contrato", )
+    name = fields.Text(string="Descripción/Meta", )
 
-    descripciontrabajos = fields.Text(string="Descripción trabajos:", required=True)
+    descripciontrabajos = fields.Text(string="Descripción trabajos:", )
     unidadresponsableejecucion = fields.Many2one('proceso.unidad_responsable', string="Unidad responsable de su "
-                                                                                      "ejecución", required=True)
+                                                                                      "ejecución", )
     supervisionexterna = fields.Text(string="Supervisión externa")
     supervisionexterna1 = fields.Many2one('proceso.elaboracion_contrato', string="Supervisión externa:")
     contratista = fields.Many2one('contratista.contratista', related="adjudicacion.contratista")
-    fechainicio = fields.Date(string="Fecha de Inicio", required=True)
-    fechatermino = fields.Date(string="Fecha de Termino", required=True)
+    fechainicio = fields.Date(string="Fecha de Inicio", )
+    fechatermino = fields.Date(string="Fecha de Termino", )
     periodicidadretencion = fields.Selection([('diario', 'Diario'),('mensual','Mensual'),('ninguno','Ninguno')],
-                                             string="Periodicidad Retención", required=True, default='Ninguno')
+                                             string="Periodicidad Retención",  default='ninguno')
     retencion = fields.Float(string="% Retención")
     # Fianzas
     fianzas = fields.Many2many('proceso.fianza', string="Fianzas:")
@@ -363,11 +366,11 @@ class Fianza(models.Model):
 
     select_tipo_fianza = [('1', 'Cumplimiento'), ('2', 'Calidad/Vicios Ocultos'), ('3', 'Responsabilidad Civil'),
                           ('4', 'Ninguno')]
-    tipo_fianza = fields.Selection(select_tipo_fianza, string="Tipo Fianza", default="4", required=True)
-    numero_fianza_fianzas = fields.Char(string="Numero Fianza", required=True)
-    monto = fields.Float(string="Monto", required=True)
-    fecha_fianza_fianzas = fields.Date(string="Fecha Fianza", required=True)
-    afianzadora_fianzas = fields.Char(string="Afianzadora", required=True)
+    tipo_fianza = fields.Selection(select_tipo_fianza, string="Tipo Fianza", default="4", )
+    numero_fianza_fianzas = fields.Char(string="Numero Fianza", )
+    monto = fields.Float(string="Monto", )
+    fecha_fianza_fianzas = fields.Date(string="Fecha Fianza", )
+    afianzadora_fianzas = fields.Char(string="Afianzadora", )
 
 
 class FiniquitarContratoAnticipadamente(models.Model):

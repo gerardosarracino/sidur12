@@ -25,14 +25,25 @@
           <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <div>
+                    <group colspan="1" col="2">
                         <h1>
-                            <field name="vinculo_estimaciones"/>
+                            <h2>Estimación: <field name="vinculo_estimaciones" readonly="1"/></h2>
                         </h1>
-                    </div>
+                        <h1>
+                            <h2>Contrato: <field name="numero_contrato"/></h2>
+                        </h1>
+
+                    </group>
+
+                    <br/>
                     <group>
                          <field name="fecha" class="oe_inline"/>
-                         <field name="cuentas_bancos"/>
+                    </group>
+                    <group>
+                         <field name="total_estimado"/>
+                    </group>
+                    <group>
+                        <field name="cuentas_bancos" class="oe_inline"/>
                     </group>
                 </sheet>
             </form>
@@ -71,7 +82,7 @@
                         icon="fa-book"/>
 
                     <button string="Orden de pago" name="OrdenesPago" type="object" class="oe_highlight"
-                            context="{'default_vinculo_estimaciones.id': active_id}" icon="fa-file-text"/>
+                            icon="fa-file-text"/>
                     </div>
                     <div>
                         <h1>
@@ -89,6 +100,12 @@
                                     <field name="p_id" invisible="1"/>
                                     <field name="obra"/>
                                     <field name="xd" invisible="1"/>
+                                    <br/>
+
+                                    <field name="total_ret_est" force_save="1"/>
+                                    <field name="porc_reten" force_save="1"/>
+                                    <field name="retenido_anteriormente" force_save="1"/>
+
                                     <br/>
                                     <field name="tipo_estimacion" widget="radio"/>
                                 </group>
@@ -384,11 +401,12 @@
 
                         <!-- ANTICIPOS -->
                         <page string="Anticipos">
+
                             <group attrs="{'invisible':[('anticipada', '=' , True)]}">
                             <p>NO HAY ANTICIPO</p>
                             </group>
 
-                            <group attrs="{'invisible':[('anticipada', '=' , False)]}" colspan="1" col="4">
+                            <group attrs="{'invisible':[('anticipada', '=' , False)]}">
                                 <group string="Anticipo">
                                     <field name="numero_contrato" readonly="1"/>
                                     <field name="contratista" readonly="1"/>
@@ -522,6 +540,25 @@
         (0, 0, {'view_mode': 'form', 'view_id': ref('vista_form_estimaciones')})]"/>
     </record>
 
+      <!-- record id="deducciones_tree" model="ir.ui.view">
+          <field name="name">Deducciones</field>
+          <field name="model">control.deducciones</field>
+          <field name="arch" type="xml">
+              <tree string="">
+                  <field name="name"/>
+                  <field name="porcentaje"/>
+                  <field name="valor"/>
+              </tree>
+          </field>
+      </record>
+
+      <record model="ir.actions.act_window" id="deducciones_action">
+      <field name="name">deduc</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">control.deducciones</field>
+      <field name="view_mode">tree</field>
+    </record -->
+
       <!--<field name="view_ids" eval="[(5, 0, 0),
         (0, 0, {'view_mode': 'tree', 'view_id': ref('proc_contratacion_elaboracion_contrato_3')}),
         (0, 0, {'view_mode': 'form', 'view_id': ref('vista_form_estimaciones')})]"/>
@@ -531,5 +568,8 @@
 
     <menuitem name="Control de Estimaciones" id="control_esstimacion" parent="ejecucion_obra.menu_root"
               action="ejecucion_obra_control_estimacion_action_window" sequence="2"/>
+
+      <!-- menuitem name="deducciones" id="deducciones_menu" parent="ejecucion_obra.menu_root"
+              action="deducciones_action" sequence="5"/ -->
   </data>
 </odoo>

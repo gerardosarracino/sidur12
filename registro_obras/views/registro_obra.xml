@@ -6,7 +6,7 @@
       <field name="name">Registro de obras</field>
       <field name="type">ir.actions.act_window</field>
       <field name="res_model">registro.obra</field>
-      <field name="view_mode">tree,form,map</field>
+      <field name="view_mode">tree,form</field> <!-- map -->
     </record>
 
     <record model="ir.actions.act_window" id="registro_obras.proyectoej_action_window">
@@ -207,14 +207,11 @@
       <field name="model">registro.obra</field>
       <field name="arch" type="xml">
         <tree>
-          <field name="name"/>
-          <field name="tipoObra" string="Tipo de obra"/>
+          <field name="numero_obra"/>
+          <field name="tipoObra" string="Tipo"/>
           <field name="descripcion"/>
+          <field name="municipio"/>
           <field name="estado_obra" string="Estatus"/>
-          <field name="estado" string="Estado"/>
-          <field name="municipio" string="Municipio"/>
-          <field name="ubicacion"/>
-          <field name="localidad"/>
           <field name="monto"/>
           <field name="create_date" string="Fecha reg."/>
         </tree>
@@ -256,14 +253,19 @@
                        }" attrs="{'invisible': [('estado_obra', '=', 'Programada')]}"><field string="Progr. Obra" name="programada" widget="statinfo"/></button>
           	</div>
             <div class="oe_title">
-                            <label for="name" class="oe_edit_only"/>
+                            <label for="numero_obra" class="oe_edit_only"/>
                             <h1>
-                                <field name="name" placeholder="Número de obra"/>
+                                <field name="numero_obra" placeholder="Número de obra"/>
                             </h1>
                         </div>
+            <field name="id_sideop" invisible="1"/>
+            <field name="name" invisible="1"/>
+            <field name="programada_sideop" invisible="1"/>
 
+            <group>
 
             <field name="estado_obra" invisible="1"/>
+            </group>
 
             <group string="Datos generales de la obra" colspan="1" col="4">
               <field name="ejercicio" class="oe_inline"/>
@@ -294,26 +296,29 @@
               <field name="justificacionSocial"/>
             </group>
 
-            <field name="ubicacion" string="Ubicación" invisible="1"/>
-              <field name="localidad" string="Localidad" invisible="1"/>
-            <field name="estado" string="Estado" invisible="1"/>
+
+
             <group string="Ubicación de la obra" colspan="1" col="6">
-
+              <field name="ubicacion" string="Ubicación" />
+              <field name="localidad" string="Localidad" />
+              <field name="estado" string="Estado" />
               <field name="municipio" string="Municipio"/>
-
               <field name="cabeceraMunicipal"/>
               <field name="tipolocalidad"/>
+
+              <field name="partner_latitude" class="oe_inline" string="Latitud"/>
+              <field name="partner_longitude" class="oe_inline" string="Longitud"/>
             </group>
             <group>
 
-          <map class="o_res_partner_map" library='geometry' string="Map" lat="partner_latitude"
+          <!-- map class="o_res_partner_map" library='geometry' string="Map" lat="partner_latitude"
                  lng="partner_longitude" colors="blue:company_type=='person';green:company_type=='company';">
             <group colspan="2" col="4">
-              <field name="city" string="Localidad"/>
+              < field name="city" string="Localidad"/>
               <field name="state_id" string="Estado"/>
               <field name="country_id" string="País"/>
               <field name="street" string="Ubicación" widget="google_places"/>
-              <field name="street2" invisible="1"/>
+              <field name="street2" invisible="1" />
               <field name="zip" string="CP"/>
             </group>
               <group colspan="2" col="6">
@@ -321,12 +326,12 @@
               <field name="partner_longitude" class="oe_inline" string="Longitud"/>
               <button string="Geolocalizar" name="geo_localize" icon="fa-check" type="object"/>
             </group>
-              </map>
+              </map -->
             </group>
 
             <group>
 
-            <map library="drawing" string="Shape" class="o_res_partner_map" lat="partner_latitude"
+            <!-- map library="drawing" string="Shape" class="o_res_partner_map" lat="partner_latitude"
                  lng="partner_longitude" colors="blue:company_type=='person';green:company_type=='company';">
               <group colspan="2" col="4">
                 <field name="shape_name" class="oe_inline" invisible="1"/>
@@ -338,7 +343,7 @@
 
 
 
-            </map>
+            </map -->
             </group>
 
           </sheet>
@@ -441,7 +446,7 @@
       <field name="model">registro.programarobra</field>
       <field name="arch" type="xml">
         <search>
-          <field name="name"/>
+          <field name="obra_planeada"/>
           <field name="programaInversion"/>
           <field name="categoriaProgramatica"/>
           <field name="fechaProbInicio"/>
@@ -459,12 +464,9 @@
       <field name="name">registro.programarobra.tree</field>
       <field name="model">registro.programarobra</field>
       <field name="arch" type="xml">
-        <tree create="false">
+        <tree>
           <field name="tipo" string="Tipo"/>
           <field name="descripcion"/>
-          <field name="estate2" string="Estatus"/>
-          <field name="estado"/>
-          <field name="municipio"/>
           <field name="ubicacion"/>
           <field name="monto" string="Programado"/>
         </tree>
@@ -475,7 +477,7 @@
       <field name="name">registro.programarobra.form</field>
       <field name="model">registro.programarobra</field>
       <field name="arch" type="xml">
-        <form create="false">
+        <form>
         <header>
           <button string="Cancelar" type="object" name="borrador_progressbar_respuesta" class="oe_highlight" attrs="{'invisible': [('estate2', '=', 'cancelado')]}" confirm="¿Esta seguro que desea cancelar este registro?"/>
           <button string="Estructura financiera" type="action" name="%(registro_obras.estructurafinanciera_action)d" class="oe_highlight" context="{
@@ -490,24 +492,26 @@
          </header>
         <sheet>
 
+          <field name="Id_obraprogramada" invisible="1"/>
         <group colspan="2" col="2">
           <group>
-          <field name="name" string="Obra"/>
+
+          <field name="obra_planeada" string="Obra"/>
           <field name="descripcion"/>
           <field name="estruc_finan" invisible="1"/>
 
           <!-- INICIA VERIFICAR SI LA OBRA ES CONTRATADA, ADJUDICADA O LICITADA -->
-          <field name="adjudicacion_cont" invisible="1"/>
+          <!-- field name="adjudicacion_cont" invisible="1"/>
           <field name="licitacion_cont" invisible="1"/>
-          <field name="contrato_cont" invisible="1"/>
+          <field name="contrato_cont" invisible="1"/ -->
 
           </group>
 
-          <group>
+          <!-- group>
               <p class="float-right" style="color: #589F14" attrs="{'invisible':[('adjudicacion_cont', '=' , 0)]}">*Esta obra Está Adjudicada</p>
               <p class="float-right" style="color: #589F14" attrs="{'invisible':[('licitacion_cont', '=' , 0)]}">*Esta obra Está Licitada</p>
               <p class="float-right" style="color: #589F14" attrs="{'invisible':[('contrato_cont', '=' , 0)]}">*Esta obra Está Contratada</p>
-          </group>
+          </group -->
            <!-- TERMINA VERIFICAR SI LA OBRA ES CONTRATADA, ADJUDICADA O LICITADA -->
 
         </group>
@@ -560,7 +564,7 @@
       <field name="model">registro.estructurafinanciera</field>
       <field name="arch" type="xml">
         <tree create="false">
-          <field name="name" string="Obra"/>
+          <field name="obra_planeada" string="Obra"/>
           <field name="descripcion"/>
           <field name="sumaIaoe" string="Inversión otros ejercicios"/>
           <field name="sumaIde" string="Inversión del ejercicio"/>
@@ -578,7 +582,7 @@
         <sheet>
         <group>
           <group>
-          <field name="name" string="Obra"/>
+          <field name="obra_planeada" string="Obra"/>
           <field name="descripcion" string="Descripcion"/>
           <field name="monto" string="Monto programado"/>
           </group>
@@ -612,11 +616,49 @@
       </field>
     </record>
 
+    <record id="localidad_form" model="ir.ui.view">
+        <field name="name">localidad</field>
+        <field name="model">registro.tipolocalidad</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="localidad_tree" model="ir.ui.view">
+        <field name="name">localidad</field>
+        <field name="model">registro.tipolocalidad</field>
+        <field name="arch" type="xml">
+            <tree string="">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="localidad_Action" model="ir.actions.act_window">
+        <field name="name">localidad</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">registro.tipolocalidad</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            <!-- Add Text Here -->
+          </p><p>
+            <!-- More details about what a user can do with this object will be OK -->
+          </p>
+        </field>
+    </record>
 
     <!-- MENUS -->
     <menuitem name="Registro de obras" id="registro_obras.menu_root" sequence="0"/>
       <menuitem name="Registro de obra" id="registro_obras.obra_menu" parent="registro_obras.menu_root" action="registro_obras.obra_action_window" sequence="1"/>
       <menuitem name="Obras programadas" id="registro_obras.obra_programada_menu" parent="registro_obras.menu_root" action="registro_obras.programarobratree_action" sequence="2"/>
+    <menuitem name="Localidad" id="registro_obras.localidad" parent="registro_obras.menu_root" action="localidad_Action" sequence="3"/>
 
     <!-- explicit list view definition -->
     <!--

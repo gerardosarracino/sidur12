@@ -7,92 +7,104 @@ class ejercicio(models.Model):
 	_name = "registro.ejercicio"
 
 	name = fields.Integer(string="Ejercicio", )
-	ejercicio = fields.One2many("registro.obra", "ejercicio")
 
 
 class unidadAdminSol(models.Model):
 	_name = "registro.unidadadminsol"
 
 	name = fields.Char(string="Descripción", )
-	unidad = fields.One2many("registro.obra", "unidadadminsol")
 
 
 class tipoProyecto(models.Model):
 	_name = "registro.tipoproyecto"
 
 	name = fields.Char(string="Tipo de proyecto", )
-	tipoproyecto = fields.One2many("registro.obra", "tipoproyecto")
 
 
 class tipoObraEtapa(models.Model):
 	_name = "registro.tipoobraetapa"
 
 	name = fields.Char(string="Tipo de proyecto", )
-	tipoobraetapa = fields.One2many("registro.obra", "tipoobraetapa")
 
 
 class tipoLocalidad(models.Model):
 	_name = "registro.tipolocalidad"
 
 	name = fields.Char(string="Tipo localidad", )
-	tipolocalidad = fields.One2many("registro.obra", "tipolocalidad")
 
 
 class unidadMedida(models.Model):
 	_name = "registro.unidadm"
 
 	name = fields.Char(string="Unidad medida", )
-	unidadm = fields.One2many("registro.obra", "metaProyectoUnidad")
-	unidadm1 = fields.One2many("registro.obra", "metaEjercicioUnidad")
 
 
 class registro_obra(models.Model):
 	_name = "registro.obra"
-	_inherit = 'res.partner'
+	_rec_name = 'numero_obra'
+	# _inherit = 'res.partner'
+
+	id_sideop = fields.Integer('ID SIDEOP')
+	name = fields.Char('ID SIDEOP', compute="id_sideop_metod")
+
+	@api.one
+	def id_sideop_metod(self):
+		self.name = str(self.id_sideop)
 
 	# MAP DRAW
-	shape_name = fields.Char(string='Shape Name')
+	'''shape_name = fields.Char(string='Shape Name')
 	shape_area = fields.Float(string='Area')
 	shape_radius = fields.Float(string='Radius')
 	shape_description = fields.Text(string='Description')
 	shape_type = fields.Selection([
 		('circle', 'Circle'), ('polygon', 'Polygon'),
 		('rectangle', 'Rectangle')], string='Type', default='polygon',
-		required=True)
-	shape_paths = fields.Text(string='Paths')
+		)
+	shape_paths = fields.Text(string='Paths')'''
 
-	name = fields.Char(string="Número de obra")
-	ejercicio = fields.Many2one("registro.ejercicio", string="Ejercicio", required=True)
+	numero_obra = fields.Char(string="Número de obra", default="x", placeholder='Numero de obra')
+
+	ejercicio = fields.Many2one("registro.ejercicio", string="Ejercicio", )
 	grupoObra = fields.Boolean(string="Grupo de obra")
-	origen = fields.Many2one('generales.origenes_obra', 'origen', required=True)
-	monto = fields.Float(string="Monto", required=True)
-	descripcion = fields.Text(string="Descripción", required=True)
-	problematica = fields.Text(string="Problemática", required=True)
+	origen = fields.Many2one('generales.origenes_obra', 'origen', )
+	monto = fields.Float(string="Monto", )
+	descripcion = fields.Text(string="Descripción", )
+	problematica = fields.Text(string="Problemática")
 	unidadadminsol = fields.Many2one('registro.unidadadminsol', string="Unidad administrativa solicitante",
-									 required=True)
-	tipoObra = fields.Many2one('generales.tipo_obra', 'tipo_obra', required=True)
-	tipoproyecto = fields.Many2one("registro.tipoproyecto", string="Tipo de proyecto", required=True)
-	tipoobraetapa = fields.Many2one("registro.tipoobraetapa", string="Tipo de obra etapa", required=True)
+									 )
+	tipoObra = fields.Many2one('generales.tipo_obra', 'tipo_obra', )
+	tipoproyecto = fields.Many2one("registro.tipoproyecto", string="Tipo de proyecto", )
+	tipoobraetapa = fields.Many2one("registro.tipoobraetapa", string="Tipo de obra etapa", )
 	estado = fields.Many2one('generales.estado', 'estado')
-	municipio = fields.Many2one('generales.municipios', 'municipio_delegacion', required=True)
+
+	municipio = fields.Many2one('generales.municipios', 'municipio delegacion')
+
 	ubicacion = fields.Text(string="Ubicación")
 	localidad = fields.Text(string="Localidad")
 	cabeceraMunicipal = fields.Boolean(string="Cabecera municipal")
-	tipolocalidad = fields.Many2one("registro.tipolocalidad", string="Tipo localidad", required=True)
-	latitud = fields.Char(string="Latitud")
-	longitud = fields.Char(string="Longitud")
-	beneficiados = fields.Char(string="Beneficiados", required=True)
-	metaFisicaProyecto = fields.Char(string="Meta física Proyecto", required=True)
+	tipolocalidad = fields.Many2one("registro.tipolocalidad", string="Tipo localidad", )
+	# latitud = fields.Char(string="Latitud")
+	# longitud = fields.Char(string="Longitud")
+
+	partner_latitude = fields.Char(string='Geo Latitude', digits=(16, 5))
+	partner_longitude = fields.Char(string='Geo Longitude', digits=(16, 5))
+
+	beneficiados = fields.Char(string="Beneficiados", )
+	metaFisicaProyecto = fields.Char(string="Meta física Proyecto", )
 	# metaProyectoUnidad = fields.Many2one("registro.unidadm" ,string="Meta Proyecto Unidad", )
-	metaProyectoUnidad = fields.Char(string="Meta Proyecto Unidad", required=True)
-	metaEjercicio = fields.Char(string="Meta ejercicio", required=True)
+	metaProyectoUnidad = fields.Char(string="Meta Proyecto Unidad", )
+	metaEjercicio = fields.Char(string="Meta ejercicio", )
 	# metaEjercicioUnidad = fields.Many2one("registro.unidadm", string="Meta ejercicio unidad", )
-	metaEjercicioUnidad = fields.Char(string="Meta ejercicio unidad", required=True)
-	justificacionTecnica = fields.Text(string="Justificación técnica", required=True)
-	justificacionSocial = fields.Text(string="Justificación social", required=True)
+	metaEjercicioUnidad = fields.Char(string="Meta ejercicio unidad", )
+	justificacionTecnica = fields.Text(string="Justificación técnica", )
+	justificacionSocial = fields.Text(string="Justificación social", )
+
 	proyecto_ejecutivo = fields.Integer(compute='contar')
 	seguimientoc = fields.Integer(compute='contar1')
-	programada = fields.Integer(compute='contar2')
+	programada = fields.Integer(related="programada_sideop") # compute='contar2'
+
+	programada_sideop = fields.Integer('programada')
+
 	# estate = fields.Selection([('planeada', 'Planeada'),('programada', 'Programada'),], default='planeada')
 	estado_obra = fields.Char(compute="contar_programada")
 
@@ -121,8 +133,10 @@ class registro_obra(models.Model):
 
 	@api.one
 	def contar_programada(self):
-		count = self.env['registro.programarobra'].search_count([('name', '=', self.id),('estate2','!=','cancelado')])
-		count2 = self.env['registro.programarobra'].search_count([('name', '=', self.id),('estate2','=','cancelado')])
+		# count = self.env['registro.programarobra'].search_count([('name', '=', self.id),('estate2','!=','cancelado')])
+		count = self.programada_sideop
+		# count2 = self.env['registro.programarobra'].search_count([('name', '=', self.id),('estate2','=','cancelado')])
+		count2 = self.programada_sideop
 		if count == 0 and count2 == 0:
 			self.estado_obra = 'Planeada'
 		elif count > 0 and count2==0:
@@ -165,33 +179,38 @@ class registro_obra(models.Model):
 class ProyectoEjecutivo(models.TransientModel):
 	_name = 'registro.proyectoejecutivo'
 
-	name1 = fields.Many2one('generales.apartados_proyectos', required=True)
+	name1 = fields.Many2one('generales.apartados_proyectos', )
 	name = fields.Many2one('registro.obra', readonly=True)
-	documento = fields.Binary(string="Documento", required=True)
-	nombre = fields.Char(string="Nombre", required=True)
-	observaciones = fields.Text(string="Observaciones", required=True)
+	documento = fields.Binary(string="Documento", )
+	nombre = fields.Char(string="Nombre", )
+	observaciones = fields.Text(string="Observaciones", )
 
 
 class SeguimientoObra(models.TransientModel):
 	_name = 'registro.seguimientoobra'
 
 	name = fields.Many2one('registro.obra', readonly=True)
-	seguimiento = fields.Html(string="Seguimiento", required=True)
+	seguimiento = fields.Html(string="Seguimiento", )
 
 
 class ProgramarObra(models.Model):
 	_name = 'registro.programarobra'
 	_rec_name = 'descripcion'
 
-	name = fields.Many2one('registro.obra', readonly=True)
-	programaInversion = fields.Many2one('generales.programas_inversion', required=True)
-	categoriaProgramatica = fields.Many2one('generales.modalidades', required=True)
-	fechaProbInicio = fields.Date(string="Fecha probable de inicio", required=True)
-	fechaProbTermino = fields.Date(string="Fecha Probable de termino", required=True)
+	# id_sideop = fields.Many2one('registro.obra', string='ID SIDEOP')
+
+	Id_obraprogramada = fields.Integer('IDE OBRAPROGRAMADA')
+
+	obra_planeada = fields.Many2one('registro.obra')
+
+	programaInversion = fields.Many2one('generales.programas_inversion', )
+	categoriaProgramatica = fields.Many2one('generales.modalidades', )
+	fechaProbInicio = fields.Date(string="Fecha probable de inicio", )
+	fechaProbTermino = fields.Date(string="Fecha Probable de termino", )
 	descripTotalObra = fields.Text(string="Descripción de la totalidad de la obra")
 	conceptoEjecutar = fields.Text(string="Conceptos a ejecutar")
 	select = [('1', 'Contrato'), ('2', 'Administracion directa'), ('3', 'Mixta')]
-	modalidadEjecucion = fields.Selection(select, string="Modalidad de la ejecución", default="1", required=True)
+	modalidadEjecucion = fields.Selection(select, string="Modalidad de la ejecución", default="1", )
 	avanceFisicoActual = fields.Float(string="Avance físico actual")
 	avanceProgCierreEjerci = fields.Float(string="Avance programado al cierre del ejercicio")
 	imagen1 = fields.Binary(string="Imagen uno")
@@ -199,18 +218,18 @@ class ProgramarObra(models.Model):
 	imagen3 = fields.Binary(string="Imagen tres")
 	imagen4 = fields.Binary(string="Imagen cuatro")
 	estate2 = fields.Selection([('activo', 'Activo'),('cancelado', 'Cancelado'),], default='activo')
-	tipo = fields.Char(related="name.tipoObra.tipo_obra")
+	tipo = fields.Char(related="obra_planeada.tipoObra.tipo_obra")
 
-	descripcion = fields.Text(related="name.descripcion")
+	descripcion = fields.Text(related="obra_planeada.descripcion")
 
-	estado = fields.Char(related="name.estado.estado")
-	municipio = fields.Char(related="name.municipio.municipio_delegacion")
-	ubicacion = fields.Text(related="name.ubicacion")
-	monto = fields.Float(related="name.monto")
+	estado = fields.Char(related="obra_planeada.estado.estado")
+	municipio = fields.Char(related="obra_planeada.municipio.municipio_delegacion")
+	ubicacion = fields.Text(related="obra_planeada.ubicacion")
+	monto = fields.Float(related="obra_planeada.monto")
 	estruc_finan = fields.Integer(compute='contar3')
 
 	# BUSCAR SI LA OBRA ESTA ADJUDICADA
-	adjudicacion_cont = fields.Integer(compute="adjudicacion_contar")
+	'''adjudicacion_cont = fields.Integer(compute="adjudicacion_contar")
 	licitacion_cont = fields.Integer(compute="licitacion_contar")
 	contrato_cont = fields.Integer(compute="contrato_contar")
 	# INICA METODOS PARA CONTAR ADJUDICADA, LICITADA O CONTRATADA
@@ -227,7 +246,7 @@ class ProgramarObra(models.Model):
 	@api.one
 	def contrato_contar(self):
 		count = self.env['partidas.partidas'].search_count([('obra', '=', self.descripcion)])
-		self.contrato_cont = count
+		self.contrato_cont = count'''
 
 	# TERMINA METODOS PARA CONTAR ADJUDICADA, LICITADA O CONTRATADA
 
@@ -240,22 +259,22 @@ class ProgramarObra(models.Model):
 
 	@api.constrains('name')
 	def contar2(self):
-		count = self.env['registro.programarobra'].search_count([('name', '=', self.name.id),('estate2','!=','cancelado')])
+		count = self.env['registro.programarobra'].search_count([('name', '=', self.obra_planeada.id),('estate2','!=','cancelado')])
 		if count>1:
 			raise exceptions.ValidationError("La obra ya fue programada con anterioridad. Por favor verifique su información.")
 
 	@api.one
 	def contar3(self):
-		count = self.env['registro.estructurafinanciera'].search_count([('name', '=', self.id)])
+		count = self.env['registro.estructurafinanciera'].search_count([('obra_planeada', '=', self.id)])
 		self.estruc_finan = count
 
 
 class EstructuraFinanciera(models.Model):
 	_name = "registro.estructurafinanciera"
 
-	name = fields.Many2one('registro.programarobra', readonly=True)
-	descripcion = fields.Text(related="name.descripcion")
-	monto = fields.Float(related="name.monto")
+	obra_planeada = fields.Many2one('registro.programarobra', readonly=True)
+	descripcion = fields.Text(related="obra_planeada.descripcion")
+	monto = fields.Float(related="obra_planeada.monto")
 	iaoeFederal = fields.Float(string="Federal")
 	iaoeEstatal = fields.Float(string="Estatal")
 	iaoeMunicipal = fields.Float(string="Municipal")
@@ -309,7 +328,7 @@ class GoogleMapsDrawingShapeMixin(models.AbstractModel):
 	shape_type = fields.Selection([
 		('circle', 'Circle'), ('polygon', 'Polygon'),
 		('rectangle', 'Rectangle')], string='Type', default='polygon',
-		required=True)
+		)
 	shape_paths = fields.Text(string='Paths')
 
 	@api.multi

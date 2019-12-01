@@ -3,7 +3,7 @@
     <data>
 
 <!--View-->
-    <record id="view_res_partner_map" model="ir.ui.view">
+    <!-- record id="view_res_partner_map" model="ir.ui.view">
         <field name="name">view.res.partner.map</field>
         <field name="model">registro.obra</field>
         <field name="arch" type="xml">
@@ -108,7 +108,7 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form,map</field>
         <field name="res_model">registro.obra</field>
-    </record>
+    </record -->
 
 
     </data>

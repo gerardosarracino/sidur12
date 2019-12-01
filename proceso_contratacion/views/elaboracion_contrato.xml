@@ -163,6 +163,8 @@
                 </div>
 
             <notebook >
+
+
                 <page string="Datos Generales" icon="fa-bitbucket">
                      <group string="Contrato Datos Generales"  >
                          <field name="tipo_contrato" widget="radio"/>
@@ -172,8 +174,15 @@
                         <field name="obra" string="Seleccionar Licitación" attrs="{'invisible': [('tipo_contrato','!=', '1')]}"/>
 
                          <field name="adjudicacion" attrs="{'invisible': [('tipo_contrato','!=', '2')]}"
-                               domain="[('contratado','&lt;','1')]" string="Seleccionar Adjudicación"/>
+                                string="Seleccionar Adjudicación"/> <!-- domain="[('contratado','&lt;','1')]" -->
+
+
+
                      </group>
+
+                       <!-- field de importacion -->
+                        <field name="num_contrato_sideop" invisible="1"/>
+                        <field name="id_sideop_partida" invisible="1"/>
 
                      <group colspan="1" col="4">
                         <field name="fecha" class="oe_inline"/>

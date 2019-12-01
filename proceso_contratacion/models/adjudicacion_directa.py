@@ -7,11 +7,14 @@ class AdjudicacionDirecta(models.Model):
     _name = "proceso.adjudicacion_directa"
     _rec_name = "numerocontrato"
 
+    id_sideop_adjudicacion = fields.Integer('ID SIDEOP')
+    id_sideop_partida = fields.Integer('ID SIDEOP part')
+
     # CAMPO BOOLEAN PARA VERIFICAR SI YA SE CONTRATO ESTA ADJUDICACION
     contratado = fields.Integer(string="", store=True)
 
     #  HACER LOS FILTROS DE RELACION DE PROGRAMAS DE INVERSION CON OBRAS PROGRAMADAS(partidas)
-    name = fields.Text(string="Descripción/Meta", required=True)
+    name = fields.Text(string="Descripción/Meta", )
     programas_inversion_adjudicacion = fields.Many2one('generales.programas_inversion', 'name')
     # /// Partidas
     programar_obra_adjudicacion = fields.Many2many("partidas.adjudicacion", string="Partida(s):", ondelete="cascade")
@@ -20,18 +23,18 @@ class AdjudicacionDirecta(models.Model):
 
     importe_adjudicacion = fields.Float(string="Importe",)
 
-    numerocontrato = fields.Char(string="Numero Contrato", required=True)
+    numerocontrato = fields.Char(string="Numero Contrato", )
 
-    fechaadjudicacion = fields.Date(string="Fecha de Adjudicación", required=True)
-    dictamen = fields.Char(string="Dictamen", required=True)
+    fechaadjudicacion = fields.Date(string="Fecha de Adjudicación", )
+    dictamen = fields.Char(string="Dictamen", )
     select = [('1', 'Federal'), ('2', 'Estatal')]
-    normatividad = fields.Selection(select, string="Normatividad", default="1", required=True)
+    normatividad = fields.Selection(select, string="Normatividad", default="1", )
     anticipoinicio = fields.Float(string="Anticipo Inicio %")
     anticipomaterial = fields.Float(string="Anticipo Material %")
-    fechainicio = fields.Date(string="Fecha de Inicio", required=True, default=fields.Date.today())
-    fechatermino = fields.Date(string="Fecha termino", required=True, )
-    plazodias = fields.Integer(string="Plazo/Días", required=True)
-    contratista = fields.Many2one('contratista.contratista', string='Contratista', required=True)
+    fechainicio = fields.Date(string="Fecha de Inicio", default=fields.Date.today())
+    fechatermino = fields.Date(string="Fecha termino", )
+    plazodias = fields.Integer(string="Plazo/Días", )
+    contratista = fields.Many2one('contratista.contratista', string='Contratista', )
     # RECURSOS
     recurso_federal = fields.Float(string="Federal")
     recurso_federal_indirecto = fields.Float(string="Federal Indirecto")

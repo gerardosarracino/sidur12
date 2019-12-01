@@ -62,11 +62,19 @@
                 <button name="recursos" type="object" string="Recursos Específicos" class="oe_highlight" icon="fa-pencil-square-o"/>
           </div>
 
+
           <group string="Agregar nueva adjudicación directa" >
                 <!-- PROGRAMAS DE INVERSION -->
                 <field name="programas_inversion_adjudicacion" string="Programa de inversión"/>
-                <field name="contratado" force_save="1" />
+                <field name="contratado" force_save="1" invisible="1"/>
+
+
           </group>
+
+
+              <!-- fields de impportacion -->
+                <field name="id_sideop_adjudicacion" invisible="1"/>
+                <field name="id_sideop_partida" invisible="1"/>
 
           <group>
                 <!-- PARTIDAS -->
@@ -77,6 +85,8 @@
                         <control>
                              <create string="Agregar Partida"/>
                         </control>
+                        <field name="id_sideop_adjudicacion" invisible="1"/>
+                        <field name="id_sideop_partida" invisible="1"/>
                         <field name="obra" domain="[('programaInversion', '=', parent.programas_inversion_adjudicacion)]"/>
                         <field name="programaInversion" readonly="1" force_save="1" invisible="1"/>
                         <field name="monto_partida" sum="Monto" widget="monetary"/>

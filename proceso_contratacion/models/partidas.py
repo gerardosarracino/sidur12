@@ -8,6 +8,8 @@ from odoo.exceptions import ValidationError
 class PartidasLicitacion(models.Model):
     _name = 'partidas.licitacion'
 
+    recursos = fields.Many2one('autorizacion_obra.anexo_tecnico', 'Recursos')
+
     obra = fields.Many2one('registro.programarobra', required=True)
     programaInversion = fields.Many2one('generales.programas_inversion')
     monto_partida = fields.Float(string="Monto", required=True)
@@ -46,6 +48,9 @@ class PartidasLicitacion(models.Model):
 class PartidasAdjudicacion(models.Model):
     _name = 'partidas.adjudicacion'
     # _inherit = 'res.config.settings'
+
+    id_sideop_adjudicacion = fields.Integer('ID SIDEOP')
+    id_sideop_partida = fields.Integer('ID SIDEOP part')
 
     obra = fields.Many2one('registro.programarobra', required=True)
     programaInversion = fields.Many2one('generales.programas_inversion')
@@ -194,10 +199,10 @@ class Partidas(models.Model):
     contar_estimaciones = fields.Integer(compute='ContarEstimaciones', string="PRUEBA")
 
     # VISTA DE INFORMACION DE LA PARTIDA
-    ejercicio = fields.Many2one("registro.ejercicio", string="Ejercicio", related="obra.name.ejercicio")
-    municipio = fields.Many2one('generales.municipios', 'Municipio', related="obra.name.municipio")
-    localidad = fields.Char(string="Localidad", readonly="True", related="obra.name.city")
-    # localidad = fields.Text(string="Localidad", readonly="True", related="obra.name.localidad")
+    ejercicio = fields.Many2one("registro.ejercicio", string="Ejercicio", related="obra.obra_planeada.ejercicio")
+    municipio = fields.Many2one('generales.municipios', 'Municipio', related="obra.obra_planeada.municipio")
+    localidad = fields.Text(string="Localidad", readonly="True", related="obra.obra_planeada.ubicacion")
+    # localidad = fields.Text(string="Localidad", readonly="True", related="obra.obra_planeada.localidad")
     fecha = fields.Date(string="Fecha", related="numero_contrato.fecha")
     fechainicio = fields.Date(string="Fecha de Inicio", related="numero_contrato.fechainicio")
     fechatermino = fields.Date(string="Fecha de Termino", related="numero_contrato.fechatermino")

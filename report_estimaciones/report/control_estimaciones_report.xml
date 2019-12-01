@@ -28,11 +28,11 @@
                              <table class="table table-sm table-bordered">
                                  <tbody>
                                     <tr>
-                                        <td colspan="2" rowspan="2" style="width:10%"><strong>OBRA:</strong></td>
-                                        <td colspan="2" rowspan="2" style="width:30%"><span t-field="o.obra"/></td>
-                                        <td rowspan="2" style="width:10%"><strong>LUGAR:</strong></td>
-                                        <td rowspan="2" style="width:30%" class="text-left"><span t-field="o.municipio_contrato"/></td>
-                                        <td style="width:20%"><strong>FECHA:</strong></td>
+                                        <td colspan="2" rowspan="2" style="width:7%"><strong>OBRA:</strong></td>
+                                        <td colspan="2" rowspan="2" style="width:61%"><span t-field="o.obra"/></td>
+                                        <td rowspan="2" style="width:7%"><strong>LUGAR:</strong></td>
+                                        <td rowspan="2" style="width:15%" class="text-left"><span t-field="o.municipio_contrato"/></td>
+                                        <td style="width:10%"><strong>FECHA:</strong></td>
                                     </tr>
                                     <tr>
                                         <td><span t-field="o.fecha_contrato"/></td>
@@ -43,7 +43,7 @@
                                         <td><strong>POR OBRA EFECTUADA EN EL PERIODO DE:</strong></td>
                                     </tr>
                                     <tr>
-                                        <td><p><span t-field="o.idobra"/></p></td>
+                                        <td><b style="font-size: 15px;"><span t-field="o.idobra"/></b></td>
                                         <td><p><span t-field="o.fecha_inicio_estimacion"/> <strong> AL </strong>
                                             <span t-field="o.fecha_termino_estimacion"/></p></td>
                                     </tr>
@@ -165,7 +165,7 @@
 
                                     <p><span t-field="o.ret_dev"/></p>
                                     <p><span t-field="o.sancion"/></p>
-                                    <p><span t-field="o.a_pagar"/></p>
+                                    <b><span t-field="o.a_pagar"/></b>
                                 </td>
                             </tr>
                          </table>
@@ -177,10 +177,10 @@
                      <div class="text-center">
                          <table class="table table-condensed">
                              <tr>
-                                 <td>FORMULO</td>
-                                 <td></td>
-                                 <td>REVISO</td>
-                                 <td></td>
+                                 <th>FORMULO</th>
+                                 <th></th>
+                                 <th>REVISO</th>
+                                 <th></th>
                              </tr>
 
                             <tr>

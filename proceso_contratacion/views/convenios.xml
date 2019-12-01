@@ -22,47 +22,42 @@
                       </group>
                     </group>
 
-                    <group colspan="2" col="2">
                         <group string="">
-                            <field name="tipo_convenio" widget="radio"/>
+                            <field name="tipo_convenio" widget="radio" options="{'horizontal': true}"/>
                         </group>
+                        <hr/>
                                <!-- PLAZO -->
                            <group string="Plazo" attrs="{'invisible': [('tipo_convenio','!=', '1')]}" colspan="2" col="2">
-                               <hr/>
                            <field name="plazo_fecha_inicio" />
                            <field name="plazo_fecha_termino" />
-                               <hr/>
                            </group>
 
                                 <!-- OBJETO -->
                            <group string="Objeto" attrs="{'invisible': [('tipo_convenio','!=', '2')]}" colspan="2" col="2">
-                               <hr/>
                            <field name="objeto_nuevo_objeto" />
-                               <hr/>
                            </group>
 
                            <!-- MONTO -->
                            <group string="Monto" attrs="{'invisible': [('tipo_convenio','!=', '3')]}" colspan="2" col="2">
-                               <hr/>
                            <field name="tipo_monto" />
                            <field name="monto_importe" />
                            <field name="monto_iva" />
                            <field name="monto_total" />
-                               <hr/>
                            </group>
 
                            <!-- MONTO/PLAZO -->
-                           <group string="Monto/Plazo" attrs="{'invisible': [('tipo_convenio','!=', '4')]}" colspan="2" col="2">
-                               <hr/>
-                           <field name="monto_plazo_fecha_inicio" />
-                           <field name="monto_plazo_fecha_termino" />
-                           <field name="tipo_monto_plazo" />
-                           <field name="monto_plazo_importe" />
-                           <field name="monto_plazo_iva" />
-                           <field name="monto_plazo_total" />
-                               <hr/>
+                           <group string="Monto/Plazo" attrs="{'invisible': [('tipo_convenio','!=', '4')]}" >
+                               <group colspan="2" col="4">
+                                    <field name="monto_plazo_fecha_inicio" />
+                                    <field name="monto_plazo_fecha_termino" />
+                               </group>
+                               <group colspan="2" col="2">
+                                   <field name="tipo_monto_plazo" />
+                                   <field name="monto_plazo_importe" />
+                                   <field name="monto_plazo_iva" />
+                                   <field name="monto_plazo_total" />
+                               </group>
                            </group>
-                       </group>
                 </sheet>
             </form>
           </field>
