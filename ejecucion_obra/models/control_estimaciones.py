@@ -20,6 +20,8 @@ class Estimaciones(models.Model):
 
     # AUXILIAR DE CONEXION HACIA CONTRATO
     numero_contrato = fields.Many2one(string="nc", related="obra.numero_contrato")
+    descripcion_contrato = fields.Text(related="numero_contrato.name")
+    nombre_partida = fields.Many2one(related="obra.obra")
 
     # ESTIMACIONES
     radio_estimacion = [(

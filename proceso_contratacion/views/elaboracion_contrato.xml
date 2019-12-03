@@ -215,11 +215,15 @@
                             <field name="p_id" invisible="1"/>
                          </tree>
                     </field>
+
+
                     <!-- PARTIDA LICITACION -->
                     <field name="contrato_partida_licitacion" context="{'form_view_ref': 'proceso_contratacion.partidas_form'}"
                            attrs="{'invisible': [('obra', '=', False)]}" string="" nolabel="1">
                         <tree editable="bottom" create="false" delete="false">
-                            <field name="obra" readonly="1" force_save="1"/>
+                            <!-- field name="obra" readonly="1" force_save="1"/ -->
+                            <field name="recursos" string="Obra" />
+
                             <field name="programaInversion" readonly="1" force_save="1"/>
                             <field name="monto_partida" sum="Monto" widget="monetary" />
                             <field name="iva_partida" readonly="True" sum="I.V.A" widget="monetary"/>

@@ -10,8 +10,9 @@ class PartidasLicitacion(models.Model):
 
     recursos = fields.Many2one('autorizacion_obra.anexo_tecnico', 'Recursos')
 
-    obra = fields.Many2one('registro.programarobra', required=True)
+    # obra = fields.Many2one('registro.programarobra', required=True)
     programaInversion = fields.Many2one('generales.programas_inversion')
+
     monto_partida = fields.Float(string="Monto", required=True)
     iva_partida = fields.Float(string="Iva", compute="iva")
     total_partida = fields.Float(string="Total", compute="sumaPartidas")
@@ -90,6 +91,9 @@ class PartidasAdjudicacion(models.Model):
 class Partidas(models.Model):
     _name = 'partidas.partidas'
     _rec_name = "numero_contrato"
+
+    # RECURSOS LICITACION
+    recursos = fields.Many2one('autorizacion_obra.anexo_tecnico', 'Recursos')
 
     # one2many
     enlace = fields.One2many(comodel_name="proceso.elaboracion_contrato", inverse_name="contrato_partida_adjudicacion",

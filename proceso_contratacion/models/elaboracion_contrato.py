@@ -17,11 +17,6 @@ class ElaboracionContratos(models.Model):
     contrato_partida_licitacion = fields.Many2many('partidas.partidas', ondelete="cascade")
     contrato_partida_adjudicacion = fields.Many2many('partidas.partidas', ondelete="cascade")
 
-    # RELATED CON LA OBRA DE LA PARTIDA PARA RELACIONARLA CON EL ANEXO TECNICO
-    obra_partida = fields.Many2one(string="obra partida", related="contrato_partida_adjudicacion.obra")
-    obra_partida_licitacion = fields.Many2one(string="obra partida", related="contrato_partida_licitacion.obra")
-    contrato_id = fields.Char(compute="nombre", store=True)
-
     # LICITACION PARTIDAS
     obra = fields.Many2one('proceso.licitacion', string="Seleccionar obra")
     # ADJUDICACION PARTIDAS
@@ -60,6 +55,12 @@ class ElaboracionContratos(models.Model):
     convenios_escalatorias = fields.Float(string="Convenios y Escalatorias:", readonly="True")
     total_contratado = fields.Float(string="Total Contratado:", compute="contratado_total")
     saldo = fields.Float(string="Saldo:", compute="saldo_total")
+
+    # RELATED CON LA OBRA DE LA PARTIDA PARA RELACIONARLA CON EL ANEXO TECNICO
+    obra_partida = fields.Many2one(string="obra partida adjudicacion", related="contrato_partida_adjudicacion.obra")
+    obra_partida_licitacion = fields.Many2one(string="obra partida licitacion", related="contrato_partida_licitacion.recursos")
+    contrato_id = fields.Char(compute="nombre", store=True)
+
     # IMPORTE DEL CONTRATO LICITACION Y ADJUDICACION
     impcontra = fields.Float(string="Importe:", compute="importeT")
 
@@ -79,6 +80,7 @@ class ElaboracionContratos(models.Model):
     def validado_progressbar(self):
         self.write({'estatus_contrato': 'validado'})
 
+    # METODO PARA MANDAR PARAMETRO QUE IDENTIFICAR QUE ADJUDICACION FUE CONTRATADA YA
     @api.model
     def create(self, values):
         # if len(values['adjudicacion']) > 0:
@@ -160,7 +162,7 @@ class ElaboracionContratos(models.Model):
     @api.one
     @api.depends('adjudicacion', 'obra')
     def llenar_anexo(self):
-        b_anexo = self.env['autorizacion_obra.anexo_tecnico'].search([('concepto', '=', self.obra_partida.id or
+        b_anexo = self.env['autorizacion_obra.anexo_tecnico'].search([('id', '=', self.obra_partida.id or
                                                                        self.obra_partida_licitacion.id)])
         self.update({
             'anexos': [[5]]
@@ -201,6 +203,7 @@ class ElaboracionContratos(models.Model):
                 'total_contratado': rec.impcontra + rec.convenios_escalatorias
             })
 
+    # CALCULAR EL RECURSO TOTAL DE LOS ANEXOS
     @api.depends('recurso_autorizado', 'importe_cancelado')
     def recurso_total(self):
         for rec in self:
@@ -252,7 +255,7 @@ class ElaboracionContratos(models.Model):
         for partidas in adirecta_id.programar_obra_licitacion:
             cont = cont + 1
             self.update({
-                'contrato_partida_licitacion': [[0, 0, {'obra': partidas.obra,
+                'contrato_partida_licitacion': [[0, 0, {'recursos': partidas.recursos,
                                                           'programaInversion': partidas.programaInversion,
                                                           'monto_partida': partidas.monto_partida,
                                                           'iva_partida': partidas.iva_partida,

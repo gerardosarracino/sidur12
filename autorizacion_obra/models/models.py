@@ -44,11 +44,13 @@ class AutorizacionDeObra(models.Model):
 
 class AnexoTecnico(models.Model):
     _name = 'autorizacion_obra.anexo_tecnico'
-    _rec_name = 'name'
+    _rec_name = 'concepto'
 
     id_anexo_sideop = fields.Integer('id anexo sideop')
     id_partida_sideop = fields.Integer('id partida sideop')
-    id_oficio_sideop = fields.Integer('id oficio sideop')
+
+    id_oficio_sideop = fields.Char('id oficio sideop')
+
     id_oficio_sideop2 = fields.Many2one('autorizacion_obra.oficios_de_autorizacion', string='id oficio sideop')
 
     name = fields.Many2one('autorizacion_obra.oficios_de_autorizacion', ondelete="cascade")

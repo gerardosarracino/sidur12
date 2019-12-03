@@ -30,16 +30,285 @@
          </field>
       </record>
 
-        <!-- tree view PARTICIPANTES-->
+      <!-- aclaraciones -->
+      <record id="proceso_aclaraciones_form" model="ir.ui.view">
+          <field name="name">Aclaraciones</field>
+          <field name="model">proceso.contra_aclaraciones</field>
+          <field name="arch" type="xml">
+              <form string="">
+                  <div class="panel panel-default">
+                  <div class="panel-body">
+                    <h3 colspan="2" align="center"> Preguntas del Licitante</h3>
+                  </div>
+              </div>
+
+                  <sheet>
+                      <group colspan="2" col="4">
+                          <field name="name" readonly="1"/>
+                          <field name="asiste"/>
+                          <field name="nombre_representante" readonly="1"/>
+                          <field name="correo" readonly="1"/>
+                      </group>
+                      <group>
+                          <field name="pregunta"/>
+                          <field name="respuesta"/>
+                      </group>
+                  </sheet>
+              </form>
+          </field>
+      </record>
+
+      <!-- PROPUESTA -->
+      <record id="proceso_propuesta_form" model="ir.ui.view">
+          <field name="name">Propuesta</field>
+          <field name="model">proceso.contra_propuestas</field>
+          <field name="arch" type="xml">
+              <form string="">
+                  <div class="panel panel-default">
+                      <div class="panel-body">
+                        <h3 colspan="2" align="center"> Propuesta del Licitante: </h3>
+                      </div>
+                  </div>
+                  <sheet>
+                      <group>
+                          <field name="numerolicitacion" readonly="1"/>
+                      </group>
+                      <group colspan="2" col="6">
+                            <field name="asiste"/>
+                            <field name="completa"/>
+                            <field name="revision"/>
+                      </group>
+                      <group>
+                          <field name="programar_obra_licitacion2" nolabel="1">
+                                <tree create="false" editable="bottom">
+                                    <field name="recursos" force_save="1" string="Obras que pertenecen a esta licitación" readonly="1"/>
+                                    <field name="monto_partida"/>
+                                </tree>
+                          </field>
+                      </group>
+                      <group colspan="2" col="2">
+                          <field name="monto" force_save="1"/>
+                          <field name="observaciones"/>
+                      </group>
+                      <b>Resultado De La Revisión</b>
+                      <group>
+                          <field name="paso"/>
+                          <field name="posicion"/>
+                      </group>
+                  </sheet>
+              </form>
+          </field>
+      </record>
+
+      <!-- FALLO -->
+      <record id="proceso_fallo_form" model="ir.ui.view">
+          <field name="name">Fallo</field>
+          <field name="model">proceso.contra_fallo</field>
+          <field name="arch" type="xml">
+              <form string="">
+                  <div class="panel panel-default">
+                      <div class="panel-body">
+                        <h3 colspan="2" align="center"> Fallo</h3>
+                      </div>
+                  </div>
+                  <sheet>
+                      <group colspan="2" col="4">
+                          <field name="asiste"/>
+                          <field name="ganador"/>
+                      </group>
+                      <group>
+                          <field name="observaciones"/>
+                      </group>
+                      <group >
+                          <field name="monto" />
+                      </group>
+                      <group colspan="2" col="4">
+                          <field name="puntos_tecnicos"/>
+                          <field name="puntos_economicos"/>
+                      </group>
+                  </sheet>
+              </form>
+          </field>
+      </record>
+
+      <record id="proceso_fallo_datos_form" model="ir.ui.view">
+          <field name="name">Fallo Datos</field>
+          <field name="model">proceso.datos_fallo</field>
+          <field name="arch" type="xml">
+              <form string="">
+                  <div class="panel panel-default">
+                      <div class="panel-body">
+                        <h3 colspan="2" align="center"> Datos generales de la Licitación: <field name="numerolicitacion"/></h3>
+                      </div>
+                  </div>
+                  <sheet>
+                      <group>
+                          <field name="id_eventos"/>
+                      </group>
+
+                      <group string="Datos Generales Del Fallo" colspan="2" col="4">
+
+                          <field name="ganador"/>
+                          <field name="fecha_fallo"/>
+                          <field name="hora_inicio_f"/>
+                          <field name="hora_termino_f"/>
+                          <field name="hora_inicio_o"/>
+                          <field name="hora_termino_o"/>
+                          <field name="plazo"/>
+                          <field name="hora_antes_firma"/>
+                          <field name="fecha_fcontrato"/>
+
+                      </group>
+                      <group colspan="2" col="4">
+                          <field name="importe_ganador"/>
+                          <field name="iva"/>
+                          <field name="total_contratado"/>
+                      </group>
+                      <group>
+                          <field name="recursos"/>
+                      </group>
+                  </sheet>
+              </form>
+          </field>
+      </record>
+
+      <!-- FORM EVENTOS -->
+   <record model="ir.ui.view" id="proceso_eventos_form">
+          <field name="name">proceso.eventos.form</field>
+          <field name="model">proceso.eventos_licitacion</field>
+          <field name="arch" type="xml">
+            <form>
+                <div class="panel panel-default">
+                  <div class="panel-body">
+                    <h3 colspan="2" align="center"> Eventos de la Licitación</h3>
+                  </div>
+              </div>
+
+                <sheet>
+                    <group>
+                        <h4>Licitación: <field name="numerolicitacion_evento" force_save="1"/></h4>
+                        <field name="aux" invisible="1"/>
+                    </group>
+
+                    <group>
+                        <notebook>
+                            <page string="Visita de Obra">
+                                <group colspan="2" col="2">
+
+                                   <field name="contratista_participantes" widget="one2many" nolabel="1" colspan="4" force_save="1">
+                                       <tree create="false" editable="bottom" delete="false">
+                                           <field name="asiste"/>
+                                           <field name="name" readonly="1" force_save="1"/>
+                                           <field name="nombre_representante" readonly="1" force_save="1"/>
+                                           <field name="correo" readonly="1" force_save="1"/>
+                                           <button name="button_method_name" type="object" string="Generar Constancia Individual"
+                                           class="btn btn-primary"/>
+                                       </tree>
+                                   </field>
+
+                               </group>
+                            </page>
+
+                            <page string="Junta de Aclaraciones">
+                                <group colspan="2" col="2">
+                                    <field name="contratista_aclaraciones" nolabel="1" widget="one2many" force_save="1">
+                                       <tree create="false" editable="bottom" delete="false">
+                                           <field name="asiste"/>
+                                           <field name="name" readonly="1" force_save="1"/>
+                                           <field name="nombre_representante" readonly="1" force_save="1"/>
+                                           <field name="correo" readonly="1" force_save="1"/>
+                                           <button name="aclaraciones" type="object" string="Preguntas del Licitante"
+                                           class="btn btn-primary"/>
+                                       </tree>
+                                   </field>
+                               </group>
+                            </page>
+
+                            <page string="Apertura de Propuestas">
+                                <group colspan="2" col="2">
+                                    <field name="contratista_propuesta" nolabel="1">
+                                       <tree create="false" delete="false">
+
+                                           <field name="numerolicitacion" invisible="1"/>
+                                           <field name="name"/>
+                                           <field name="monto"/>
+                                           <field name="asiste"/>
+                                           <field name="completa"/>
+                                           <field name="revision"/>
+                                           <field name="puntos_tecnicos"/>
+                                           <field name="puntos_economicos"/>
+                                           <field name="paso"/>
+                                           <field name="posicion"/>
+                                           <button name="propuestas" type="object" string="Propuesta del Licitante"
+                                           class="btn btn-primary"/>
+                                       </tree>
+                                   </field>
+                               </group>
+                            </page>
+
+                            <page string="Fallo">
+                                <group colspan="2" col="2">
+                                    <field name="contratista_fallo" nolabel="1" >
+                                       <tree create="false" delete="false">
+                                           <field name="posicion"/>
+                                           <field name="name" readonly="1"/>
+                                           <field name="asiste"/>
+                                            <field name="ganador"/>
+                                           <field name="monto"/>
+                                           <button name="fallo" type="object" string="Datos del Fallo"
+                                           class="btn btn-primary" context="{'default_id_eventos': active_id}"/>
+                                       </tree>
+                                   </field>
+
+                               </group>
+                                <group>
+                                    <button name="dato_fallo" type="object" string="Datos Generales Del Fallo"
+                                    />
+                                </group>
+                            </page>
+                        </notebook>
+
+
+
+                    </group>
+                </sheet>
+                </form>
+              </field>
+        </record>
+
+    <!-- SEARCH EVENTOS -->
+    <record model="ir.ui.view" id="proceso_eventos_search">
+         <field name="name">Eventos participantes</field>
+         <field name="model">proceso.eventos_licitacion</field>
+         <field name="arch" type="xml">
+            <search>
+                <field name="numerolicitacion_evento"/>
+                <field name="contratista_participantes"/>
+            </search>
+         </field>
+      </record>
+
+
+
+        <!-- tree view EVENTOS-->
     <record model="ir.ui.view" id="proceso_participantes_tree">
       <field name="name">proceso.participantes.tree</field>
-      <field name="model">proceso.participante</field>
+      <field name="model">proceso.eventos_licitacion</field>
       <field name="arch" type="xml">
         <tree>
-           <field name="numerolicitacion" string="Numero de Licitación"/>
+           <field name="numerolicitacion_evento" string="Numero de Licitación"/>
            <field name="contratista_participantes" string="Licitantes participantes" widget="many2many_tags"/>
         </tree>
       </field>
+    </record>
+
+       <!-- action eventos -->
+      <record model="ir.actions.act_window" id="action_eventos">
+        <field name="name">Eventos</field>
+        <field name="res_model">proceso.eventos_licitacion</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+        (0, 0, {'view_mode': 'form', 'view_id': ref('proceso_eventos_form')})]"/>
+        <field name="target">new</field>
     </record>
 
 
@@ -79,6 +348,7 @@
           <field name="name"/>
           <field name="normatividad"/>
           <field name="fechaoficio" />
+          <field name="estatus"/>
         </tree>
       </field>
     </record>
@@ -98,6 +368,7 @@
             </search>
          </field>
   </record>
+
 
 
     <!-- SEARCH DESIERTA -->
@@ -239,20 +510,19 @@
               <button type="action" icon="fa-list-ol" string="Ev. Puntos"></button>
 
                 <!-- BOTONES DE PARTICIPANTES -->
-              <button type="action" name="%(action_participantes1)d" class="oe_highlight" context="{
+              <button type="object" name="VentanaParticipantes" class="oe_highlight" context="{
                        'search_default_numerolicitacion': active_id,
                        'default_numerolicitacion': active_id
-                       }" icon="fa-users" attrs="{'invisible': [('variable_count', '=', 1)]}">
-                  <field name="variable_count" string=' Participantes' widget="statinfo" />
-              </button>
-              <button type="action" name="%(action_participantes2)d" class="oe_highlight" context="{
-                       'search_default_numerolicitacion': active_id,
-                       'default_numerolicitacion': active_id
-                       }" icon="fa-users" attrs="{'invisible': [('variable_count', '=', 0)]}">
+                       }" icon="fa-users">
                   <field name="variable_count" string=' Participantes' widget="statinfo" />
               </button>
 
-              <button type="action" icon="fa-calendar" string="Eventos"></button>
+                <!-- BOTON DE EVENTOS -->
+              <button type="object" name="VentanaEventos" icon="fa-calendar" string="Eventos"
+              context="{
+                       'search_default_numerolicitacion_evento': active_id,
+                       'default_numerolicitacion_evento': active_id
+                       }" />
 
                 <!-- BOTONES DE CANCELAR -->
               <button string="Cancelar" type="action" name="%(action_cancelar1)d" class="oe_highlight" context="{
@@ -276,22 +546,23 @@
                       icon="fa-bitbucket" attrs="{'invisible': ['|',('estado_obra_desierta', '=', 0), ('estado_obra_cancelar','>=', '1') ]}"/>
 
             </div>
-
               <!-- FORMULARIO LICITACION -->
-              <group string="Seleccionar Obra" colspan="1" col="2">
-                <field name="programa_inversion_licitacion" string="Programa de Inversión" />
+              <group string="Seleccionar Obra" colspan="1" col="2" >
+                <field name="programa_inversion_licitacion" string="Programa de Inversión"
+                       attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
               </group>
               <group>
                   <!-- INSERTAR PARTIDAS LICITACION -->
                 <field name="programar_obra_licitacion" widget='one2many'
-                attrs="{'invisible': [('programa_inversion_licitacion', '=', False)]}" string="" nolabel="1"
-                context="{'default_programaInversion': programa_inversion_licitacion}">
+                attrs="{'invisible': [('programa_inversion_licitacion', '=', False)], 'readonly': ['|', ('estado_obra_cancelar','>=', 1),
+                ('estado_obra_desierta','>=', 1)]}"
+                       nolabel="1" context="{'default_programaInversion': programa_inversion_licitacion}">
                     <tree editable="bottom">
                         <control>
                              <create string="Agregar Partida"/>
                         </control>
                             <field name="recursos" string="Listado de obras por licitar"/>
-                            <field name="obra" domain="[('programaInversion', '=', parent.programa_inversion_licitacion)]"/>
+                            <!-- field name="obra" domain="[('programaInversion', '=', parent.programa_inversion_licitacion)]"/ -->
                             <field name="programaInversion" invisible="1" force_save="1"/>
                             <field name="monto_partida" sum="Monto" widget="monetary"/>
                             <field name="iva_partida" readonly="True" sum="I.V.A" widget="monetary" force_save="1"/>
@@ -300,69 +571,71 @@
                 </field>
               </group>
               <group>
-                <field name="name" class="oe_inline"/>
+                <field name="name" class="oe_inline" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
+                <field name="estatus" />
                 <field name="estado_obra_desierta" widget="statinfo" invisible="1"/>
                 <field name="estado_obra_cancelar" widget="statinfo" invisible="1"/>
               </group>
 
               <group >
               <group string="Datos De La Licitación" colspan="1" col="2">
-                <field name="tipolicitacion"/>
-                <field name="numerolicitacion" />
-                <field name="convocatoria"/>
-                <field name="fechaconinv"/>
-                <field name="caracter"/>
-                <field name="normatividad"/>
+                <field name="tipolicitacion" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
+                <field name="numerolicitacion" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
+                <field name="convocatoria" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
+                <field name="fechaconinv" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
+                <field name="caracter" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
+                <field name="normatividad" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
               </group>
 
               <group string="Presiden Actos" colspan="1" col="2">
-                <field name="funcionariopresideactos"/>
-                <field name="puesto"/>
-                <field name="numerooficio"/>
-                <field name="fechaoficio"/>
-                <field name="oficioinvitacioncontraloria"/>
-                <field name="fechaoficio2"/>
-                <field name="notariopublico"/>
+                <field name="funcionariopresideactos" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
+                <field name="puesto" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
+                <field name="numerooficio" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
+                <field name="fechaoficio" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
+                <field name="oficioinvitacioncontraloria" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
+                <field name="fechaoficio2" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
+                <field name="notariopublico" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
               </group>
               </group>
 
               <group string="Datos Generales" colspan="1" col="2">
                   <group>
-                    <field name="fechalimiteentregabases"/>
-                    <field name="costobasesdependencia"/>
-                    <field name="fechaestimadainicio"/>
-                    <field name="plazodias"/>
-                    <field name="anticipomaterial"/>
-                    <field name="puntosminimospropuestatecnica"/>
+                    <field name="fechalimiteentregabases" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1),
+                    ('estado_obra_desierta','>=', 1)]}"/>
+                    <field name="costobasesdependencia" attrs="{'readonly': ['|', ('normatividad','=', '1'), ('estado_obra_cancelar','>=', 1), '|', ('estado_obra_desierta','>=', 1)]}"/>
+                    <field name="fechaestimadainicio" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
+                    <field name="plazodias" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
+                    <field name="anticipomaterial" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
+                    <field name="puntosminimospropuestatecnica" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
                   </group>
                   <group>
-                    <field name="fecharegistrocompranet"/>
-                    <field name="costocompranetbanco"/>
-                    <field name="fechaestimadatermino"/>
-                    <field name="capitalcontable"/>
-                    <field name="anticipoinicio"/>
+                    <field name="fecharegistrocompranet" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
+                    <field name="costocompranetbanco" attrs="{'readonly': ['|', ('normatividad','=', '1'), ('estado_obra_cancelar','>=', 1), '|', ('estado_obra_desierta','>=', 1)]}"/>
+                    <field name="fechaestimadatermino" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
+                    <field name="capitalcontable" attrs="{'readonly': ['|', ('normatividad','=', '1'), ('estado_obra_cancelar','>=', 1), '|', ('estado_obra_desierta','>=', 1)]}"/>
+                    <field name="anticipoinicio" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
                   </group>
               </group>
 
               <group>
               <group string="Visita De Obra" colspan="1" col="2">
-                <field name="visitafechahora"/>
-                <field name="visitalugar"/>
+                <field name="visitafechahora" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
+                <field name="visitalugar" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
               </group>
 
               <group string="Junta De Aclaraciones" colspan="1" col="2">
-                <field name="juntafechahora"/>
-                <field name="juntalugar"/>
+                <field name="juntafechahora" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
+                <field name="juntalugar" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
               </group>
 
               <group string="Apertura" colspan="1" col="2">
-                <field name="aperturafechahora"/>
-                <field name="aperturalugar"/>
+                <field name="aperturafechahora" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
+                <field name="aperturalugar" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
               </group>
 
               <group string="Fallo" colspan="1" col="2">
-                <field name="fallofechahora"/>
-                <field name="fallolugar"/>
+                <field name="fallofechahora" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
+                <field name="fallolugar" attrs="{'readonly': ['|', ('estado_obra_cancelar','>=', 1), ('estado_obra_desierta','>=', 1)]}"/>
               </group>
             </group>
 
@@ -371,7 +644,7 @@
       </field>
     </record>
 
-    <!-- TREE VIEW REPORTE-->
+    <!-- TREE VIEW LICITACION-->
     <record model="ir.ui.view" id="proc_contratacion_licitacion_tree2">
       <field name="name">proceso licitacion tree2</field>
       <field name="model">proceso.licitacion</field>
@@ -382,6 +655,7 @@
           <field name="name"/>
           <field name="normatividad"/>
           <field name="fechaoficio"/>
+
         </tree>
       </field>
     </record>

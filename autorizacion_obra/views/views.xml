@@ -177,8 +177,8 @@
           <field name="id_oficio_sideop2"/>
 
         <group string="Anexo técnico del oficio">
-        <field name="id" invisible="1"/>
-        <field name="name" invisible="1"/>
+        <field name="id" />
+        <field name="name" />
         <field name="cancelados" invisible="1"/>
         <group colspan="2" col="4">
 
